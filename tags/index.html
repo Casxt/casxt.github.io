@@ -26,7 +26,7 @@
 <meta property="og:site_name" content="Maple.Link">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-03-01T16:56:47.000Z">
-<meta property="article:modified_time" content="2021-05-03T09:05:00.044Z">
+<meta property="article:modified_time" content="2021-05-03T09:38:44.913Z">
 <meta property="article:author" content="Maple">
 <meta name="twitter:card" content="summary">
 
@@ -238,6 +238,7 @@
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -402,6 +403,26 @@
   
 
   
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'db8196d5d31eff822ffb',
+      clientSecret: 'a7b6442e925817c22e7559e5f134e11ffe90fe16',
+      repo        : 'Casxt/casxt.github.io',
+      owner       : 'casxt',
+      admin       : ['casxt'],
+      id          : 'f47af1d1eda4d807b02bba32be15120b',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>
