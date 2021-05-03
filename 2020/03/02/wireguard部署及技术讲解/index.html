@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -28,7 +28,7 @@
 <meta property="og:description" content="wiregurad目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-03-01T16:40:43.000Z">
-<meta property="article:modified_time" content="2021-05-03T12:06:36.025Z">
+<meta property="article:modified_time" content="2020-03-01T16:40:43.000Z">
 <meta property="article:author" content="Maple">
 <meta property="article:tag" content="route">
 <meta property="article:tag" content="wireguard">
@@ -227,13 +227,6 @@
 
               <time title="创建时间：2020-03-02 00:40:43" itemprop="dateCreated datePublished" datetime="2020-03-02T00:40:43+08:00">2020-03-02</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-03 20:06:36" itemprop="dateModified" datetime="2021-05-03T20:06:36+08:00">2021-05-03</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -255,8 +248,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><a href="https://www.wireguard.com/" target="_blank" rel="noopener">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
-<a id="more"></a>
+        <p><a target="_blank" rel="noopener" href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
+<span id="more"></span>
 
 <h1 id="Wireguard-安装"><a href="#Wireguard-安装" class="headerlink" title="Wireguard 安装"></a>Wireguard 安装</h1><p>对于Ubuntu ≥ 19.10以上的用户, 直接安装即可</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install wireguard</span></span><br></pre></td></tr></table></figure>
@@ -300,7 +293,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route add 192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.x</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 192.168.100.x 指本机ip</span></span><br></pre></td></tr></table></figure>
 
 <p>如果设置的时候提示 <code>RTNETLINK answers: File exists</code> 则表示wg已经自动设置过路由。可以使用以下命令查看</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route </span></span><br><span class="line">default via 192.168.1.1 dev enp6s0 proto dhcp src 192.168.1.4 metric 100</span><br><span class="line">192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route</span> </span><br><span class="line">default via 192.168.1.1 dev enp6s0 proto dhcp src 192.168.1.4 metric 100</span><br><span class="line">192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.2</span><br></pre></td></tr></table></figure>
 
 <h1 id="查看连接状态"><a href="#查看连接状态" class="headerlink" title="查看连接状态"></a>查看连接状态</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo wg</span></span><br><span class="line">interface: wg0</span><br><span class="line">  public key: SaarEV3HLvcAaaLhorieaaalNMhCaaaxqVmIpmKwjWY=</span><br><span class="line">  private key: (hidden)</span><br><span class="line">  listening port: 10240</span><br><span class="line"></span><br><span class="line">peer: taaSMAMx4fMaaXfd1g4Z/c+AaapQRapYnStJ/wVFNjk=</span><br><span class="line">  endpoint: 111.20.8.222:51820</span><br><span class="line">  allowed ips: 192.168.100.2/32</span><br><span class="line">  latest handshake: 1 minute, 48 seconds ago</span><br><span class="line">  transfer: 256.64 KiB received, 200.38 KiB sent</span><br><span class="line">  persistent keepalive: every 10 seconds</span><br></pre></td></tr></table></figure>
 
@@ -389,7 +382,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Wireguard-安装"><span class="nav-number">1.</span> <span class="nav-text">Wireguard 安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Wireguard-组网设置"><span class="nav-number">2.</span> <span class="nav-text">Wireguard 组网设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加网卡"><span class="nav-number">3.</span> <span class="nav-text">添加网卡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置ip"><span class="nav-number">4.</span> <span class="nav-text">设置ip</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生成连接密钥"><span class="nav-number">5.</span> <span class="nav-text">生成连接密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#生成一对密钥"><span class="nav-number">5.1.</span> <span class="nav-text">生成一对密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成私钥"><span class="nav-number">5.1.1.</span> <span class="nav-text">生成私钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成公钥"><span class="nav-number">5.1.2.</span> <span class="nav-text">生成公钥</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编写配置文件"><span class="nav-number">6.</span> <span class="nav-text">编写配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#有公网ip的设备-A"><span class="nav-number">6.1.</span> <span class="nav-text">有公网ip的设备 A</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无公网ip设备-B"><span class="nav-number">6.2.</span> <span class="nav-text">无公网ip设备 B</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AllowedIPs"><span class="nav-number">6.3.</span> <span class="nav-text">AllowedIPs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用配置文件"><span class="nav-number">6.4.</span> <span class="nav-text">应用配置文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启用网卡"><span class="nav-number">7.</span> <span class="nav-text">启用网卡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加路由"><span class="nav-number">8.</span> <span class="nav-text">添加路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看连接状态"><span class="nav-number">9.</span> <span class="nav-text">查看连接状态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网关设置"><span class="nav-number">10.</span> <span class="nav-text">网关设置</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Wireguard-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Wireguard 安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Wireguard-%E7%BB%84%E7%BD%91%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">Wireguard 组网设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%BD%91%E5%8D%A1"><span class="nav-number">3.</span> <span class="nav-text">添加网卡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEip"><span class="nav-number">4.</span> <span class="nav-text">设置ip</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%BF%9E%E6%8E%A5%E5%AF%86%E9%92%A5"><span class="nav-number">5.</span> <span class="nav-text">生成连接密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%B8%80%E5%AF%B9%E5%AF%86%E9%92%A5"><span class="nav-number">5.1.</span> <span class="nav-text">生成一对密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E7%A7%81%E9%92%A5"><span class="nav-number">5.1.1.</span> <span class="nav-text">生成私钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%85%AC%E9%92%A5"><span class="nav-number">5.1.2.</span> <span class="nav-text">生成公钥</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">编写配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E5%85%AC%E7%BD%91ip%E7%9A%84%E8%AE%BE%E5%A4%87-A"><span class="nav-number">6.1.</span> <span class="nav-text">有公网ip的设备 A</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E5%85%AC%E7%BD%91ip%E8%AE%BE%E5%A4%87-B"><span class="nav-number">6.2.</span> <span class="nav-text">无公网ip设备 B</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AllowedIPs"><span class="nav-number">6.3.</span> <span class="nav-text">AllowedIPs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.4.</span> <span class="nav-text">应用配置文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E7%BD%91%E5%8D%A1"><span class="nav-number">7.</span> <span class="nav-text">启用网卡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1"><span class="nav-number">8.</span> <span class="nav-text">添加路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81"><span class="nav-number">9.</span> <span class="nav-text">查看连接状态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E8%AE%BE%E7%BD%AE"><span class="nav-number">10.</span> <span class="nav-text">网关设置</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
