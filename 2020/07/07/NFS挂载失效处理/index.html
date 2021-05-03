@@ -87,7 +87,7 @@
 <meta property="og:description" content="在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-06T18:43:41.000Z">
-<meta property="article:modified_time" content="2021-05-03T08:07:12.290Z">
+<meta property="article:modified_time" content="2021-05-03T08:13:34.247Z">
 <meta property="article:author" content="Maple">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="nfs">
