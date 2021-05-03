@@ -36,7 +36,7 @@
   </entry>
   <entry>
     <title>LRU相关题目</title>
-    <url>//LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
 <span id="more"></span>
 
@@ -75,7 +75,7 @@
   </entry>
   <entry>
     <title>Yolo发展整理</title>
-    <url>//Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86</url>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
     <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
 <span id="more"></span>
 
@@ -340,7 +340,7 @@
   </entry>
   <entry>
     <title>动态规划相关题目</title>
-    <url>//%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>动态规划类题目笔记</p>
 <span id="more"></span>
 
@@ -364,7 +364,7 @@
   </entry>
   <entry>
     <title>堆相关知识点</title>
-    <url>//%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9</url>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>堆类题目堆相关知识点</p>
 <span id="more"></span>
 
@@ -388,7 +388,7 @@
   </entry>
   <entry>
     <title>堆相关题目</title>
-    <url>//%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>堆类相关题目</p>
 <span id="more"></span>
 
@@ -404,8 +404,28 @@
       </tags>
   </entry>
   <entry>
+    <title>子序列相关题目</title>
+    <url>/2021/05/03/%E5%AD%90%E5%BA%8F%E5%88%97/</url>
+    <content><![CDATA[<p>子序列类相关题目</p>
+<span id="more"></span>
+
+<h1 id="最大子序和"><a href="#最大子序和" class="headerlink" title="最大子序和"></a>最大子序和</h1><p><a href="https://leetcode-cn.com/problems/maximum-subarray/">https://leetcode-cn.com/problems/maximum-subarray/</a></p>
+<p>若nums的前n-1个元素的最大子序列和为M</p>
+<p>nums的第N个元素为X</p>
+<p>则nums的前n个元素的最大子序列和为max(M+X, X)</p>
+<p>以此进行动态规划。</p>
+<h1 id="简化路径"><a href="#简化路径" class="headerlink" title="简化路径"></a>简化路径</h1><p>模拟出入栈即可<br>字符串操作</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">paths := strings.Split(path, <span class="string">&quot;/&quot;</span>)</span><br><span class="line">s := <span class="string">&quot;/&quot;</span> + strings.Join(stack, <span class="string">&quot;/&quot;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>子序列</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>字符串相关题目</title>
-    <url>//%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>字符串类相关题目</p>
 <span id="more"></span>
 
@@ -487,7 +507,7 @@
   </entry>
   <entry>
     <title>数学相关题目</title>
-    <url>//%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>数学类相关题目</p>
 <span id="more"></span>
 
@@ -512,7 +532,7 @@
   </entry>
   <entry>
     <title>数组相关题目</title>
-    <url>//%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>数组类相关题目</p>
 <span id="more"></span>
 
@@ -542,7 +562,7 @@
   </entry>
   <entry>
     <title>树相关知识点</title>
-    <url>//%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9</url>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>树类题目相关知识点</p>
 <span id="more"></span>
 
@@ -567,7 +587,7 @@
   </entry>
   <entry>
     <title>树相关题目</title>
-    <url>//%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>树类相关题目</p>
 <span id="more"></span>
 
@@ -595,7 +615,7 @@
   </entry>
   <entry>
     <title>矩阵相关题目</title>
-    <url>//%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>矩阵类相关题目</p>
 <span id="more"></span>
 
@@ -617,7 +637,7 @@
   </entry>
   <entry>
     <title>链表相关题目</title>
-    <url>//%E9%93%BE%E8%A1%A8%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <url>/2021/05/03/%E9%93%BE%E8%A1%A8%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>链表类相关题目</p>
 <span id="more"></span>
 
