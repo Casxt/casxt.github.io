@@ -76,7 +76,7 @@
   <entry>
     <title>Yolo发展整理</title>
     <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
 <span id="more"></span>
 
 <h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
