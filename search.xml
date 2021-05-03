@@ -35,6 +35,24 @@
       </tags>
   </entry>
   <entry>
+    <title>LRU相关题目</title>
+    <url>//LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -53,6 +71,33 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Yolo发展整理</title>
+    <url>//Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -294,6 +339,116 @@
       </tags>
   </entry>
   <entry>
+    <title>动态规划相关题目</title>
+    <url>//%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关知识点</title>
+    <url>//%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9</url>
+    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+<span id="more"></span>
+
+<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
+<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
+<p>container/heap</p>
+<p>4.1 heap.Init</p>
+<p>4.2 heap.Push</p>
+<p>4.3 heap.Pop</p>
+<p>4.4 heap.Fix</p>
+<p>4.5 heap.Remove</p>
+<p>实现</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>堆</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关题目</title>
+    <url>//%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>堆类相关题目</p>
+<span id="more"></span>
+
+<h1 id="连续中值"><a href="#连续中值" class="headerlink" title="连续中值"></a>连续中值</h1><p>将半段数字放于一个小根堆，后半段放入大根堆</p>
+<p>取小根堆和大根堆的堆顶即可推导出中位数</p>
+<p>实际操作时，ruo</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>堆</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串相关题目</title>
+    <url>//%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>字符串类相关题目</p>
+<span id="more"></span>
+
+<h1 id="无重复字符的最长子串"><a href="#无重复字符的最长子串" class="headerlink" title="无重复字符的最长子串"></a>无重复字符的最长子串</h1><p><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/">https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/</a></p>
+<p>动态规划</p>
+<p>已知以位置i-1结束的最长不重复串长为x, 若i处字符到其上一次出现的位置长为n</p>
+<p>若 n &gt; x, 则 以位置i结束的最长不重复串长为x+1</p>
+<p>若 n &lt;= x, 则 以位置i结束的最长不重复串长为n</p>
+<h1 id="验证IP地址"><a href="#验证IP地址" class="headerlink" title="验证IP地址"></a>验证IP地址</h1><p><a href="https://leetcode-cn.com/problems/validate-ip-address/">https://leetcode-cn.com/problems/validate-ip-address/</a></p>
+<p>10进制字符串转int<br>n, err := strconv.ParseInt(s, 10, 32)</p>
+<p>16进制字符串转int<br>n, err := strconv.ParseInt(s, 16, 32)</p>
+<h1 id="字母异位词分组"><a href="#字母异位词分组" class="headerlink" title="字母异位词分组"></a>字母异位词分组</h1><p><a href="https://leetcode-cn.com/problems/group-anagrams/">https://leetcode-cn.com/problems/group-anagrams/</a></p>
+<p>字符串排序hash</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">code</span><span class="params">(str <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">byte</span>(str)</span><br><span class="line">    sort.Slice(s, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> s[i] &lt; s[j] &#125;)</span><br><span class="line">    sortedStr := <span class="keyword">string</span>(s)</span><br><span class="line">    <span class="keyword">return</span> sortedStr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="最小覆盖子串"><a href="#最小覆盖子串" class="headerlink" title="最小覆盖子串"></a>最小覆盖子串</h1><p><a href="https://leetcode-cn.com/problems/minimum-window-substring/">https://leetcode-cn.com/problems/minimum-window-substring/</a></p>
+<p>双指针法，不匹配时右移右指针，匹配时记录最短串，并右移左指针。</p>
+<p>直到右指针达到末尾并且不匹配</p>
+<h1 id="找到字符串中所有字母异位词"><a href="#找到字符串中所有字母异位词" class="headerlink" title="找到字符串中所有字母异位词"></a>找到字符串中所有字母异位词</h1><p><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/">https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/</a></p>
+<p>使用双指针标记窗口，移动窗口依次比较。</p>
+<p>使用26长数组代替字典。</p>
+<p>进阶：</p>
+<p>每次移入元素使得字典某字母数量匹配目标数量，使match++</p>
+<p>每次移出元素使得字典某字母数量从匹配目标数量变为不匹配，使match–</p>
+<p>当match等于元素种类时，记录当前窗口起始位置</p>
+<h1 id="字符串的排列"><a href="#字符串的排列" class="headerlink" title="字符串的排列"></a>字符串的排列</h1><p><a href="https://leetcode-cn.com/problems/permutations/">https://leetcode-cn.com/problems/permutations/</a></p>
+<p><a href="https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/">https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/</a></p>
+<p>递归遍历</p>
+<p>每层选择一个位置i</p>
+<p>如果i到达序列尾部，则记录结果，否则</p>
+<p>依次将i 与 j([i, len])位置处的数据交换。</p>
+<p>如果位置j处的数据在此层之前([i, j-1])出现过，则跳过到下一位置</p>
+<p>交换数据后进行递归，从位置i+1开始</p>
+<p>递归结束后再次交换，恢复序列，并循环下一j。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>手动挂载Nvidia显卡到docker容器中</title>
     <url>/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/</url>
     <content><![CDATA[<p>在docker使用显卡往往需要nvidia的nvidia-container驱动，本文将叫你如何使用原生docker挂载显卡。<br>虽然在最新版的docker中已经内置了nvidia驱动，但是对于podman等其他容器管理来说，这套方法依旧是有意义的。</p>
@@ -328,6 +483,155 @@
         <tag>nvidia</tag>
         <tag>device</tag>
         <tag>driver</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数学相关题目</title>
+    <url>//%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>数学类相关题目</p>
+<span id="more"></span>
+
+<h1 id="整数拆分"><a href="#整数拆分" class="headerlink" title="整数拆分"></a>整数拆分</h1><p><a href="https://leetcode-cn.com/problems/integer-break/">https://leetcode-cn.com/problems/integer-break/</a></p>
+<p>考虑数字为4的情况，最大结果为2<em>2<br>考虑数字为5的情况，最大结果为2</em>3<br>考虑数字为6的情况，最大结果为3<em>3<br>考虑数字为7的情况，最大结果为3</em>2<em>2<br>考虑数字为8的情况，最大结果为3</em>3*2<br>所有大于3的数字一定可由2和3相加得到，归纳可证，需要将数字尽可能拆分为3相加</p>
+<p>根据 n 除以 3 的余数进行分类讨论：</p>
+<p>如果余数为 0，拆分为 n//3个3</p>
+<p>如果余数为 1，拆分为 (n//3)-1 个 3和1个4</p>
+<p>如果余数为 2，拆分为 n//3 个 3和1个2</p>
+<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><p><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a></p>
+<p>较为复杂，多复习</p>
+<p>不断将位置i和赋值给i+k,直到回到i</p>
+<p>从i+1开始重复上述过程</p>
+<p>直到处理过的数字和数组长度相等</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数组相关题目</title>
+    <url>//%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>数组类相关题目</p>
+<span id="more"></span>
+
+<h1 id="搜索旋转排序数组"><a href="#搜索旋转排序数组" class="headerlink" title="搜索旋转排序数组"></a>搜索旋转排序数组</h1><p><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/">https://leetcode-cn.com/problems/search-in-rotated-sorted-array/</a></p>
+<p>二分之后，必有一边是有序的(因为全局只有一个间断点，该点只能出现于一侧)。检查target是否坐落于有序一侧，如果不位于有序一侧，则一定位于无序一侧。</p>
+<p>target取位于的那一侧继续迭代</p>
+<h1 id="缺失的第一个正数"><a href="#缺失的第一个正数" class="headerlink" title="缺失的第一个正数"></a>缺失的第一个正数</h1><p><a href="https://leetcode-cn.com/problems/first-missing-positive/">https://leetcode-cn.com/problems/first-missing-positive/</a></p>
+<p>观察可知，题目所求正数不超过数组长度+1</p>
+<p>遍历每一个位置，将该位置上的值x与位置x-1上的值y交换，重复交换直到x == y或 x &lt; 0 或 x &gt; 数组长度。</p>
+<p>之后继续下一个位置</p>
+<h1 id="在排序数组中查找元素的第一个和最后一个位置"><a href="#在排序数组中查找元素的第一个和最后一个位置" class="headerlink" title="在排序数组中查找元素的第一个和最后一个位置"></a>在排序数组中查找元素的第一个和最后一个位置</h1><p><a href="https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/">https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/</a></p>
+<p>寻找左边界和有边界，二分条件大于小于情况照常处理，等于时，如果寻找左边界，则取左区间，反之右区间。</p>
+<p>每次mid==target时记录最新的值</p>
+<p>循环的s &gt; e 时跳出。</p>
+<p>此时的最新mid值即为边界。</p>
+<h1 id="最长递增子序列"><a href="#最长递增子序列" class="headerlink" title="最长递增子序列"></a>最长递增子序列</h1><p><a href="https://leetcode-cn.com/problems/longest-increasing-subsequence/">https://leetcode-cn.com/problems/longest-increasing-subsequence/</a></p>
+<p>贪心算法，构建队列，遍历数字，当数字大于队尾，则增加该数字，否则，找到第一个大于该数字的元素，修改为该数字。</p>
+<p>通过二分查找加速</p>
+<p>sort search会返回最小的满足true条件的位置，否则返回len(list)，注意函数中大于等于条件。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">idx := sort.Search(<span class="built_in">len</span>(list), <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;<span class="keyword">return</span> list[i] &gt;= n&#125;)</span><br><span class="line"><span class="keyword">if</span> idx &lt; <span class="built_in">len</span>(list) &#123;</span><br><span class="line">    list[idx] = n</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树相关知识点</title>
+    <url>//%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9</url>
+    <content><![CDATA[<p>树类题目相关知识点</p>
+<span id="more"></span>
+
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
+<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
+<h1 id="前中后序遍历"><a href="#前中后序遍历" class="headerlink" title="前中后序遍历"></a>前中后序遍历</h1><p>前序：根节点——左子树——右子树</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
+<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
+<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
+<p>通过记录前缀和并搜索的方式快速求解</p>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
+<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树相关题目</title>
+    <url>//%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>树类相关题目</p>
+<span id="more"></span>
+
+<h1 id="检查子树"><a href="#检查子树" class="headerlink" title="检查子树"></a>检查子树</h1><p><a href="https://leetcode-cn.com/problems/check-subtree-lcci/">https://leetcode-cn.com/problems/check-subtree-lcci/</a></p>
+<p>递归比较，以每一个节点为头，比较2树是否相同即可</p>
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p><a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<p>经过某一结点的最长路径为 左子树高度+右子树高度</p>
+<p>遍历每一个树中每一个节点，求得其左右子树高度并计算路径，取最大值作为树的直径</p>
+<h1 id="完全二叉树的最后一层的最后一个节点"><a href="#完全二叉树的最后一层的最后一个节点" class="headerlink" title="完全二叉树的最后一层的最后一个节点"></a>完全二叉树的最后一层的最后一个节点</h1><p><a href="https://blog.csdn.net/fangjian1204/article/details/39179343">https://blog.csdn.net/fangjian1204/article/details/39179343</a></p>
+<p>先计算树的高度，由于是完全二叉树，左节点遍历到底得到树高h。</p>
+<p>之后进入算法</p>
+<p>从根节点开始</p>
+<p>若h==2，返回当前节点右，左中第一个非空的。</p>
+<p>计算右子树高度，若高h，以右节点为根节点重新开始，否则以左节点为根节点重新开始。并令h-1</p>
+<h1 id="之字形打印二叉树"><a href="#之字形打印二叉树" class="headerlink" title="之字形打印二叉树"></a>之字形打印二叉树</h1><p><a href="https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/">https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/</a></p>
+<p>压栈法循环取出层</p>
+<p>因为之字形打印，倒序遍历上一层，并根据需要按照从右到左或从左到右的顺序压节点</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>矩阵相关题目</title>
+    <url>//%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>矩阵类相关题目</p>
+<span id="more"></span>
+
+<h1 id="螺旋矩阵-回形打印二维数组"><a href="#螺旋矩阵-回形打印二维数组" class="headerlink" title="螺旋矩阵 回形打印二维数组"></a>螺旋矩阵 回形打印二维数组</h1><p><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/">https://leetcode-cn.com/problems/spiral-matrix/solution/</a></p>
+<p>使用四个循环依次打印四条边即可，使用计数器记录已经访问过的元素数目。</p>
+<p>在打印上边和右边之后以及打印四条边之后判断计数器即可。</p>
+<p>如果记不住，每条边打印前都判断一次也可</p>
+<h1 id="旋转图像"><a href="#旋转图像" class="headerlink" title="旋转图像"></a>旋转图像</h1><p><a href="https://leetcode-cn.com/problems/rotate-image/">https://leetcode-cn.com/problems/rotate-image/</a></p>
+<p>从左上角开始沿一条边逐个访问元素，</p>
+<p>每个元素和其他四条边中相对起始位置相同的元素交换</p>
+<p>他四条边中相对起始位置相同的元素坐标可以推算出来</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>链表相关题目</title>
+    <url>//%E9%93%BE%E8%A1%A8%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE</url>
+    <content><![CDATA[<p>链表类相关题目</p>
+<span id="more"></span>
+
+<h1 id="判断链表是否有环"><a href="#判断链表是否有环" class="headerlink" title="判断链表是否有环"></a>判断链表是否有环</h1><p><a href="https://leetcode-cn.com/problems/linked-list-cycle/submissions/">https://leetcode-cn.com/problems/linked-list-cycle/submissions/</a></p>
+<p>快慢指针法, 快指针一次2步，慢指针一次1步，如果指针之一发现nil尾节点，则返回无环。<br>如果指针重合，返回有环。</p>
+<h1 id="两个链表的第一个公共节点"><a href="#两个链表的第一个公共节点" class="headerlink" title="两个链表的第一个公共节点"></a>两个链表的第一个公共节点</h1><p><a href="https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/">https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/</a></p>
+<p>使用双指针，分别从a, b开始遍历，到达a的末尾后衔接b的头。b也同理。</p>
+<p>注意完成跳转的轮次不能进行其他工作，否则会导致头节点被错过。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> pointA == <span class="literal">nil</span> &#123;</span><br><span class="line">    pointA = headB</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    pointA = pointA.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
       </tags>
   </entry>
 </search>
