@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="php,yc,浏览器,c++," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。 这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。 抱着好奇心我打开了他们的官网：http:&#x2F;&#x2F;www.ycbro.com&#x2F;, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。 反正软件也不大，抱着试试玩的心态，我也下了一个看看。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个新奇的国产web引擎————YC编译器">
+<meta property="og:url" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。 这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。 抱着好奇心我打开了他们的官网：http:&#x2F;&#x2F;www.ycbro.com&#x2F;, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。 反正软件也不大，抱着试试玩的心态，我也下了一个看看。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg">
+<meta property="og:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg">
+<meta property="article:published_time" content="2020-03-12T13:14:45.000Z">
+<meta property="article:modified_time" content="2021-05-03T08:07:12.294Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="php">
+<meta property="article:tag" content="yc">
+<meta property="article:tag" content="浏览器">
+<meta property="article:tag" content="c++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maple.link/2020/03/12/一个新奇的国产web引擎————YC编译器/"/>
+
+
+
+
+
+  <title>一个新奇的国产web引擎————YC编译器 | Maple.Link</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maple.Link</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">技术分享站</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一个新奇的国产web引擎————YC编译器</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-12T21:14:45+08:00">
+                2020-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E5%BC%80%E7%9C%BC%E7%95%8C/" itemprop="url" rel="index">
+                    <span itemprop="name">大开眼界</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
+<p>这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。</p>
+<p>抱着好奇心我打开了他们的官网：<a href="http://www.ycbro.com/" target="_blank" rel="noopener">http://www.ycbro.com/</a>, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。</p>
+<p>反正软件也不大，抱着试试玩的心态，我也下了一个看看。</p>
+<a id="more"></a>
+
+<h1 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h1><p>安装完成后看到两个快捷方式， “YC服务器 D__ycc” 和 “YC编译器 D__ycc”。</p>
+<p>打开YC服务器可以看到一个非常复古的界面</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg" class="" title="yc服务器界面 200"> </div>
+
+<p>界面上的按钮我都点了一下，没啥用。</p>
+<p>经过一番操作呢，我在他们安装目录下发现了一些模板的ysp文件，估计是文件名改了之后没有调整界面上的链接, 直接在浏览器输入路径, 这次成功的打开了<code>http://127.0.0.1/daoshi_info.ysp</code></p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg" class="" title="导师信息界面 200"> </div>
+
+<p>提示要安装access, 我比较偷懒就不安了。</p>
+<h1 id="上传功能"><a href="#上传功能" class="headerlink" title="上传功能"></a>上传功能</h1><p>经过一番搜索我终于找到了一个功能还比较齐全的页面，也不需要数据库<code>http://127.0.0.1/upload.ysp</code>，有趣的是第一次访问还报错了404，过了一会再次访问就成功了，不禁让人想到这页面可能是动态编译的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg" class="" title="上传界面 200"> </div>
+
+<p>随手上传了两个文件，页面功能还算正常，不过这些都是传统的js功能，并没有什么意思</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg" class="" title="上传界面上传后 200"> </div>
+
+
+<h1 id="代码编辑器"><a href="#代码编辑器" class="headerlink" title="代码编辑器"></a>代码编辑器</h1><p>yc还贴心的为我们提供了开发ide，虽然界面略显过时，但是也能看出开发者确实是在自己一点点打磨的，不然直接依托vscode搞一个ide会更香。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg" class="" title="ide 200"> </div>
+
+<p>这个ide甚至可以编辑二进制文件，难道这些开发者喜欢手写机器码吗</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg" class="" title="二进制编辑 200"> </div>
+
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>打开yc源码目录，可以看到很多ysp文件和cpp文件，一入眼就是一堆avx，略显硬核</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg" class="" title="源码 200"> </div>
+
+<p>我打开了<code>sea.ysp</code>, 映入眼帘的是一堆c风格的代码，不过按照ysp的介绍应该是支持cpp的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg" class="" title="sea.ysp 200"> </div>
+
+<p>可以看出在ysp中prinft类似于php中的echo，用于在页面上输出元素。</p>
+<p>顺便该页面的输出效果如下</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg" class="" title="sea.ysp页面 200"> </div>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>yc可以说是当代浮躁的代码界的一股清流，制作者不为外界所扰，潜心制作了一款cpp版php，虽然在当前的技术环境下很难说ycc能有多大的空间去施展拳脚，但至少从这个项目中可以看出老一辈程序员深厚的编程功底和耐得住寂寞的开发精神。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+            <a href="/tags/yc/" rel="tag"># yc</a>
+          
+            <a href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8/" rel="tag"># 浏览器</a>
+          
+            <a href="/tags/c/" rel="tag"># c++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/" rel="next" title="pytorch 矩阵操作">
+                <i class="fa fa-chevron-left"></i> pytorch 矩阵操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/" rel="prev" title="手动挂载Nvidia显卡到docker容器中">
+                手动挂载Nvidia显卡到docker容器中 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Maple</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初识"><span class="nav-number">1.</span> <span class="nav-text">初识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上传功能"><span class="nav-number">2.</span> <span class="nav-text">上传功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码编辑器"><span class="nav-number">3.</span> <span class="nav-text">代码编辑器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码"><span class="nav-number">4.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maple</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

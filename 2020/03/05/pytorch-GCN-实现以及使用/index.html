@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="pytorch,gcn,rsenet,残差," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch GCN 实现以及使用">
+<meta property="og:url" content="https://maple.link/2020/03/05/pytorch-GCN-%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-05T02:45:37.000Z">
+<meta property="article:modified_time" content="2021-05-03T08:07:12.294Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="pytorch">
+<meta property="article:tag" content="gcn">
+<meta property="article:tag" content="rsenet">
+<meta property="article:tag" content="残差">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maple.link/2020/03/05/pytorch-GCN-实现以及使用/"/>
+
+
+
+
+
+  <title>pytorch GCN 实现以及使用 | Maple.Link</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maple.Link</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">技术分享站</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2020/03/05/pytorch-GCN-%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">pytorch GCN 实现以及使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-05T10:45:37+08:00">
+                2020-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络</p>
+<a id="more"></a>
+
+<h1 id="图"><a href="#图" class="headerlink" title="图"></a>图</h1><p>一张图由数个节点组成, 各个节点之间存在单向或双向的边。图只在概念上存在，实际上一张图由节点和邻接矩阵共同表示。</p>
+<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>图中的一个概念上的点, 每个点都携带着一定量的数据。例如以下数据结构, 其中每一行代表一个点, 每一行中的数字代表该点所携带的数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 4点, 每点包含一个5维的数据</span></span><br><span class="line">[<span class="number">0.4252</span>, <span class="number">0.2733</span>, <span class="number">0.5442</span>, <span class="number">0.7236</span>, <span class="number">0.0515</span>]</span><br><span class="line">[<span class="number">0.5121</span>, <span class="number">0.2056</span>, <span class="number">0.8560</span>, <span class="number">0.3010</span>, <span class="number">0.3110</span>]</span><br><span class="line">[<span class="number">0.0684</span>, <span class="number">0.5282</span>, <span class="number">0.8454</span>, <span class="number">0.0913</span>, <span class="number">0.9803</span>]</span><br><span class="line">[<span class="number">0.4211</span>, <span class="number">0.5779</span>, <span class="number">0.2952</span>, <span class="number">0.3368</span>, <span class="number">0.8389</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="邻接矩阵"><a href="#邻接矩阵" class="headerlink" title="邻接矩阵"></a>邻接矩阵</h2><p>邻接矩阵是一个 n * n 的矩阵, n 表示节点数目, 每一行都表示一个节点和其他节点是否相连。 对于一个无向图, 他的邻接矩阵总是对称的。例如以下数据结构。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 4点邻接矩阵</span></span><br><span class="line">[<span class="number">1.</span>, <span class="number">0.</span>, <span class="number">1.</span>, <span class="number">0.</span>]</span><br><span class="line">[<span class="number">0.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">0.</span>]</span><br><span class="line">[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">0.</span>]</span><br><span class="line">[<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">1.</span>]</span><br></pre></td></tr></table></figure>
+
+<p>我们观察第一行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1.</span>, <span class="number">0.</span>, <span class="number">1.</span>, <span class="number">0.</span>]</span><br></pre></td></tr></table></figure>
+
+<p>表示节点0, 和节点0/2相连。</p>
+<h1 id="GCN-定义"><a href="#GCN-定义" class="headerlink" title="GCN 定义"></a>GCN 定义</h1><h1 id="如何实现一个GCN模块"><a href="#如何实现一个GCN模块" class="headerlink" title="如何实现一个GCN模块"></a>如何实现一个GCN模块</h1><p>注意网络输入尺寸为<code>b*(n+c)*n</code>, 前<code>n</code>个channel构成的<code>b*n*n</code>表示邻接矩阵。后<code>b*c*n</code>表示节点数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch import nn</span><br><span class="line">class GraphConvolution(nn.Module):</span><br><span class="line"></span><br><span class="line">    def __init__(self, node_num, input_feature_num, output_feature_num, add_bias&#x3D;True, dtype&#x3D;torch.float,</span><br><span class="line">                 batch_normal&#x3D;True):</span><br><span class="line">        super().__init__()</span><br><span class="line">        # shapes</span><br><span class="line">        self.graph_num &#x3D; node_num</span><br><span class="line">        self.input_feature_num &#x3D; input_feature_num</span><br><span class="line">        self.output_feature_num &#x3D; output_feature_num</span><br><span class="line">        self.add_bias &#x3D; add_bias</span><br><span class="line">        self.batch_normal &#x3D; batch_normal</span><br><span class="line"></span><br><span class="line">        # params</span><br><span class="line">        self.weight &#x3D; nn.Parameter(torch.empty(self.output_feature_num, input_feature_num, dtype&#x3D;dtype))</span><br><span class="line">        self.bias &#x3D; nn.Parameter(torch.empty(self.output_feature_num, self.graph_num, dtype&#x3D;dtype))</span><br><span class="line">        if batch_normal:</span><br><span class="line">            self.norm &#x3D; nn.InstanceNorm1d(node_num)</span><br><span class="line">            </span><br><span class="line">    def set_trainable(self, train&#x3D;True):</span><br><span class="line">        for param in self.parameters():</span><br><span class="line">            param.requires_grad &#x3D; train</span><br><span class="line"></span><br><span class="line">    def forward(self, inp: torch.Tensor):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        @param inp : adjacent: (batch, graph_num, graph_num) cat node_feature: (batch, graph_num, in_feature_num) -&gt; (batch, graph_num, graph_num + in_feature_num)</span><br><span class="line">        @return:</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        b, c, n &#x3D; inp.shape</span><br><span class="line">        adjacent, node_feature &#x3D; inp[:, 0:n, :], inp[:, n:, :]</span><br><span class="line">        x &#x3D; torch.matmul(self.weight, node_feature)</span><br><span class="line">        x &#x3D; torch.matmul(x, adjacent)</span><br><span class="line">        if self.add_bias:</span><br><span class="line">            x &#x3D; x + self.bias</span><br><span class="line">        if self.batch_normal:</span><br><span class="line">            x &#x3D; self.norm(x)</span><br><span class="line"></span><br><span class="line">        return torch.cat((adjacent, x), dim&#x3D;1)</span><br></pre></td></tr></table></figure>
+
+<h1 id="残差GCN"><a href="#残差GCN" class="headerlink" title="残差GCN"></a>残差GCN</h1><h1 id="GCN存在的问题"><a href="#GCN存在的问题" class="headerlink" title="GCN存在的问题"></a>GCN存在的问题</h1><h1 id="训练中需要注意的"><a href="#训练中需要注意的" class="headerlink" title="训练中需要注意的"></a>训练中需要注意的</h1><ol>
+<li>在训练GCN时必须谨慎使用Norm方法, 否则很可能造成网络不收敛</li>
+<li>GCN梯度退化较为严重, 尽量使用残差结构</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pytorch/" rel="tag"># pytorch</a>
+          
+            <a href="/tags/gcn/" rel="tag"># gcn</a>
+          
+            <a href="/tags/rsenet/" rel="tag"># rsenet</a>
+          
+            <a href="/tags/%E6%AE%8B%E5%B7%AE/" rel="tag"># 残差</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="iptables基础概念">
+                <i class="fa fa-chevron-left"></i> iptables基础概念
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/" rel="prev" title="pytorch 矩阵操作">
+                pytorch 矩阵操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Maple</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#图"><span class="nav-number">1.</span> <span class="nav-text">图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#节点"><span class="nav-number">1.1.</span> <span class="nav-text">节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#邻接矩阵"><span class="nav-number">1.2.</span> <span class="nav-text">邻接矩阵</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GCN-定义"><span class="nav-number">2.</span> <span class="nav-text">GCN 定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何实现一个GCN模块"><span class="nav-number">3.</span> <span class="nav-text">如何实现一个GCN模块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#残差GCN"><span class="nav-number">4.</span> <span class="nav-text">残差GCN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GCN存在的问题"><span class="nav-number">5.</span> <span class="nav-text">GCN存在的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练中需要注意的"><span class="nav-number">6.</span> <span class="nav-text">训练中需要注意的</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maple</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
