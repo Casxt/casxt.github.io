@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://maple.link/2021/05/04/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E5%90%88Github-Action%E5%AE%8C%E6%88%90%E8%87%AA%E5%8A%A8CI-CD/</loc>
+    <lastmod>2021-05-04</lastmod>
+  </url>
+  <url>
     <loc>https://maple.link/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</loc>
     <lastmod>2021-05-03</lastmod>
   </url>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://maple.link/2021/05/04/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E5%90%88Github-Action%E5%AE%8C%E6%88%90%E8%87%AA%E5%8A%A8CI-CD/</loc>
+    
+    <lastmod>2021-05-04</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://maple.link/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</loc>
     
     <lastmod>2021-05-03</lastmod>
@@ -236,6 +243,27 @@
   
   <url>
     <loc>https://maple.link/tags/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</loc>
+    <lastmod>2021-05-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/CI-CD/</loc>
+    <lastmod>2021-05-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/Github-Action/</loc>
+    <lastmod>2021-05-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/Hexo/</loc>
     <lastmod>2021-05-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -489,6 +517,13 @@
   </url>
   
   <url>
+    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2021-05-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://maple.link/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2021-05-04</lastmod>
     <changefreq>daily</changefreq>
@@ -497,6 +532,13 @@
   
   <url>
     <loc>https://maple.link/categories/%E5%A4%A7%E5%BC%80%E7%9C%BC%E7%95%8C/</loc>
+    <lastmod>2021-05-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2021-05-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
