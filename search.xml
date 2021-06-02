@@ -635,7 +635,10 @@
 <h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
 <h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
 <p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
-<h1 id="前中后序遍历"><a href="#前中后序遍历" class="headerlink" title="前中后序遍历"></a>前中后序遍历</h1><p>前序：根节点——左子树——右子树</p>
+<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
+<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
+<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
+<p>层次遍历：只需按层次遍历即可</p>
 <h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
 <h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
 <p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
