@@ -20,20 +20,22 @@
     var CONFIG = {"hostname":"maple.link","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="数组类相关题目">
+  <meta name="description" content="近年来，在深度学习模型的部署中，涌现了许多新技术，从最早的tf&#x2F;pytorch直接部署，到onnx，到trnsorrt(trt)，模型的运行效率越来越高。但即便是使用trt方式部署模型，也依旧无法避免巨大的工作量。在使用c++部署trt时，代码量较大，还需要预处理困难。而使用python部署trt，受限于python的GIL问题，需要同时部署多个模型，又失去了trt节省显存的优点。同时，不论使用何">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数组相关题目">
-<meta property="og:url" content="https://maple.link/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/index.html">
+<meta property="og:title" content="Nvidia Triton 使用教程">
+<meta property="og:url" content="https://maple.link/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="Maple.Link">
-<meta property="og:description" content="数组类相关题目">
+<meta property="og:description" content="近年来，在深度学习模型的部署中，涌现了许多新技术，从最早的tf&#x2F;pytorch直接部署，到onnx，到trnsorrt(trt)，模型的运行效率越来越高。但即便是使用trt方式部署模型，也依旧无法避免巨大的工作量。在使用c++部署trt时，代码量较大，还需要预处理困难。而使用python部署trt，受限于python的GIL问题，需要同时部署多个模型，又失去了trt节省显存的优点。同时，不论使用何">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-03T07:03:41.000Z">
-<meta property="article:modified_time" content="2021-05-03T07:03:41.000Z">
+<meta property="article:published_time" content="2021-06-10T09:52:00.000Z">
+<meta property="article:modified_time" content="2021-06-10T09:52:00.000Z">
 <meta property="article:author" content="Maple">
-<meta property="article:tag" content="数组">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="nvidia">
+<meta property="article:tag" content="triton">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://maple.link/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/">
+<link rel="canonical" href="https://maple.link/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/">
 
 
 <script id="page-configurations">
@@ -46,7 +48,7 @@
   };
 </script>
 
-  <title>数组相关题目 | Maple.Link</title>
+  <title>Nvidia Triton 使用教程 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
     <script>
@@ -208,7 +210,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -221,7 +223,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          数组相关题目
+          Nvidia Triton 使用教程
         </h1>
 
         <div class="post-meta">
@@ -231,7 +233,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-03 15:03:41" itemprop="dateCreated datePublished" datetime="2021-05-03T15:03:41+08:00">2021-05-03</time>
+              <time title="创建时间：2021-06-10 17:52:00" itemprop="dateCreated datePublished" datetime="2021-06-10T17:52:00+08:00">2021-06-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -239,7 +241,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">刷题笔记</span></a>
+                  <a href="/categories/GPU/" itemprop="url" rel="index"><span itemprop="name">GPU</span></a>
                 </span>
             </span>
 
@@ -256,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>834</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -275,37 +277,68 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>数组类相关题目</p>
+        <p>近年来，在深度学习模型的部署中，涌现了许多新技术，从最早的tf/pytorch直接部署，到onnx，到trnsorrt(trt)，模型的运行效率越来越高。但即便是使用trt方式部署模型，也依旧无法避免巨大的工作量。在使用c++部署trt时，代码量较大，还需要预处理困难。而使用python部署trt，受限于python的GIL问题，需要同时部署多个模型，又失去了trt节省显存的优点。同时，不论使用何种方式，都无法避免面对组batch等问题，整个系统的工程实现会变得非常复杂。<br>在这样的情况下，triton应运而生一站式的帮助我们解决了几乎所有的工程问题，作为一款强大的模型执行引擎，triton支持几乎所有主流的网络模型，对于pytorch，tensorflow，onnx，trt都有良好的支持。</p>
+<p>本文将从trt/onnx模型的部署介绍triton的部署流程。</p>
 <span id="more"></span>
 
-<h1 id="搜索旋转排序数组"><a href="#搜索旋转排序数组" class="headerlink" title="搜索旋转排序数组"></a>搜索旋转排序数组</h1><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/">https://leetcode-cn.com/problems/search-in-rotated-sorted-array/</a></p>
-<p>二分之后，必有一边是有序的(因为全局只有一个间断点，该点只能出现于一侧)。检查target是否坐落于有序一侧，如果不位于有序一侧，则一定位于无序一侧。</p>
-<p>target取位于的那一侧继续迭代</p>
-<h1 id="缺失的第一个正数"><a href="#缺失的第一个正数" class="headerlink" title="缺失的第一个正数"></a>缺失的第一个正数</h1><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/first-missing-positive/">https://leetcode-cn.com/problems/first-missing-positive/</a></p>
-<p>观察可知，题目所求正数不超过数组长度+1</p>
-<p>遍历每一个位置，将该位置上的值x与位置x-1上的值y交换，重复交换直到x == y或 x &lt; 0 或 x &gt; 数组长度。</p>
-<p>之后继续下一个位置</p>
-<h1 id="在排序数组中查找元素的第一个和最后一个位置"><a href="#在排序数组中查找元素的第一个和最后一个位置" class="headerlink" title="在排序数组中查找元素的第一个和最后一个位置"></a>在排序数组中查找元素的第一个和最后一个位置</h1><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/">https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/</a></p>
-<p>寻找左边界和有边界，二分条件大于小于情况照常处理，等于时，如果寻找左边界，则取左区间，反之右区间。</p>
-<p>每次mid==target时记录最新的值</p>
-<p>循环的s &gt; e 时跳出。</p>
-<p>此时的最新mid值即为边界。</p>
-<h1 id="最长递增子序列"><a href="#最长递增子序列" class="headerlink" title="最长递增子序列"></a>最长递增子序列</h1><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-subsequence/">https://leetcode-cn.com/problems/longest-increasing-subsequence/</a></p>
-<p>贪心算法，构建队列，遍历数字，当数字大于队尾，则增加该数字，否则，找到第一个大于该数字的元素，修改为该数字。</p>
-<p>通过二分查找加速</p>
-<p>sort search会返回最小的满足true条件的位置，否则返回len(list)，注意函数中大于等于条件。</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">idx := sort.Search(<span class="built_in">len</span>(list), <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;<span class="keyword">return</span> list[i] &gt;= n&#125;)</span><br><span class="line"><span class="keyword">if</span> idx &lt; <span class="built_in">len</span>(list) &#123;</span><br><span class="line">    list[idx] = n</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="triton项目的组件"><a href="#triton项目的组件" class="headerlink" title="triton项目的组件"></a>triton项目的组件</h1><ol>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/server">triton server</a><br>triton的服务端可以直接使用docker方式部署，从(triton的镜像列表)[<a target="_blank" rel="noopener" href="https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]%E4%B8%AD%E9%80%89%E6%8B%A9tag%E4%B8%BAxx.xx-py3%E7%9A%84%E9%95%9C%E5%83%8F%E5%8D%B3%E5%8F%AF%E3%80%82">https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]中选择tag为xx.xx-py3的镜像即可。</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/client">triton client</a><br>triton的客户端可以从pip直接安装，但为了测试方便，可以直接使用包含测试端的容器环境，tag为xx.xx-py3-sdk的镜像中包含了客户端。</p>
+</li>
+</ol>
+<h1 id="triton-server"><a href="#triton-server" class="headerlink" title="triton server"></a>triton server</h1><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>triton部署模型可以参考<a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/server/blob/main/docs/quickstart.md#create-a-model-repository">文档1</a>和<a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/server/blob/main/docs/model_repository.md">文档2</a>，但是对于onnx和trt模型，由于模型内已经包含了输入和输出的信息，因此triton可以自动生成配置文件，部署会变得非常简单。</p>
+<p>按照triton的教程，我们创建三层目录结构，之后直接把onnx或trt模型拷贝进去即可。</p>
+<p>onnx的默认模型名称为model.onnx，而trt的默认模型名称为model.plan</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p model_repository/your_model_name/1</span><br><span class="line"><span class="comment"># onnx</span></span><br><span class="line">cp your_model_name.onnx model_repository/your_model_name/1/model.onnx</span><br><span class="line"><span class="comment"># trt</span></span><br><span class="line">cp your_model_name.trt model_repository/your_model_name/1/model.plan</span><br></pre></td></tr></table></figure>
+
+<p>此时你的目录结构如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;model-repository-path&gt;/</span><br><span class="line">  &lt;your_model_name&gt;/</span><br><span class="line">    1/</span><br><span class="line">      model.plan</span><br></pre></td></tr></table></figure>
+
+<p>准备好模型文件的目录结构之后，我们启动triton服务，并使用<code>--strict-model-config=false</code>要求他自动生成模型文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm --gpus all \</span><br><span class="line">-p8000:8000 -p8001:8001 -p8002:8002 \</span><br><span class="line">-v model_repository:/models \</span><br><span class="line">nvcr.io/nvidia/tritonserver:21.05-py3 \</span><br><span class="line">tritonserver --strict-model-config=<span class="literal">false</span> --model-repository=/models</span><br></pre></td></tr></table></figure>
+
+<p>如果模型正常启动，你将会看到类似下面的的输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+----------------------+---------+--------+</span><br><span class="line">| Model                | Version | Status |</span><br><span class="line">+----------------------+---------+--------+</span><br><span class="line">| &lt;model_name&gt;         | &lt;v&gt;     | READY  |</span><br><span class="line">| ..                   | .       | ..     |</span><br><span class="line">| ..                   | .       | ..     |</span><br><span class="line">+----------------------+---------+--------+</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">I1002 21:58:57.891440 62 grpc_server.cc:3914] Started GRPCInferenceService at 0.0.0.0:8001</span><br><span class="line">I1002 21:58:57.893177 62 http_server.cc:2717] Started HTTPService at 0.0.0.0:8000</span><br><span class="line">I1002 21:58:57.935518 62 http_server.cc:2736] Started Metrics Service at 0.0.0.0:8002</span><br></pre></td></tr></table></figure>
+
+<h2 id="config"><a href="#config" class="headerlink" title="config"></a>config</h2><p>接下来我们需要修改triton为我们生成的配置文件，使用如下命令可以获得当前的配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:8000&#x2F;v2&#x2F;models&#x2F;&lt;your_model_name&gt;&#x2F;config</span><br></pre></td></tr></table></figure>
+
+<p>得到json输出之后，我们需要收到修改为pbconfig的格式。可以参考<a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/server/blob/main/docs/model_configuration.md">这篇教程</a>，基本格式如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">platform: &quot;your_model_name&quot;</span><br><span class="line">max_batch_size: 8</span><br><span class="line">input [</span><br><span class="line">  &#123;</span><br><span class="line">    name: &quot;input0&quot;</span><br><span class="line">    data_type: TYPE_FP32</span><br><span class="line">    dims: [ 16 ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line">output [</span><br><span class="line">  &#123;</span><br><span class="line">    name: &quot;output0&quot;</span><br><span class="line">    data_type: TYPE_FP32</span><br><span class="line">    dims: [ 4 ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>修改之后，保存为<code>model_repository/your_model_name/config.pbtxt</code>，保存后你的模型目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;model-repository-path&gt;&#x2F;</span><br><span class="line">  &lt;your_model_name&gt;&#x2F;</span><br><span class="line">    config.pbtxt</span><br><span class="line">    1&#x2F;</span><br><span class="line">      model.plan</span><br></pre></td></tr></table></figure>
+
+<p>这时我们可以关闭triton，去掉<code>--strict-model-config=false</code>选项后重启服务，修改好的配置文件就会生效了。</p>
+<h1 id="triton-client"><a href="#triton-client" class="headerlink" title="triton client"></a>triton client</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处以python client为例</p>
+<p>triton python client的安装非常简单，使用如下方式即可，如果你只使用http或grpc方式调用，可以将<code>tritonclient[all]</code>替换为<code>tritonclient[http]</code>或<code>tritonclient[grpc]</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install nvidia-pyindex</span><br><span class="line">pip install tritonclient[all]</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>根据我的测试，grpc方式调用triton的性能远远高于http方式，在极端情况下甚至可以达到十倍的性能差距，因此如果没有特殊需要，我不建议使用http方式调用。</p>
+<p>客户端示例可以看<a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/client/tree/main/src/python/examples">此处</a>，推荐从<code>simple_grpc_infer_client.py</code>这个例子入手</p>
+<h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中，grpc性能已经足够支撑，不需要在进行shm方式的优化了。</p>
+<h2 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式(async mode)"></a>异步模式(async mode)</h2><p>triton client还支持异步调用，可以查看<code>simple_grpc_async_infer_client.py</code>。</p>
+
     </div>
 
     
     
     
       
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/29/手动挂载Nvidia显卡到docker容器中/" rel="bookmark">手动挂载Nvidia显卡到docker容器中</a></div>
+    </li>
+  </ul>
 
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%95%B0%E7%BB%84/" rel="tag"># 数组</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/nvidia/" rel="tag"># nvidia</a>
+              <a href="/tags/triton/" rel="tag"># triton</a>
           </div>
 
         
@@ -314,13 +347,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="prev" title="树相关知识点">
-      <i class="fa fa-chevron-left"></i> 树相关知识点
+    <a href="/2021/05/10/C++%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E5%89%B2/" rel="prev" title="C++字符串分割">
+      <i class="fa fa-chevron-left"></i> C++字符串分割
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/" rel="next" title="数学相关题目">
-      数学相关题目 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -380,7 +410,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E6%97%8B%E8%BD%AC%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">搜索旋转排序数组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">缺失的第一个正数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%92%8C%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">在排序数组中查找元素的第一个和最后一个位置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">最长递增子序列</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#triton%E9%A1%B9%E7%9B%AE%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">triton项目的组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-server"><span class="nav-number">2.</span> <span class="nav-text">triton server</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">2.1.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config"><span class="nav-number">2.2.</span> <span class="nav-text">config</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-client"><span class="nav-number">3.</span> <span class="nav-text">triton client</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-memory"><span class="nav-number">3.3.</span> <span class="nav-text">shared memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%BC%8F-async-mode"><span class="nav-number">3.4.</span> <span class="nav-text">异步模式(async mode)</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -566,7 +596,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'casxt.github.io',
       owner       : 'casxt',
       admin       : ['casxt'],
-      id          : 'b7d808775d30ca00997d59eedc5d8faf',
+      id          : '26adf855e5d57c17cd111e83904404da',
         language: '',
       distractionFreeMode: true
     });

@@ -102,6 +102,61 @@
       </tags>
   </entry>
   <entry>
+    <title>Nvidia Triton 使用教程</title>
+    <url>/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>近年来，在深度学习模型的部署中，涌现了许多新技术，从最早的tf/pytorch直接部署，到onnx，到trnsorrt(trt)，模型的运行效率越来越高。但即便是使用trt方式部署模型，也依旧无法避免巨大的工作量。在使用c++部署trt时，代码量较大，还需要预处理困难。而使用python部署trt，受限于python的GIL问题，需要同时部署多个模型，又失去了trt节省显存的优点。同时，不论使用何种方式，都无法避免面对组batch等问题，整个系统的工程实现会变得非常复杂。<br>在这样的情况下，triton应运而生一站式的帮助我们解决了几乎所有的工程问题，作为一款强大的模型执行引擎，triton支持几乎所有主流的网络模型，对于pytorch，tensorflow，onnx，trt都有良好的支持。</p>
+<p>本文将从trt/onnx模型的部署介绍triton的部署流程。</p>
+<span id="more"></span>
+
+<h1 id="triton项目的组件"><a href="#triton项目的组件" class="headerlink" title="triton项目的组件"></a>triton项目的组件</h1><ol>
+<li><p><a href="https://github.com/triton-inference-server/server">triton server</a><br>triton的服务端可以直接使用docker方式部署，从(triton的镜像列表)[<a href="https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]%E4%B8%AD%E9%80%89%E6%8B%A9tag%E4%B8%BAxx.xx-py3%E7%9A%84%E9%95%9C%E5%83%8F%E5%8D%B3%E5%8F%AF%E3%80%82">https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]中选择tag为xx.xx-py3的镜像即可。</a></p>
+</li>
+<li><p><a href="https://github.com/triton-inference-server/client">triton client</a><br>triton的客户端可以从pip直接安装，但为了测试方便，可以直接使用包含测试端的容器环境，tag为xx.xx-py3-sdk的镜像中包含了客户端。</p>
+</li>
+</ol>
+<h1 id="triton-server"><a href="#triton-server" class="headerlink" title="triton server"></a>triton server</h1><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>triton部署模型可以参考<a href="https://github.com/triton-inference-server/server/blob/main/docs/quickstart.md#create-a-model-repository">文档1</a>和<a href="https://github.com/triton-inference-server/server/blob/main/docs/model_repository.md">文档2</a>，但是对于onnx和trt模型，由于模型内已经包含了输入和输出的信息，因此triton可以自动生成配置文件，部署会变得非常简单。</p>
+<p>按照triton的教程，我们创建三层目录结构，之后直接把onnx或trt模型拷贝进去即可。</p>
+<p>onnx的默认模型名称为model.onnx，而trt的默认模型名称为model.plan</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p model_repository/your_model_name/1</span><br><span class="line"><span class="comment"># onnx</span></span><br><span class="line">cp your_model_name.onnx model_repository/your_model_name/1/model.onnx</span><br><span class="line"><span class="comment"># trt</span></span><br><span class="line">cp your_model_name.trt model_repository/your_model_name/1/model.plan</span><br></pre></td></tr></table></figure>
+
+<p>此时你的目录结构如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;model-repository-path&gt;/</span><br><span class="line">  &lt;your_model_name&gt;/</span><br><span class="line">    1/</span><br><span class="line">      model.plan</span><br></pre></td></tr></table></figure>
+
+<p>准备好模型文件的目录结构之后，我们启动triton服务，并使用<code>--strict-model-config=false</code>要求他自动生成模型文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --rm --gpus all \</span><br><span class="line">-p8000:8000 -p8001:8001 -p8002:8002 \</span><br><span class="line">-v model_repository:/models \</span><br><span class="line">nvcr.io/nvidia/tritonserver:21.05-py3 \</span><br><span class="line">tritonserver --strict-model-config=<span class="literal">false</span> --model-repository=/models</span><br></pre></td></tr></table></figure>
+
+<p>如果模型正常启动，你将会看到类似下面的的输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">+----------------------+---------+--------+</span><br><span class="line">| Model                | Version | Status |</span><br><span class="line">+----------------------+---------+--------+</span><br><span class="line">| &lt;model_name&gt;         | &lt;v&gt;     | READY  |</span><br><span class="line">| ..                   | .       | ..     |</span><br><span class="line">| ..                   | .       | ..     |</span><br><span class="line">+----------------------+---------+--------+</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">I1002 21:58:57.891440 62 grpc_server.cc:3914] Started GRPCInferenceService at 0.0.0.0:8001</span><br><span class="line">I1002 21:58:57.893177 62 http_server.cc:2717] Started HTTPService at 0.0.0.0:8000</span><br><span class="line">I1002 21:58:57.935518 62 http_server.cc:2736] Started Metrics Service at 0.0.0.0:8002</span><br></pre></td></tr></table></figure>
+
+<h2 id="config"><a href="#config" class="headerlink" title="config"></a>config</h2><p>接下来我们需要修改triton为我们生成的配置文件，使用如下命令可以获得当前的配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl localhost:8000&#x2F;v2&#x2F;models&#x2F;&lt;your_model_name&gt;&#x2F;config</span><br></pre></td></tr></table></figure>
+
+<p>得到json输出之后，我们需要收到修改为pbconfig的格式。可以参考<a href="https://github.com/triton-inference-server/server/blob/main/docs/model_configuration.md">这篇教程</a>，基本格式如下。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">platform: &quot;your_model_name&quot;</span><br><span class="line">max_batch_size: 8</span><br><span class="line">input [</span><br><span class="line">  &#123;</span><br><span class="line">    name: &quot;input0&quot;</span><br><span class="line">    data_type: TYPE_FP32</span><br><span class="line">    dims: [ 16 ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line">output [</span><br><span class="line">  &#123;</span><br><span class="line">    name: &quot;output0&quot;</span><br><span class="line">    data_type: TYPE_FP32</span><br><span class="line">    dims: [ 4 ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>修改之后，保存为<code>model_repository/your_model_name/config.pbtxt</code>，保存后你的模型目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;model-repository-path&gt;&#x2F;</span><br><span class="line">  &lt;your_model_name&gt;&#x2F;</span><br><span class="line">    config.pbtxt</span><br><span class="line">    1&#x2F;</span><br><span class="line">      model.plan</span><br></pre></td></tr></table></figure>
+
+<p>这时我们可以关闭triton，去掉<code>--strict-model-config=false</code>选项后重启服务，修改好的配置文件就会生效了。</p>
+<h1 id="triton-client"><a href="#triton-client" class="headerlink" title="triton client"></a>triton client</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>此处以python client为例</p>
+<p>triton python client的安装非常简单，使用如下方式即可，如果你只使用http或grpc方式调用，可以将<code>tritonclient[all]</code>替换为<code>tritonclient[http]</code>或<code>tritonclient[grpc]</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install nvidia-pyindex</span><br><span class="line">pip install tritonclient[all]</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>根据我的测试，grpc方式调用triton的性能远远高于http方式，在极端情况下甚至可以达到十倍的性能差距，因此如果没有特殊需要，我不建议使用http方式调用。</p>
+<p>客户端示例可以看<a href="https://github.com/triton-inference-server/client/tree/main/src/python/examples">此处</a>，推荐从<code>simple_grpc_infer_client.py</code>这个例子入手</p>
+<h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中，grpc性能已经足够支撑，不需要在进行shm方式的优化了。</p>
+<h2 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式(async mode)"></a>异步模式(async mode)</h2><p>triton client还支持异步调用，可以查看<code>simple_grpc_async_infer_client.py</code>。</p>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>triton</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Yolo发展整理</title>
     <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
     <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
