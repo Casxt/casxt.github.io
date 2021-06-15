@@ -41,24 +41,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -101,6 +83,24 @@
       </tags>
   </entry>
   <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -119,33 +119,6 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
-<span id="more"></span>
-
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
-]]></content>
-      <categories>
-        <category>草稿</category>
-      </categories>
-      <tags>
-        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -204,6 +177,70 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -675,34 +712,6 @@
       </tags>
   </entry>
   <entry>
-    <title>树相关知识点</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>树类题目相关知识点</p>
-<span id="more"></span>
-
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
-<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
-<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
-<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
-<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
-<p>层次遍历：只需按层次遍历即可</p>
-<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
-<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
-<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
-<p>通过记录前缀和并搜索的方式快速求解</p>
-<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
-<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>数组相关题目</title>
     <url>/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>数组类相关题目</p>
@@ -730,6 +739,34 @@
       </categories>
       <tags>
         <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树相关知识点</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>树类题目相关知识点</p>
+<span id="more"></span>
+
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
+<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
+<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
+<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
+<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
+<p>层次遍历：只需按层次遍历即可</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
+<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
+<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
+<p>通过记录前缀和并搜索的方式快速求解</p>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
+<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>树</tag>
       </tags>
   </entry>
   <entry>
