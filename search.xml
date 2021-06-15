@@ -26,10 +26,30 @@
     <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
 <span id="more"></span>
 
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
 ]]></content>
       <categories>
         <category>刷题笔记</category>
@@ -81,24 +101,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -117,6 +119,33 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -175,33 +204,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
-<span id="more"></span>
-
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
-]]></content>
-      <categories>
-        <category>草稿</category>
-      </categories>
-      <tags>
-        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -673,6 +675,34 @@
       </tags>
   </entry>
   <entry>
+    <title>树相关知识点</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>树类题目相关知识点</p>
+<span id="more"></span>
+
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
+<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
+<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
+<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
+<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
+<p>层次遍历：只需按层次遍历即可</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
+<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
+<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
+<p>通过记录前缀和并搜索的方式快速求解</p>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
+<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数组相关题目</title>
     <url>/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>数组类相关题目</p>
@@ -700,34 +730,6 @@
       </categories>
       <tags>
         <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树相关知识点</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>树类题目相关知识点</p>
-<span id="more"></span>
-
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
-<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
-<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
-<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
-<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
-<p>层次遍历：只需按层次遍历即可</p>
-<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
-<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
-<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
-<p>通过记录前缀和并搜索的方式快速求解</p>
-<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
-<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>树</tag>
       </tags>
   </entry>
   <entry>
