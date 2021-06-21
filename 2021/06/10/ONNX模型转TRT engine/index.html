@@ -299,7 +299,7 @@
 <li><p>–optShapes 平均输入</p>
 </li>
 <li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
 </ul>
 
     </div>
@@ -334,12 +334,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/05/10/C++%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E5%89%B2/" rel="prev" title="C++字符串分割">
-      <i class="fa fa-chevron-left"></i> C++字符串分割
+    <a href="/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="prev" title="Nvidia Triton 使用教程">
+      <i class="fa fa-chevron-left"></i> Nvidia Triton 使用教程
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="next" title="Nvidia Triton 使用教程">
-      Nvidia Triton 使用教程 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/" rel="next" title="Golang 输入输出 stdio">
+      Golang 输入输出 stdio <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
