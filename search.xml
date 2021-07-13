@@ -41,6 +41,24 @@
       </tags>
   </entry>
   <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -83,24 +101,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -119,6 +119,43 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -169,6 +206,15 @@
 <p>客户端示例可以看<a href="https://github.com/triton-inference-server/client/tree/main/src/python/examples">此处</a>，推荐从<code>simple_grpc_infer_client.py</code>这个例子入手</p>
 <h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中，grpc性能已经足够支撑，不需要在进行shm方式的优化了。</p>
 <h2 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式(async mode)"></a>异步模式(async mode)</h2><p>triton client还支持异步调用，可以查看<code>simple_grpc_async_infer_client.py</code>。</p>
+<h2 id="将triton客户端封装为协程"><a href="#将triton客户端封装为协程" class="headerlink" title="将triton客户端封装为协程"></a>将triton客户端封装为协程</h2><p>triton的客户端仅支持异步模式而不支持协程，需要我们手动进行封装</p>
+<p>一次原始的异步调用形式如下，当执行结束，callback函数会被调用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">triton_client.async_infer(</span><br><span class="line">        model_name&#x3D;model_name,</span><br><span class="line">        inputs&#x3D;inputs,</span><br><span class="line">        callback&#x3D;callback,</span><br><span class="line">        outputs&#x3D;outputs)</span><br></pre></td></tr></table></figure>
+
+<p>因此我们需要在callback中通知协程。需要注意的是callback会在另个一个triton client的线程中被调用，因此需要使用<code>loop.call_soon_threadsafe</code>方法为future设置结果。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import asyncio</span><br><span class="line">from functools import partial</span><br><span class="line"></span><br><span class="line">def callback(loop, future, result, error):</span><br><span class="line">    if error:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_exception, error)</span><br><span class="line">    else:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_result, result)</span><br><span class="line"></span><br><span class="line">def await_infer(triton_client, model_name, inputs, outputs)</span><br><span class="line">    loop &#x3D; asyncio.get_running_loop()</span><br><span class="line">    future &#x3D; loop.create_future()</span><br><span class="line"></span><br><span class="line">    triton_client.async_infer(</span><br><span class="line">        model_name&#x3D;model_name,</span><br><span class="line">        inputs&#x3D;inputs,</span><br><span class="line">        callback&#x3D;partial(callback, loop, future),</span><br><span class="line">        outputs&#x3D;outputs)</span><br><span class="line">    return future</span><br></pre></td></tr></table></figure>
+
+<p>包装好后我们就可以使用<code>await</code>关键字去调用<code>await_infer</code>了</p>
+<p>```py3<br>async_result = await await_infer(<br>                triton_client = service.triton_client,<br>                model_name = model_name,<br>                inputs = inputs,<br>                outputs = outputs<br>            )</p>
 ]]></content>
       <categories>
         <category>GPU</category>
@@ -177,43 +223,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -260,44 +269,6 @@
       </categories>
       <tags>
         <tag>Yolo发展整理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>hexo博客配合Github Action完成自动CI/CD</title>
-    <url>/2021/05/04/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E5%90%88Github-Action%E5%AE%8C%E6%88%90%E8%87%AA%E5%8A%A8CI-CD/</url>
-    <content><![CDATA[<p>每次部署博客时都需要在本地完成编译和上传，维护工具链成为一件很繁琐的事情，有什么办法能够将这一步自动化，为将来随时随地写博客打下基础呢？</p>
-<p>现在来一起学(白)习(嫖)Github Action吧！</p>
-<p><small>PS.阅读本文，你需要提前了解一些sh和yaml相关的知识。</small></p>
-<span id="more"></span>
-
-<h2 id="CI实现"><a href="#CI实现" class="headerlink" title="CI实现"></a>CI实现</h2><p>为了从源码构建Hexo博客，我们需要进行如下几步：</p>
-<ol>
-<li>clone源码</li>
-<li>clone主题(可选)</li>
-<li>安装依赖</li>
-<li>构建</li>
-</ol>
-<p>那么如果使用Github Action实现如上几步呢？</p>
-<p>下面直接上配置</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Action 名称</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Auto</span> <span class="string">Deploy</span></span><br><span class="line"><span class="comment"># 触发条件</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="comment"># 代码变动时触发</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line"></span><br><span class="line">  <span class="comment"># 保留此行代表运行手动触发</span></span><br><span class="line">  <span class="comment"># 详情轻参考 https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch</span></span><br><span class="line">  <span class="attr">workflow_dispatch:</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line">  <span class="comment"># 主题代码</span></span><br><span class="line">  <span class="attr">THEME_REPO:</span> <span class="string">theme-next/hexo-theme-next</span></span><br><span class="line">  <span class="attr">THEME_BRANCH:</span> <span class="string">master</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="comment"># 工作环境</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="comment"># 设置时区</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">TimeZone</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">sudo</span> <span class="string">timedatectl</span> <span class="string">set-timezone</span> <span class="string">&quot;Asia/Shanghai&quot;</span></span><br><span class="line">      <span class="comment"># clone代码到~/Blog目录</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">Blog</span></span><br><span class="line">      <span class="comment"># 配置Node</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-node@v2.1.5</span></span><br><span class="line">      <span class="comment"># 删除旧主题(可选)</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Clear</span> <span class="string">old</span> <span class="string">theme</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">rm</span> <span class="string">-rf</span> <span class="string">themes/next</span></span><br><span class="line">      <span class="comment"># 拉取新主题(可选)</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">theme</span> <span class="string">repo</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">repository:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.THEME_REPO</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">ref:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.THEME_BRANCH</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">Blog/themes/next</span></span><br><span class="line">      <span class="comment"># 安装主题配置文件，安装依赖</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">deps</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">cp</span> <span class="string">theme_config.yml</span> <span class="string">themes/next/_config.yml</span></span><br><span class="line">          <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">      <span class="comment"># 构建, 产物在~/Blog/public</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="CD实现"><a href="#CD实现" class="headerlink" title="CD实现"></a>CD实现</h2><p>部署方式因人而异，我选择了最方便的Github Pages方式部署。以这种方式部署时，构建好的项目需要被上传到pages项目中。</p>
-<p>创建pages项目的教程请参考 <a href="https://pages.github.com/%E3%80%82">https://pages.github.com/。</a></p>
-<p>创建完成后，我们需要在pages项目的Settings-&gt;Deploy keys中增加一个公钥。</p>
-<p>在博客源码项目中的Settings-&gt;Secrets-&gt;Actions secrets中增加一个私钥。此处我命名为了MAPLE_BLOG，并在步骤Set up git中使用。</p>
-<p>密钥对的生成可以使用ssh-keygen(linux/mac)或puttygen(win)，此处不再赘述。</p>
-<p>之后在上述流程中增加如下几个env和steps。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ... 省略了一些东西</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line">  <span class="comment"># 增加如下几个env</span></span><br><span class="line">  <span class="attr">GIT_USER:</span> <span class="string">Casxt</span></span><br><span class="line">  <span class="attr">GIT_EMAIL:</span> <span class="number">774714620</span><span class="string">@qq.com</span></span><br><span class="line">  <span class="attr">DEPLOY_REPO:</span> <span class="string">casxt/casxt.github.io</span></span><br><span class="line">  <span class="attr">DEPLOY_BRANCH:</span> <span class="string">main</span></span><br><span class="line">  <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">git@github.com:casxt/blog.github.io.git</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="comment"># ... 构建的steps</span></span><br><span class="line">      <span class="comment"># 增加如下step</span></span><br><span class="line">      <span class="comment"># clone pages 项目到~/public目录</span></span><br><span class="line">      <span class="comment"># 需要注意的是我们构建好的产物在~/Blog/public</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">blog</span> <span class="string">repo</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">repository:</span> <span class="string">$&#123;&#123;env.DEPLOY_REPO&#125;&#125;</span></span><br><span class="line">          <span class="attr">ref:</span> <span class="string">$&#123;&#123;env.DEPLOY_BRANCH&#125;&#125;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">public</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># 设置私钥，以便向pages项目推送代码</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">git</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_KEY:</span> <span class="string">$&#123;&#123;secrets.MAPLE_BLOG&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh/</span></span><br><span class="line">          <span class="string">echo</span> <span class="string">&quot;$DEPLOY_KEY&quot;</span> <span class="string">&gt;</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">          <span class="string">chmod</span> <span class="number">600</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">          <span class="string">ssh-keyscan</span> <span class="string">github.com</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">          <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.name</span> <span class="string">$GIT_USER</span></span><br><span class="line">          <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.email</span> <span class="string">$GIT_EMAIL</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># 拷贝产物，并push</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">git</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">cp</span> <span class="string">-R</span> <span class="string">public/*</span> <span class="string">../public/</span> </span><br><span class="line">          <span class="string">cd</span> <span class="string">../public/</span></span><br><span class="line">          <span class="string">git</span> <span class="string">remote</span> <span class="string">set-url</span> <span class="string">origin</span> <span class="string">$DEPLOY_GIT_REMOTE</span></span><br><span class="line">          <span class="string">git</span> <span class="string">add</span> <span class="string">.</span></span><br><span class="line">          <span class="string">git</span> <span class="string">commit</span> <span class="string">-m</span> <span class="string">&quot;auto deploy&quot;</span></span><br><span class="line">          <span class="string">git</span> <span class="string">push</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>前端技术</category>
-        <category>容器技术</category>
-      </categories>
-      <tags>
-        <tag>CI/CD</tag>
-        <tag>Github Action</tag>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -350,6 +321,44 @@
         <tag>chain</tag>
         <tag>rule</tag>
         <tag>filter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo博客配合Github Action完成自动CI/CD</title>
+    <url>/2021/05/04/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E5%90%88Github-Action%E5%AE%8C%E6%88%90%E8%87%AA%E5%8A%A8CI-CD/</url>
+    <content><![CDATA[<p>每次部署博客时都需要在本地完成编译和上传，维护工具链成为一件很繁琐的事情，有什么办法能够将这一步自动化，为将来随时随地写博客打下基础呢？</p>
+<p>现在来一起学(白)习(嫖)Github Action吧！</p>
+<p><small>PS.阅读本文，你需要提前了解一些sh和yaml相关的知识。</small></p>
+<span id="more"></span>
+
+<h2 id="CI实现"><a href="#CI实现" class="headerlink" title="CI实现"></a>CI实现</h2><p>为了从源码构建Hexo博客，我们需要进行如下几步：</p>
+<ol>
+<li>clone源码</li>
+<li>clone主题(可选)</li>
+<li>安装依赖</li>
+<li>构建</li>
+</ol>
+<p>那么如果使用Github Action实现如上几步呢？</p>
+<p>下面直接上配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Action 名称</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Auto</span> <span class="string">Deploy</span></span><br><span class="line"><span class="comment"># 触发条件</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="comment"># 代码变动时触发</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line"></span><br><span class="line">  <span class="comment"># 保留此行代表运行手动触发</span></span><br><span class="line">  <span class="comment"># 详情轻参考 https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch</span></span><br><span class="line">  <span class="attr">workflow_dispatch:</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line">  <span class="comment"># 主题代码</span></span><br><span class="line">  <span class="attr">THEME_REPO:</span> <span class="string">theme-next/hexo-theme-next</span></span><br><span class="line">  <span class="attr">THEME_BRANCH:</span> <span class="string">master</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="comment"># 工作环境</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="comment"># 设置时区</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">TimeZone</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">sudo</span> <span class="string">timedatectl</span> <span class="string">set-timezone</span> <span class="string">&quot;Asia/Shanghai&quot;</span></span><br><span class="line">      <span class="comment"># clone代码到~/Blog目录</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">Blog</span></span><br><span class="line">      <span class="comment"># 配置Node</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-node@v2.1.5</span></span><br><span class="line">      <span class="comment"># 删除旧主题(可选)</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Clear</span> <span class="string">old</span> <span class="string">theme</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">rm</span> <span class="string">-rf</span> <span class="string">themes/next</span></span><br><span class="line">      <span class="comment"># 拉取新主题(可选)</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">theme</span> <span class="string">repo</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">repository:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.THEME_REPO</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">ref:</span> <span class="string">$&#123;&#123;</span> <span class="string">env.THEME_BRANCH</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">Blog/themes/next</span></span><br><span class="line">      <span class="comment"># 安装主题配置文件，安装依赖</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">deps</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">cp</span> <span class="string">theme_config.yml</span> <span class="string">themes/next/_config.yml</span></span><br><span class="line">          <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">      <span class="comment"># 构建, 产物在~/Blog/public</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="CD实现"><a href="#CD实现" class="headerlink" title="CD实现"></a>CD实现</h2><p>部署方式因人而异，我选择了最方便的Github Pages方式部署。以这种方式部署时，构建好的项目需要被上传到pages项目中。</p>
+<p>创建pages项目的教程请参考 <a href="https://pages.github.com/%E3%80%82">https://pages.github.com/。</a></p>
+<p>创建完成后，我们需要在pages项目的Settings-&gt;Deploy keys中增加一个公钥。</p>
+<p>在博客源码项目中的Settings-&gt;Secrets-&gt;Actions secrets中增加一个私钥。此处我命名为了MAPLE_BLOG，并在步骤Set up git中使用。</p>
+<p>密钥对的生成可以使用ssh-keygen(linux/mac)或puttygen(win)，此处不再赘述。</p>
+<p>之后在上述流程中增加如下几个env和steps。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ... 省略了一些东西</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line">  <span class="comment"># 增加如下几个env</span></span><br><span class="line">  <span class="attr">GIT_USER:</span> <span class="string">Casxt</span></span><br><span class="line">  <span class="attr">GIT_EMAIL:</span> <span class="number">774714620</span><span class="string">@qq.com</span></span><br><span class="line">  <span class="attr">DEPLOY_REPO:</span> <span class="string">casxt/casxt.github.io</span></span><br><span class="line">  <span class="attr">DEPLOY_BRANCH:</span> <span class="string">main</span></span><br><span class="line">  <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">git@github.com:casxt/blog.github.io.git</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="comment"># ... 构建的steps</span></span><br><span class="line">      <span class="comment"># 增加如下step</span></span><br><span class="line">      <span class="comment"># clone pages 项目到~/public目录</span></span><br><span class="line">      <span class="comment"># 需要注意的是我们构建好的产物在~/Blog/public</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">blog</span> <span class="string">repo</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">repository:</span> <span class="string">$&#123;&#123;env.DEPLOY_REPO&#125;&#125;</span></span><br><span class="line">          <span class="attr">ref:</span> <span class="string">$&#123;&#123;env.DEPLOY_BRANCH&#125;&#125;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">public</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># 设置私钥，以便向pages项目推送代码</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">git</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_KEY:</span> <span class="string">$&#123;&#123;secrets.MAPLE_BLOG&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh/</span></span><br><span class="line">          <span class="string">echo</span> <span class="string">&quot;$DEPLOY_KEY&quot;</span> <span class="string">&gt;</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">          <span class="string">chmod</span> <span class="number">600</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">          <span class="string">ssh-keyscan</span> <span class="string">github.com</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">          <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.name</span> <span class="string">$GIT_USER</span></span><br><span class="line">          <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.email</span> <span class="string">$GIT_EMAIL</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># 拷贝产物，并push</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">git</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">DEPLOY_GIT_REMOTE:</span> <span class="string">$&#123;&#123;env.DEPLOY_GIT_REMOTE&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">cd</span> <span class="string">Blog</span></span><br><span class="line">          <span class="string">cp</span> <span class="string">-R</span> <span class="string">public/*</span> <span class="string">../public/</span> </span><br><span class="line">          <span class="string">cd</span> <span class="string">../public/</span></span><br><span class="line">          <span class="string">git</span> <span class="string">remote</span> <span class="string">set-url</span> <span class="string">origin</span> <span class="string">$DEPLOY_GIT_REMOTE</span></span><br><span class="line">          <span class="string">git</span> <span class="string">add</span> <span class="string">.</span></span><br><span class="line">          <span class="string">git</span> <span class="string">commit</span> <span class="string">-m</span> <span class="string">&quot;auto deploy&quot;</span></span><br><span class="line">          <span class="string">git</span> <span class="string">push</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>前端技术</category>
+        <category>容器技术</category>
+      </categories>
+      <tags>
+        <tag>CI/CD</tag>
+        <tag>Github Action</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -422,6 +431,59 @@
       </tags>
   </entry>
   <entry>
+    <title>一个新奇的国产web引擎————YC编译器</title>
+    <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
+    <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
+<p>这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。</p>
+<p>抱着好奇心我打开了他们的官网：<a href="http://www.ycbro.com/">http://www.ycbro.com/</a>, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。</p>
+<p>反正软件也不大，抱着试试玩的心态，我也下了一个看看。</p>
+<span id="more"></span>
+
+<h1 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h1><p>安装完成后看到两个快捷方式， “YC服务器 D__ycc” 和 “YC编译器 D__ycc”。</p>
+<p>打开YC服务器可以看到一个非常复古的界面</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg" class="" title="yc服务器界面 200"> </div>
+
+<p>界面上的按钮我都点了一下，没啥用。</p>
+<p>经过一番操作呢，我在他们安装目录下发现了一些模板的ysp文件，估计是文件名改了之后没有调整界面上的链接, 直接在浏览器输入路径, 这次成功的打开了<code>http://127.0.0.1/daoshi_info.ysp</code></p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg" class="" title="导师信息界面 200"> </div>
+
+<p>提示要安装access, 我比较偷懒就不安了。</p>
+<h1 id="上传功能"><a href="#上传功能" class="headerlink" title="上传功能"></a>上传功能</h1><p>经过一番搜索我终于找到了一个功能还比较齐全的页面，也不需要数据库<code>http://127.0.0.1/upload.ysp</code>，有趣的是第一次访问还报错了404，过了一会再次访问就成功了，不禁让人想到这页面可能是动态编译的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg" class="" title="上传界面 200"> </div>
+
+<p>随手上传了两个文件，页面功能还算正常，不过这些都是传统的js功能，并没有什么意思</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg" class="" title="上传界面上传后 200"> </div>
+
+
+<h1 id="代码编辑器"><a href="#代码编辑器" class="headerlink" title="代码编辑器"></a>代码编辑器</h1><p>yc还贴心的为我们提供了开发ide，虽然界面略显过时，但是也能看出开发者确实是在自己一点点打磨的，不然直接依托vscode搞一个ide会更香。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg" class="" title="ide 200"> </div>
+
+<p>这个ide甚至可以编辑二进制文件，难道这些开发者喜欢手写机器码吗</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg" class="" title="二进制编辑 200"> </div>
+
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>打开yc源码目录，可以看到很多ysp文件和cpp文件，一入眼就是一堆avx，略显硬核</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg" class="" title="源码 200"> </div>
+
+<p>我打开了<code>sea.ysp</code>, 映入眼帘的是一堆c风格的代码，不过按照ysp的介绍应该是支持cpp的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg" class="" title="sea.ysp 200"> </div>
+
+<p>可以看出在ysp中prinft类似于php中的echo，用于在页面上输出元素。</p>
+<p>顺便该页面的输出效果如下</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg" class="" title="sea.ysp页面 200"> </div>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>yc可以说是当代浮躁的代码界的一股清流，制作者不为外界所扰，潜心制作了一款cpp版php，虽然在当前的技术环境下很难说ycc能有多大的空间去施展拳脚，但至少从这个项目中可以看出老一辈程序员深厚的编程功底和耐得住寂寞的开发精神。</p>
+]]></content>
+      <categories>
+        <category>大开眼界</category>
+      </categories>
+      <tags>
+        <tag>php</tag>
+        <tag>yc</tag>
+        <tag>浏览器</tag>
+        <tag>c++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Wireguard 配置部署及技术讲解</title>
     <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
@@ -483,59 +545,6 @@
         <tag>wireguard</tag>
         <tag>network</tag>
         <tag>ip</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一个新奇的国产web引擎————YC编译器</title>
-    <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
-    <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
-<p>这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。</p>
-<p>抱着好奇心我打开了他们的官网：<a href="http://www.ycbro.com/">http://www.ycbro.com/</a>, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。</p>
-<p>反正软件也不大，抱着试试玩的心态，我也下了一个看看。</p>
-<span id="more"></span>
-
-<h1 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h1><p>安装完成后看到两个快捷方式， “YC服务器 D__ycc” 和 “YC编译器 D__ycc”。</p>
-<p>打开YC服务器可以看到一个非常复古的界面</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg" class="" title="yc服务器界面 200"> </div>
-
-<p>界面上的按钮我都点了一下，没啥用。</p>
-<p>经过一番操作呢，我在他们安装目录下发现了一些模板的ysp文件，估计是文件名改了之后没有调整界面上的链接, 直接在浏览器输入路径, 这次成功的打开了<code>http://127.0.0.1/daoshi_info.ysp</code></p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg" class="" title="导师信息界面 200"> </div>
-
-<p>提示要安装access, 我比较偷懒就不安了。</p>
-<h1 id="上传功能"><a href="#上传功能" class="headerlink" title="上传功能"></a>上传功能</h1><p>经过一番搜索我终于找到了一个功能还比较齐全的页面，也不需要数据库<code>http://127.0.0.1/upload.ysp</code>，有趣的是第一次访问还报错了404，过了一会再次访问就成功了，不禁让人想到这页面可能是动态编译的。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg" class="" title="上传界面 200"> </div>
-
-<p>随手上传了两个文件，页面功能还算正常，不过这些都是传统的js功能，并没有什么意思</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg" class="" title="上传界面上传后 200"> </div>
-
-
-<h1 id="代码编辑器"><a href="#代码编辑器" class="headerlink" title="代码编辑器"></a>代码编辑器</h1><p>yc还贴心的为我们提供了开发ide，虽然界面略显过时，但是也能看出开发者确实是在自己一点点打磨的，不然直接依托vscode搞一个ide会更香。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg" class="" title="ide 200"> </div>
-
-<p>这个ide甚至可以编辑二进制文件，难道这些开发者喜欢手写机器码吗</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg" class="" title="二进制编辑 200"> </div>
-
-<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>打开yc源码目录，可以看到很多ysp文件和cpp文件，一入眼就是一堆avx，略显硬核</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg" class="" title="源码 200"> </div>
-
-<p>我打开了<code>sea.ysp</code>, 映入眼帘的是一堆c风格的代码，不过按照ysp的介绍应该是支持cpp的。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg" class="" title="sea.ysp 200"> </div>
-
-<p>可以看出在ysp中prinft类似于php中的echo，用于在页面上输出元素。</p>
-<p>顺便该页面的输出效果如下</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg" class="" title="sea.ysp页面 200"> </div>
-
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>yc可以说是当代浮躁的代码界的一股清流，制作者不为外界所扰，潜心制作了一款cpp版php，虽然在当前的技术环境下很难说ycc能有多大的空间去施展拳脚，但至少从这个项目中可以看出老一辈程序员深厚的编程功底和耐得住寂寞的开发精神。</p>
-]]></content>
-      <categories>
-        <category>大开眼界</category>
-      </categories>
-      <tags>
-        <tag>php</tag>
-        <tag>yc</tag>
-        <tag>浏览器</tag>
-        <tag>c++</tag>
       </tags>
   </entry>
   <entry>
@@ -669,6 +678,31 @@
       </tags>
   </entry>
   <entry>
+    <title>数学相关题目</title>
+    <url>/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>数学类相关题目</p>
+<span id="more"></span>
+
+<h1 id="整数拆分"><a href="#整数拆分" class="headerlink" title="整数拆分"></a>整数拆分</h1><p><a href="https://leetcode-cn.com/problems/integer-break/">https://leetcode-cn.com/problems/integer-break/</a></p>
+<p>考虑数字为4的情况，最大结果为2<em>2<br>考虑数字为5的情况，最大结果为2</em>3<br>考虑数字为6的情况，最大结果为3<em>3<br>考虑数字为7的情况，最大结果为3</em>2<em>2<br>考虑数字为8的情况，最大结果为3</em>3*2<br>所有大于3的数字一定可由2和3相加得到，归纳可证，需要将数字尽可能拆分为3相加</p>
+<p>根据 n 除以 3 的余数进行分类讨论：</p>
+<p>如果余数为 0，拆分为 n//3个3</p>
+<p>如果余数为 1，拆分为 (n//3)-1 个 3和1个4</p>
+<p>如果余数为 2，拆分为 n//3 个 3和1个2</p>
+<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><p><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a></p>
+<p>较为复杂，多复习</p>
+<p>不断将位置i和赋值给i+k,直到回到i</p>
+<p>从i+1开始重复上述过程</p>
+<p>直到处理过的数字和数组长度相等</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>手动挂载Nvidia显卡到docker容器中</title>
     <url>/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/</url>
     <content><![CDATA[<p>在docker使用显卡往往需要nvidia的nvidia-container驱动，本文将叫你如何使用原生docker挂载显卡。<br>虽然在最新版的docker中已经内置了nvidia驱动，但是对于podman等其他容器管理来说，这套方法依旧是有意义的。</p>
@@ -703,31 +737,6 @@
         <tag>nvidia</tag>
         <tag>device</tag>
         <tag>driver</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数学相关题目</title>
-    <url>/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>数学类相关题目</p>
-<span id="more"></span>
-
-<h1 id="整数拆分"><a href="#整数拆分" class="headerlink" title="整数拆分"></a>整数拆分</h1><p><a href="https://leetcode-cn.com/problems/integer-break/">https://leetcode-cn.com/problems/integer-break/</a></p>
-<p>考虑数字为4的情况，最大结果为2<em>2<br>考虑数字为5的情况，最大结果为2</em>3<br>考虑数字为6的情况，最大结果为3<em>3<br>考虑数字为7的情况，最大结果为3</em>2<em>2<br>考虑数字为8的情况，最大结果为3</em>3*2<br>所有大于3的数字一定可由2和3相加得到，归纳可证，需要将数字尽可能拆分为3相加</p>
-<p>根据 n 除以 3 的余数进行分类讨论：</p>
-<p>如果余数为 0，拆分为 n//3个3</p>
-<p>如果余数为 1，拆分为 (n//3)-1 个 3和1个4</p>
-<p>如果余数为 2，拆分为 n//3 个 3和1个2</p>
-<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><p><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a></p>
-<p>较为复杂，多复习</p>
-<p>不断将位置i和赋值给i+k,直到回到i</p>
-<p>从i+1开始重复上述过程</p>
-<p>直到处理过的数字和数组长度相等</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
       </tags>
   </entry>
   <entry>

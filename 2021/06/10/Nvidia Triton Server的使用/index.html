@@ -258,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>4.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -322,6 +322,15 @@
 <p>客户端示例可以看<a target="_blank" rel="noopener" href="https://github.com/triton-inference-server/client/tree/main/src/python/examples">此处</a>，推荐从<code>simple_grpc_infer_client.py</code>这个例子入手</p>
 <h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中，grpc性能已经足够支撑，不需要在进行shm方式的优化了。</p>
 <h2 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式(async mode)"></a>异步模式(async mode)</h2><p>triton client还支持异步调用，可以查看<code>simple_grpc_async_infer_client.py</code>。</p>
+<h2 id="将triton客户端封装为协程"><a href="#将triton客户端封装为协程" class="headerlink" title="将triton客户端封装为协程"></a>将triton客户端封装为协程</h2><p>triton的客户端仅支持异步模式而不支持协程，需要我们手动进行封装</p>
+<p>一次原始的异步调用形式如下，当执行结束，callback函数会被调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">triton_client.async_infer(</span><br><span class="line">        model_name&#x3D;model_name,</span><br><span class="line">        inputs&#x3D;inputs,</span><br><span class="line">        callback&#x3D;callback,</span><br><span class="line">        outputs&#x3D;outputs)</span><br></pre></td></tr></table></figure>
+
+<p>因此我们需要在callback中通知协程。需要注意的是callback会在另个一个triton client的线程中被调用，因此需要使用<code>loop.call_soon_threadsafe</code>方法为future设置结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import asyncio</span><br><span class="line">from functools import partial</span><br><span class="line"></span><br><span class="line">def callback(loop, future, result, error):</span><br><span class="line">    if error:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_exception, error)</span><br><span class="line">    else:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_result, result)</span><br><span class="line"></span><br><span class="line">def await_infer(triton_client, model_name, inputs, outputs)</span><br><span class="line">    loop &#x3D; asyncio.get_running_loop()</span><br><span class="line">    future &#x3D; loop.create_future()</span><br><span class="line"></span><br><span class="line">    triton_client.async_infer(</span><br><span class="line">        model_name&#x3D;model_name,</span><br><span class="line">        inputs&#x3D;inputs,</span><br><span class="line">        callback&#x3D;partial(callback, loop, future),</span><br><span class="line">        outputs&#x3D;outputs)</span><br><span class="line">    return future</span><br></pre></td></tr></table></figure>
+
+<p>包装好后我们就可以使用<code>await</code>关键字去调用<code>await_infer</code>了</p>
+<p>```py3<br>async_result = await await_infer(<br>                triton_client = service.triton_client,<br>                model_name = model_name,<br>                inputs = inputs,<br>                outputs = outputs<br>            )</p>
 
     </div>
 
@@ -353,12 +362,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/" rel="prev" title="ONNX 模型 转 TRT engine">
-      <i class="fa fa-chevron-left"></i> ONNX 模型 转 TRT engine
+    <a href="/2021/05/10/C++%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E5%89%B2/" rel="prev" title="C++字符串分割">
+      <i class="fa fa-chevron-left"></i> C++字符串分割
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/" rel="next" title="Golang 输入输出 stdio">
-      Golang 输入输出 stdio <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/" rel="next" title="ONNX 模型 转 TRT engine">
+      ONNX 模型 转 TRT engine <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -419,7 +428,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#triton%E9%A1%B9%E7%9B%AE%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">triton项目的组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-server"><span class="nav-number">2.</span> <span class="nav-text">triton server</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">2.1.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config"><span class="nav-number">2.2.</span> <span class="nav-text">config</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-client"><span class="nav-number">3.</span> <span class="nav-text">triton client</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-memory"><span class="nav-number">3.3.</span> <span class="nav-text">shared memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%BC%8F-async-mode"><span class="nav-number">3.4.</span> <span class="nav-text">异步模式(async mode)</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#triton%E9%A1%B9%E7%9B%AE%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">triton项目的组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-server"><span class="nav-number">2.</span> <span class="nav-text">triton server</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">2.1.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config"><span class="nav-number">2.2.</span> <span class="nav-text">config</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#triton-client"><span class="nav-number">3.</span> <span class="nav-text">triton client</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-memory"><span class="nav-number">3.3.</span> <span class="nav-text">shared memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%BC%8F-async-mode"><span class="nav-number">3.4.</span> <span class="nav-text">异步模式(async mode)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86triton%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B0%81%E8%A3%85%E4%B8%BA%E5%8D%8F%E7%A8%8B"><span class="nav-number">3.5.</span> <span class="nav-text">将triton客户端封装为协程</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -484,7 +493,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">35k</span>
+    <span title="站点总字数">36k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
