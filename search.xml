@@ -41,24 +41,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -101,61 +83,21 @@
       </tags>
   </entry>
   <entry>
-    <title>NFS挂载失效处理</title>
-    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
 <span id="more"></span>
 
-<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
-<ol>
-<li><code>nfsstat -m</code></li>
-<li><code>mount</code></li>
-</ol>
-<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
 ]]></content>
       <categories>
-        <category>网络技术</category>
+        <category>刷题笔记</category>
       </categories>
       <tags>
-        <tag>linux</tag>
-        <tag>nfs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -226,15 +168,73 @@
       </tags>
   </entry>
   <entry>
+    <title>NFS挂载失效处理</title>
+    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
+<span id="more"></span>
+
+<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
+<ol>
+<li><code>nfsstat -m</code></li>
+<li><code>mount</code></li>
+</ol>
+<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
+]]></content>
+      <categories>
+        <category>网络技术</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python使用Pipe控制命令行输入输出</title>
     <url>/2021/07/13/Python%E4%BD%BF%E7%94%A8Pipe%E6%8E%A7%E5%88%B6%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/</url>
     <content><![CDATA[<p>在开发过程中，我们有时需要在python中调用诸如ffmpeg这样的命令。此时就不可避免的需要用到pipe。</p>
 <span id="more"></span>
 
-<p>当我们仅需要使用输入或输出时，可以直接指定stdin/stdout/stderr为Pipe，但是当我们需要同事使用输入输出时，直接使用pipe的读写时无法工作的。</p>
+<p>当我们仅需要使用输入或输出时，可以直接指定stdin/stdout/stderr为Pipe，但是当我们需要同时使用输入输出时，直接使用pipe的读写时无法工作的。</p>
 <p>此时只能使用<code>pipe.communicate</code>方法，通过这种一锤子买卖一次性把所有的输入设置完，并读取所有的输出。</p>
 <p>下面的例子是一个使用pipe将音频文件的字节流送给ffmpeg处理，并且从ffmpeg读取处理结果的例子。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import subprocess</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"># init command</span><br><span class="line">ffmpeg_command &#x3D; [&quot;ffmpeg&quot;, &quot;-f&quot;, &quot;aac&quot;,&quot;-i&quot;, &quot;-&quot;, &quot;-f&quot;, &quot;wav&quot;, &quot;-&quot;]</span><br><span class="line"></span><br><span class="line"># excute ffmpeg command</span><br><span class="line">pipe &#x3D; subprocess.Popen(ffmpeg_command,</span><br><span class="line">                    stdin&#x3D;subprocess.PIPE,</span><br><span class="line">                    stdout&#x3D;subprocess.PIPE,</span><br><span class="line">                    bufsize&#x3D;1024*1024*128)</span><br><span class="line"></span><br><span class="line">with open(&quot;ft_local&#x2F;audio.aac&quot;, &quot;rb&quot;) as f:</span><br><span class="line">    data &#x3D; f.read()</span><br><span class="line">    output, stderr &#x3D; pipe.communicate(data)</span><br><span class="line"></span><br><span class="line">with open(&quot;test.wav&quot;, &quot;wb&quot;) as f:</span><br><span class="line">    data &#x3D; output</span><br><span class="line">    print(len(data))</span><br><span class="line">    f.write(data)</span><br><span class="line">pipe.wait()</span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import subprocess</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"># init command</span><br><span class="line"># set ffmpeg read write to pipe</span><br><span class="line">ffmpeg_command &#x3D; [&quot;ffmpeg&quot;, &quot;-f&quot;, &quot;aac&quot;,&quot;-i&quot;, &quot;-&quot;, &quot;-f&quot;, &quot;wav&quot;, &quot;-&quot;]</span><br><span class="line"></span><br><span class="line"># excute ffmpeg command</span><br><span class="line">pipe &#x3D; subprocess.Popen(ffmpeg_command,</span><br><span class="line">                    stdin&#x3D;subprocess.PIPE,</span><br><span class="line">                    stdout&#x3D;subprocess.PIPE,</span><br><span class="line">                    bufsize&#x3D;1024*1024*128)</span><br><span class="line"></span><br><span class="line"># get you byte stream from anywhere</span><br><span class="line">with open(&quot;audio.aac&quot;, &quot;rb&quot;) as f:</span><br><span class="line">    data &#x3D; f.read()</span><br><span class="line"></span><br><span class="line"># only way you can read and write in same time</span><br><span class="line">output, stderr &#x3D; pipe.communicate(data)</span><br><span class="line"></span><br><span class="line">with open(&quot;test.wav&quot;, &quot;wb&quot;) as f:</span><br><span class="line">    data &#x3D; output</span><br><span class="line">    print(len(data))</span><br><span class="line">    f.write(data)</span><br><span class="line">pipe.wait()</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -431,59 +431,6 @@
       </tags>
   </entry>
   <entry>
-    <title>一个新奇的国产web引擎————YC编译器</title>
-    <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
-    <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
-<p>这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。</p>
-<p>抱着好奇心我打开了他们的官网：<a href="http://www.ycbro.com/">http://www.ycbro.com/</a>, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。</p>
-<p>反正软件也不大，抱着试试玩的心态，我也下了一个看看。</p>
-<span id="more"></span>
-
-<h1 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h1><p>安装完成后看到两个快捷方式， “YC服务器 D__ycc” 和 “YC编译器 D__ycc”。</p>
-<p>打开YC服务器可以看到一个非常复古的界面</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg" class="" title="yc服务器界面 200"> </div>
-
-<p>界面上的按钮我都点了一下，没啥用。</p>
-<p>经过一番操作呢，我在他们安装目录下发现了一些模板的ysp文件，估计是文件名改了之后没有调整界面上的链接, 直接在浏览器输入路径, 这次成功的打开了<code>http://127.0.0.1/daoshi_info.ysp</code></p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg" class="" title="导师信息界面 200"> </div>
-
-<p>提示要安装access, 我比较偷懒就不安了。</p>
-<h1 id="上传功能"><a href="#上传功能" class="headerlink" title="上传功能"></a>上传功能</h1><p>经过一番搜索我终于找到了一个功能还比较齐全的页面，也不需要数据库<code>http://127.0.0.1/upload.ysp</code>，有趣的是第一次访问还报错了404，过了一会再次访问就成功了，不禁让人想到这页面可能是动态编译的。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg" class="" title="上传界面 200"> </div>
-
-<p>随手上传了两个文件，页面功能还算正常，不过这些都是传统的js功能，并没有什么意思</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg" class="" title="上传界面上传后 200"> </div>
-
-
-<h1 id="代码编辑器"><a href="#代码编辑器" class="headerlink" title="代码编辑器"></a>代码编辑器</h1><p>yc还贴心的为我们提供了开发ide，虽然界面略显过时，但是也能看出开发者确实是在自己一点点打磨的，不然直接依托vscode搞一个ide会更香。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg" class="" title="ide 200"> </div>
-
-<p>这个ide甚至可以编辑二进制文件，难道这些开发者喜欢手写机器码吗</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg" class="" title="二进制编辑 200"> </div>
-
-<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>打开yc源码目录，可以看到很多ysp文件和cpp文件，一入眼就是一堆avx，略显硬核</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg" class="" title="源码 200"> </div>
-
-<p>我打开了<code>sea.ysp</code>, 映入眼帘的是一堆c风格的代码，不过按照ysp的介绍应该是支持cpp的。</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg" class="" title="sea.ysp 200"> </div>
-
-<p>可以看出在ysp中prinft类似于php中的echo，用于在页面上输出元素。</p>
-<p>顺便该页面的输出效果如下</p>
-<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg" class="" title="sea.ysp页面 200"> </div>
-
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>yc可以说是当代浮躁的代码界的一股清流，制作者不为外界所扰，潜心制作了一款cpp版php，虽然在当前的技术环境下很难说ycc能有多大的空间去施展拳脚，但至少从这个项目中可以看出老一辈程序员深厚的编程功底和耐得住寂寞的开发精神。</p>
-]]></content>
-      <categories>
-        <category>大开眼界</category>
-      </categories>
-      <tags>
-        <tag>php</tag>
-        <tag>yc</tag>
-        <tag>浏览器</tag>
-        <tag>c++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Wireguard 配置部署及技术讲解</title>
     <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
@@ -545,6 +492,59 @@
         <tag>wireguard</tag>
         <tag>network</tag>
         <tag>ip</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一个新奇的国产web引擎————YC编译器</title>
+    <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
+    <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
+<p>这种话一听就不靠谱嘛，微软这么大家业也不搞浏览器了。</p>
+<p>抱着好奇心我打开了他们的官网：<a href="http://www.ycbro.com/">http://www.ycbro.com/</a>, 一看果然是编译器嘛不是什么浏览器 (然而编译器也没比浏览器简单多少…)。</p>
+<p>反正软件也不大，抱着试试玩的心态，我也下了一个看看。</p>
+<span id="more"></span>
+
+<h1 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h1><p>安装完成后看到两个快捷方式， “YC服务器 D__ycc” 和 “YC编译器 D__ycc”。</p>
+<p>打开YC服务器可以看到一个非常复古的界面</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/1.jpg" class="" title="yc服务器界面 200"> </div>
+
+<p>界面上的按钮我都点了一下，没啥用。</p>
+<p>经过一番操作呢，我在他们安装目录下发现了一些模板的ysp文件，估计是文件名改了之后没有调整界面上的链接, 直接在浏览器输入路径, 这次成功的打开了<code>http://127.0.0.1/daoshi_info.ysp</code></p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/2.jpg" class="" title="导师信息界面 200"> </div>
+
+<p>提示要安装access, 我比较偷懒就不安了。</p>
+<h1 id="上传功能"><a href="#上传功能" class="headerlink" title="上传功能"></a>上传功能</h1><p>经过一番搜索我终于找到了一个功能还比较齐全的页面，也不需要数据库<code>http://127.0.0.1/upload.ysp</code>，有趣的是第一次访问还报错了404，过了一会再次访问就成功了，不禁让人想到这页面可能是动态编译的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/3.jpg" class="" title="上传界面 200"> </div>
+
+<p>随手上传了两个文件，页面功能还算正常，不过这些都是传统的js功能，并没有什么意思</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/4.jpg" class="" title="上传界面上传后 200"> </div>
+
+
+<h1 id="代码编辑器"><a href="#代码编辑器" class="headerlink" title="代码编辑器"></a>代码编辑器</h1><p>yc还贴心的为我们提供了开发ide，虽然界面略显过时，但是也能看出开发者确实是在自己一点点打磨的，不然直接依托vscode搞一个ide会更香。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/6.jpg" class="" title="ide 200"> </div>
+
+<p>这个ide甚至可以编辑二进制文件，难道这些开发者喜欢手写机器码吗</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/7.jpg" class="" title="二进制编辑 200"> </div>
+
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>打开yc源码目录，可以看到很多ysp文件和cpp文件，一入眼就是一堆avx，略显硬核</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/5.jpg" class="" title="源码 200"> </div>
+
+<p>我打开了<code>sea.ysp</code>, 映入眼帘的是一堆c风格的代码，不过按照ysp的介绍应该是支持cpp的。</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/8.jpg" class="" title="sea.ysp 200"> </div>
+
+<p>可以看出在ysp中prinft类似于php中的echo，用于在页面上输出元素。</p>
+<p>顺便该页面的输出效果如下</p>
+<div style="width:50%;margin:auto"> <img src="/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/9.jpg" class="" title="sea.ysp页面 200"> </div>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>yc可以说是当代浮躁的代码界的一股清流，制作者不为外界所扰，潜心制作了一款cpp版php，虽然在当前的技术环境下很难说ycc能有多大的空间去施展拳脚，但至少从这个项目中可以看出老一辈程序员深厚的编程功底和耐得住寂寞的开发精神。</p>
+]]></content>
+      <categories>
+        <category>大开眼界</category>
+      </categories>
+      <tags>
+        <tag>php</tag>
+        <tag>yc</tag>
+        <tag>浏览器</tag>
+        <tag>c++</tag>
       </tags>
   </entry>
   <entry>
@@ -633,6 +633,43 @@
       </tags>
   </entry>
   <entry>
+    <title>手动挂载Nvidia显卡到docker容器中</title>
+    <url>/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/</url>
+    <content><![CDATA[<p>在docker使用显卡往往需要nvidia的nvidia-container驱动，本文将叫你如何使用原生docker挂载显卡。<br>虽然在最新版的docker中已经内置了nvidia驱动，但是对于podman等其他容器管理来说，这套方法依旧是有意义的。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run -it --rm \</span><br><span class="line">--device /dev/nvidia-uvm:/dev/nvidia-uvm:rwm \</span><br><span class="line">--device /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools:rwm \</span><br><span class="line">--device /dev/nvidia0:/dev/nvidia0:rwm \</span><br><span class="line">--device /dev/nvidiactl:/dev/nvidiactl:rwm \</span><br><span class="line">-v /usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro \</span><br><span class="line">-v /usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:ro \</span><br><span class="line">ubuntu nvidia-smi</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h1><p>需要映射到容器中的控制设备包括</p>
+<ul>
+<li>/dev/nvidia-uvm</li>
+<li>/dev/nvidia-uvm-tools</li>
+<li>/dev/nvidiactl</li>
+</ul>
+<p>需要映射到容器中的显卡</p>
+<ul>
+<li>/dev/nvidia0</li>
+<li>/dev/nvidia1</li>
+</ul>
+<p>可以根据需要自行增减数量，显卡编号从0开始，自动增加，nvidia0/nvidia1/nvidia2等等</p>
+<h1 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h1><p>需要将nvidia驱动映射入容器</p>
+<ul>
+<li>/usr/bin/nvidia-smi</li>
+<li>/usr/lib/x86_64-linux-gnu</li>
+</ul>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>对于我们一开始的命令，其输出是</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Sun Mar 29 06:58:45 2020</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage&#x2F;Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;|</span><br><span class="line">|   0  GeForce RTX 208...  Off  | 00000000:AF:00.0 Off |                  N&#x2F;A |</span><br><span class="line">|  0%   25C    P8    15W &#x2F; 260W |      0MiB &#x2F; 11019MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;|</span><br><span class="line">|  No running processes found                                                 |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>容器技术</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>device</tag>
+        <tag>driver</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>字符串相关题目</title>
     <url>/2021/05/03/%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>字符串类相关题目</p>
@@ -700,43 +737,6 @@
       </categories>
       <tags>
         <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>手动挂载Nvidia显卡到docker容器中</title>
-    <url>/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/</url>
-    <content><![CDATA[<p>在docker使用显卡往往需要nvidia的nvidia-container驱动，本文将叫你如何使用原生docker挂载显卡。<br>虽然在最新版的docker中已经内置了nvidia驱动，但是对于podman等其他容器管理来说，这套方法依旧是有意义的。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run -it --rm \</span><br><span class="line">--device /dev/nvidia-uvm:/dev/nvidia-uvm:rwm \</span><br><span class="line">--device /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools:rwm \</span><br><span class="line">--device /dev/nvidia0:/dev/nvidia0:rwm \</span><br><span class="line">--device /dev/nvidiactl:/dev/nvidiactl:rwm \</span><br><span class="line">-v /usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro \</span><br><span class="line">-v /usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:ro \</span><br><span class="line">ubuntu nvidia-smi</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h1><p>需要映射到容器中的控制设备包括</p>
-<ul>
-<li>/dev/nvidia-uvm</li>
-<li>/dev/nvidia-uvm-tools</li>
-<li>/dev/nvidiactl</li>
-</ul>
-<p>需要映射到容器中的显卡</p>
-<ul>
-<li>/dev/nvidia0</li>
-<li>/dev/nvidia1</li>
-</ul>
-<p>可以根据需要自行增减数量，显卡编号从0开始，自动增加，nvidia0/nvidia1/nvidia2等等</p>
-<h1 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h1><p>需要将nvidia驱动映射入容器</p>
-<ul>
-<li>/usr/bin/nvidia-smi</li>
-<li>/usr/lib/x86_64-linux-gnu</li>
-</ul>
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>对于我们一开始的命令，其输出是</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Sun Mar 29 06:58:45 2020</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage&#x2F;Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;|</span><br><span class="line">|   0  GeForce RTX 208...  Off  | 00000000:AF:00.0 Off |                  N&#x2F;A |</span><br><span class="line">|  0%   25C    P8    15W &#x2F; 260W |      0MiB &#x2F; 11019MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;|</span><br><span class="line">|  No running processes found                                                 |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>容器技术</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>device</tag>
-        <tag>driver</tag>
       </tags>
   </entry>
   <entry>

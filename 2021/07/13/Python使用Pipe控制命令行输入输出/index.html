@@ -258,7 +258,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>837</span>
+              <span>921</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,10 +280,10 @@
         <p>在开发过程中，我们有时需要在python中调用诸如ffmpeg这样的命令。此时就不可避免的需要用到pipe。</p>
 <span id="more"></span>
 
-<p>当我们仅需要使用输入或输出时，可以直接指定stdin/stdout/stderr为Pipe，但是当我们需要同事使用输入输出时，直接使用pipe的读写时无法工作的。</p>
+<p>当我们仅需要使用输入或输出时，可以直接指定stdin/stdout/stderr为Pipe，但是当我们需要同时使用输入输出时，直接使用pipe的读写时无法工作的。</p>
 <p>此时只能使用<code>pipe.communicate</code>方法，通过这种一锤子买卖一次性把所有的输入设置完，并读取所有的输出。</p>
 <p>下面的例子是一个使用pipe将音频文件的字节流送给ffmpeg处理，并且从ffmpeg读取处理结果的例子。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import subprocess</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"># init command</span><br><span class="line">ffmpeg_command &#x3D; [&quot;ffmpeg&quot;, &quot;-f&quot;, &quot;aac&quot;,&quot;-i&quot;, &quot;-&quot;, &quot;-f&quot;, &quot;wav&quot;, &quot;-&quot;]</span><br><span class="line"></span><br><span class="line"># excute ffmpeg command</span><br><span class="line">pipe &#x3D; subprocess.Popen(ffmpeg_command,</span><br><span class="line">                    stdin&#x3D;subprocess.PIPE,</span><br><span class="line">                    stdout&#x3D;subprocess.PIPE,</span><br><span class="line">                    bufsize&#x3D;1024*1024*128)</span><br><span class="line"></span><br><span class="line">with open(&quot;ft_local&#x2F;audio.aac&quot;, &quot;rb&quot;) as f:</span><br><span class="line">    data &#x3D; f.read()</span><br><span class="line">    output, stderr &#x3D; pipe.communicate(data)</span><br><span class="line"></span><br><span class="line">with open(&quot;test.wav&quot;, &quot;wb&quot;) as f:</span><br><span class="line">    data &#x3D; output</span><br><span class="line">    print(len(data))</span><br><span class="line">    f.write(data)</span><br><span class="line">pipe.wait()</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import subprocess</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"># init command</span><br><span class="line"># set ffmpeg read write to pipe</span><br><span class="line">ffmpeg_command &#x3D; [&quot;ffmpeg&quot;, &quot;-f&quot;, &quot;aac&quot;,&quot;-i&quot;, &quot;-&quot;, &quot;-f&quot;, &quot;wav&quot;, &quot;-&quot;]</span><br><span class="line"></span><br><span class="line"># excute ffmpeg command</span><br><span class="line">pipe &#x3D; subprocess.Popen(ffmpeg_command,</span><br><span class="line">                    stdin&#x3D;subprocess.PIPE,</span><br><span class="line">                    stdout&#x3D;subprocess.PIPE,</span><br><span class="line">                    bufsize&#x3D;1024*1024*128)</span><br><span class="line"></span><br><span class="line"># get you byte stream from anywhere</span><br><span class="line">with open(&quot;audio.aac&quot;, &quot;rb&quot;) as f:</span><br><span class="line">    data &#x3D; f.read()</span><br><span class="line"></span><br><span class="line"># only way you can read and write in same time</span><br><span class="line">output, stderr &#x3D; pipe.communicate(data)</span><br><span class="line"></span><br><span class="line">with open(&quot;test.wav&quot;, &quot;wb&quot;) as f:</span><br><span class="line">    data &#x3D; output</span><br><span class="line">    print(len(data))</span><br><span class="line">    f.write(data)</span><br><span class="line">pipe.wait()</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -443,7 +443,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">32 分钟</span>
+    <span title="站点阅读时长">33 分钟</span>
 </div>
 
         
