@@ -414,11 +414,13 @@
         <category>python</category>
       </categories>
       <tags>
+        <tag>linux</tag>
         <tag>sata</tag>
         <tag>超大目录</tag>
         <tag>os.listdir</tag>
         <tag>os.walk</tag>
         <tag>os.scandir</tag>
+        <tag>dirent</tag>
       </tags>
   </entry>
   <entry>
@@ -615,23 +617,6 @@
       </tags>
   </entry>
   <entry>
-    <title>堆相关题目</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>堆类相关题目</p>
-<span id="more"></span>
-
-<h1 id="连续中值"><a href="#连续中值" class="headerlink" title="连续中值"></a>连续中值</h1><p>将半段数字放于一个小根堆，后半段放入大根堆</p>
-<p>取小根堆和大根堆的堆顶即可推导出中位数</p>
-<p>实际操作时，ruo</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>堆</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>堆相关知识点</title>
     <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>堆类题目堆相关知识点</p>
@@ -651,8 +636,25 @@
         <category>刷题笔记</category>
       </categories>
       <tags>
-        <tag>堆</tag>
         <tag>知识点速查</tag>
+        <tag>堆</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关题目</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>堆类相关题目</p>
+<span id="more"></span>
+
+<h1 id="连续中值"><a href="#连续中值" class="headerlink" title="连续中值"></a>连续中值</h1><p>将半段数字放于一个小根堆，后半段放入大根堆</p>
+<p>取小根堆和大根堆的堆顶即可推导出中位数</p>
+<p>实际操作时，ruo</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>堆</tag>
       </tags>
   </entry>
   <entry>
