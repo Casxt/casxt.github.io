@@ -871,6 +871,41 @@
       </tags>
   </entry>
   <entry>
+    <title>知识点扫盲</title>
+    <url>/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="linux用户登录流程"><a href="#linux用户登录流程" class="headerlink" title="linux用户登录流程"></a>linux用户登录流程</h1><ul>
+<li>init 阶段， 读/etc/inittab -&gt; /etc/rc.local</li>
+<li>getty 用于监听本地consloe, 打出username:, 获得用户输入之后调起/ets/login打出password:</li>
+<li>读/etc/passwd /etc/shadow 检查用户密码</li>
+<li>拉起shell</li>
+<li>读/etc/passwd 获取用户目录等信息，读/etc/motd获取欢迎界面</li>
+<li>读/etc/profile -&gt; /etc/bashrc -&gt; .profile 或 .login</li>
+<li>读.bashrc, .bash_profile</li>
+</ul>
+<h1 id="cgroup-使用"><a href="#cgroup-使用" class="headerlink" title="cgroup 使用"></a>cgroup 使用</h1><h1 id="数据库隔离机制"><a href="#数据库隔离机制" class="headerlink" title="数据库隔离机制"></a>数据库隔离机制</h1><h1 id="ssh-登录机制"><a href="#ssh-登录机制" class="headerlink" title="ssh 登录机制"></a>ssh 登录机制</h1><h2 id="ssh-与-tty-ptmx-pts"><a href="#ssh-与-tty-ptmx-pts" class="headerlink" title="ssh 与 tty ptmx pts"></a>ssh 与 tty ptmx pts</h2><p><a href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a></p>
+<h2 id="ssh-与-tls"><a href="#ssh-与-tls" class="headerlink" title="ssh 与 tls"></a>ssh 与 tls</h2><ul>
+<li>ssh验证双方，tls只验证服务端</li>
+<li>ssh在应用层，tls在传输层</li>
+<li>ssh同时完成验证和加密，tls可以不验证只加密</li>
+</ul>
+<h1 id="shm"><a href="#shm" class="headerlink" title="shm"></a>shm</h1><h1 id="GPU"><a href="#GPU" class="headerlink" title="GPU"></a>GPU</h1><h1 id="cuda-stream-context"><a href="#cuda-stream-context" class="headerlink" title="cuda stream context"></a>cuda stream context</h1><h1 id="四次挥手的合并"><a href="#四次挥手的合并" class="headerlink" title="四次挥手的合并"></a>四次挥手的合并</h1><p>客户端主动发起fin，如果服务端不需要回复对应的ack会出现如下情况。<br>情况1：</p>
+<ol>
+<li>客户端发起fin，服务端未收到</li>
+<li>客户端停止发送数据，并开始等待服务端剩余数据和fin</li>
+<li>服务端不知道客户端已经发送fin，发送完当前数据后，开始等待客户端数据</li>
+<li>服务端和客户端互相等待无法脱出。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>矩阵相关题目</title>
     <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>矩阵类相关题目</p>
