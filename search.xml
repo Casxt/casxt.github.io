@@ -245,6 +245,25 @@
       </tags>
   </entry>
   <entry>
+    <title>Tensorrt Engine 输出模型输入输出信息.md</title>
+    <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
+    <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
+<span id="more"></span>
+
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import tensorrt as trt</span><br><span class="line">import sys</span><br><span class="line">import numpy as np</span><br><span class="line">trt_logger &#x3D; trt.Logger(trt.Logger.INFO)</span><br><span class="line">runtime &#x3D; trt.Runtime(trt_logger)</span><br><span class="line">with open(sys.argv[1], &quot;rb&quot;) as f:</span><br><span class="line">    engine &#x3D; runtime.deserialize_cuda_engine(f.read())</span><br><span class="line">print(&quot;Engine Info:&quot;)</span><br><span class="line">for i, binding in enumerate(engine):</span><br><span class="line">    shape &#x3D; [engine.max_batch_size, *engine.get_binding_shape(binding)]</span><br><span class="line">    dtype &#x3D; trt.nptype(engine.get_binding_dtype(binding))</span><br><span class="line">    volume &#x3D; abs(trt.volume(engine.get_binding_shape(binding)))</span><br><span class="line">    if engine.binding_is_input(binding):</span><br><span class="line">        desc &#x3D; &quot;input&quot; </span><br><span class="line">    else:</span><br><span class="line">        desc &#x3D; &quot;output&quot;</span><br><span class="line">    print(f&quot;&#123;i&#125; type:    &#123;desc&#125;\n  binding: &#123;binding&#125; \n  data:    &#123;np.dtype(dtype).name&#125;\n  shape:   &#123;shape&#125; &#x3D;&gt; &#123;volume&#125; \n&quot;)</span><br></pre></td></tr></table></figure>
+<p>输入形式如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[TensorRT] INFO: [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 341, GPU 999 (MiB)</span><br><span class="line">[TensorRT] INFO: Loaded engine size: 4 MB</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine begin: CPU 346 MiB, GPU 999 MiB</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +491, GPU +210, now: CPU 842, GPU 1211 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuDNN: CPU +287, GPU +200, now: CPU 1129, GPU 1411 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +0, GPU +0, now: CPU 1129, GPU 1393 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine end: CPU 1129 MiB, GPU 1393 MiB</span><br><span class="line">Engine Info:</span><br><span class="line">0 type:    input</span><br><span class="line">  binding: data </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 1, 3, 256, 256] &#x3D;&gt; 36864 </span><br><span class="line"></span><br><span class="line">1 type:    output</span><br><span class="line">  binding: result </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 8, 8] &#x3D;&gt; 8 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --gpus all \</span><br><span class="line">  --rm -v /home/user/trtdebug.py:/models/trtdebug.py \</span><br><span class="line">  --rm -v /home/user/model.plan:/models/model.plan \</span><br><span class="line">  geminihub.oa.com:80/karizhang/nvcr.io/nvidia/tensorrt:21.08-py3 python /models/trtdebug.py /models/model.plan</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Yolo发展整理</title>
     <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
     <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
@@ -884,13 +903,16 @@
 <li>读/etc/profile -&gt; /etc/bashrc -&gt; .profile 或 .login</li>
 <li>读.bashrc, .bash_profile</li>
 </ul>
-<h1 id="cgroup-使用"><a href="#cgroup-使用" class="headerlink" title="cgroup 使用"></a>cgroup 使用</h1><h1 id="数据库隔离机制"><a href="#数据库隔离机制" class="headerlink" title="数据库隔离机制"></a>数据库隔离机制</h1><h1 id="ssh-登录机制"><a href="#ssh-登录机制" class="headerlink" title="ssh 登录机制"></a>ssh 登录机制</h1><h2 id="ssh-与-tty-ptmx-pts"><a href="#ssh-与-tty-ptmx-pts" class="headerlink" title="ssh 与 tty ptmx pts"></a>ssh 与 tty ptmx pts</h2><p><a href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a></p>
+<h1 id="locked-page-memory"><a href="#locked-page-memory" class="headerlink" title="locked page memory"></a>locked page memory</h1><h1 id="cgroup-使用"><a href="#cgroup-使用" class="headerlink" title="cgroup 使用"></a>cgroup 使用</h1><h1 id="数据库隔离机制"><a href="#数据库隔离机制" class="headerlink" title="数据库隔离机制"></a>数据库隔离机制</h1><h1 id="ssh-登录机制"><a href="#ssh-登录机制" class="headerlink" title="ssh 登录机制"></a>ssh 登录机制</h1><h2 id="ssh-与-tty-ptmx-pts"><a href="#ssh-与-tty-ptmx-pts" class="headerlink" title="ssh 与 tty ptmx pts"></a>ssh 与 tty ptmx pts</h2><p><a href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a></p>
 <h2 id="ssh-与-tls"><a href="#ssh-与-tls" class="headerlink" title="ssh 与 tls"></a>ssh 与 tls</h2><ul>
 <li>ssh验证双方，tls只验证服务端</li>
 <li>ssh在应用层，tls在传输层</li>
 <li>ssh同时完成验证和加密，tls可以不验证只加密</li>
 </ul>
-<h1 id="shm"><a href="#shm" class="headerlink" title="shm"></a>shm</h1><h1 id="GPU"><a href="#GPU" class="headerlink" title="GPU"></a>GPU</h1><h1 id="cuda-stream-context"><a href="#cuda-stream-context" class="headerlink" title="cuda stream context"></a>cuda stream context</h1><h1 id="四次挥手的合并"><a href="#四次挥手的合并" class="headerlink" title="四次挥手的合并"></a>四次挥手的合并</h1><p>客户端主动发起fin，如果服务端不需要回复对应的ack会出现如下情况。<br>情况1：</p>
+<h1 id="shm"><a href="#shm" class="headerlink" title="shm"></a>shm</h1><h1 id="GPU"><a href="#GPU" class="headerlink" title="GPU"></a>GPU</h1><h1 id="cuda-engine-context-stream"><a href="#cuda-engine-context-stream" class="headerlink" title="cuda engine context stream"></a>cuda engine context stream</h1><p>engine是trt中的概念</p>
+<p>context 是一个执行上下文，保存了各种状态，可以用push和pop方法出入栈，每个进程执行时必须要有一个context，通常每一个thread会分配一个独立的context</p>
+<h2 id="同一卡上能否同时存在两个context？"><a href="#同一卡上能否同时存在两个context？" class="headerlink" title="同一卡上能否同时存在两个context？"></a>同一卡上能否同时存在两个context？</h2><p>stream 代表了一系列gpu任务，包括内存拷贝，执行等，同一个context下可以有多个stream，stream之间可以并行运行，stream执行结束后可以触发回调</p>
+<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h2 id="b-tree-为什么快"><a href="#b-tree-为什么快" class="headerlink" title="b+tree 为什么快"></a>b+tree 为什么快</h2><h2 id="索引可以加在text上吗"><a href="#索引可以加在text上吗" class="headerlink" title="索引可以加在text上吗"></a>索引可以加在text上吗</h2><h1 id="四次挥手的合并"><a href="#四次挥手的合并" class="headerlink" title="四次挥手的合并"></a>四次挥手的合并</h1><p>客户端主动发起fin，如果服务端不需要回复对应的ack会出现如下情况。<br>情况1：</p>
 <ol>
 <li>客户端发起fin，服务端未收到</li>
 <li>客户端停止发送数据，并开始等待服务端剩余数据和fin</li>
