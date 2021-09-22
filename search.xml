@@ -117,6 +117,27 @@
       </tags>
   </entry>
   <entry>
+    <title>NFS挂载失效处理</title>
+    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
+<span id="more"></span>
+
+<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
+<ol>
+<li><code>nfsstat -m</code></li>
+<li><code>mount</code></li>
+</ol>
+<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
+]]></content>
+      <categories>
+        <category>网络技术</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Nvidia Triton 使用教程</title>
     <url>/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>近年来，在深度学习模型的部署中，涌现了许多新技术，从最早的tf/pytorch直接部署，到onnx，到trnsorrt(trt)，模型的运行效率越来越高。但即便是使用trt方式部署模型，也依旧无法避免巨大的工作量。在使用c++部署trt时，代码量较大，还需要预处理困难。而使用python部署trt，受限于python的GIL问题，需要同时部署多个模型，又失去了trt节省显存的优点。同时，不论使用何种方式，都无法避免面对组batch等问题，整个系统的工程实现会变得非常复杂。<br>在这样的情况下，triton应运而生一站式的帮助我们解决了几乎所有的工程问题，作为一款强大的模型执行引擎，triton支持几乎所有主流的网络模型，对于pytorch，tensorflow，onnx，trt都有良好的支持。</p>
@@ -124,7 +145,7 @@
 <span id="more"></span>
 
 <h1 id="triton项目的组件"><a href="#triton项目的组件" class="headerlink" title="triton项目的组件"></a>triton项目的组件</h1><ol>
-<li><p><a href="https://github.com/triton-inference-server/server">triton server</a><br>triton的服务端可以直接使用docker方式部署，从(triton的镜像列表)[<a href="https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]%E4%B8%AD%E9%80%89%E6%8B%A9tag%E4%B8%BAxx.xx-py3%E7%9A%84%E9%95%9C%E5%83%8F%E5%8D%B3%E5%8F%AF%E3%80%82">https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags]中选择tag为xx.xx-py3的镜像即可。</a></p>
+<li><p><a href="https://github.com/triton-inference-server/server">triton server</a><br>triton的服务端可以直接使用docker方式部署，从<a href="https://ngc.nvidia.com/catalog/containers/nvidia:tritonserver/tags">triton的镜像列表</a>中选择tag为xx.xx-py3的镜像即可。</p>
 </li>
 <li><p><a href="https://github.com/triton-inference-server/client">triton client</a><br>triton的客户端可以从pip直接安装，但为了测试方便，可以直接使用包含测试端的容器环境，tag为xx.xx-py3-sdk的镜像中包含了客户端。</p>
 </li>
@@ -181,27 +202,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>NFS挂载失效处理</title>
-    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
-<span id="more"></span>
-
-<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
-<ol>
-<li><code>nfsstat -m</code></li>
-<li><code>mount</code></li>
-</ol>
-<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>nfs</tag>
       </tags>
   </entry>
   <entry>
@@ -459,23 +459,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch 矩阵操作</title>
-    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch GCN 实现以及使用</title>
     <url>/2020/03/05/pytorch-GCN-%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络</p>
@@ -508,6 +491,23 @@
         <tag>gcn</tag>
         <tag>rsenet</tag>
         <tag>残差</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pytorch 矩阵操作</title>
+    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
@@ -906,28 +906,6 @@
       </tags>
   </entry>
   <entry>
-    <title>矩阵相关题目</title>
-    <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>矩阵类相关题目</p>
-<span id="more"></span>
-
-<h1 id="螺旋矩阵-回形打印二维数组"><a href="#螺旋矩阵-回形打印二维数组" class="headerlink" title="螺旋矩阵 回形打印二维数组"></a>螺旋矩阵 回形打印二维数组</h1><p><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/">https://leetcode-cn.com/problems/spiral-matrix/solution/</a></p>
-<p>使用四个循环依次打印四条边即可，使用计数器记录已经访问过的元素数目。</p>
-<p>在打印上边和右边之后以及打印四条边之后判断计数器即可。</p>
-<p>如果记不住，每条边打印前都判断一次也可</p>
-<h1 id="旋转图像"><a href="#旋转图像" class="headerlink" title="旋转图像"></a>旋转图像</h1><p><a href="https://leetcode-cn.com/problems/rotate-image/">https://leetcode-cn.com/problems/rotate-image/</a></p>
-<p>从左上角开始沿一条边逐个访问元素，</p>
-<p>每个元素和其他四条边中相对起始位置相同的元素交换</p>
-<p>他四条边中相对起始位置相同的元素坐标可以推算出来</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>矩阵</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>知识点扫盲</title>
     <url>/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/</url>
     <content><![CDATA[<span id="more"></span>
@@ -963,6 +941,28 @@
       </categories>
       <tags>
         <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>矩阵相关题目</title>
+    <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>矩阵类相关题目</p>
+<span id="more"></span>
+
+<h1 id="螺旋矩阵-回形打印二维数组"><a href="#螺旋矩阵-回形打印二维数组" class="headerlink" title="螺旋矩阵 回形打印二维数组"></a>螺旋矩阵 回形打印二维数组</h1><p><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/">https://leetcode-cn.com/problems/spiral-matrix/solution/</a></p>
+<p>使用四个循环依次打印四条边即可，使用计数器记录已经访问过的元素数目。</p>
+<p>在打印上边和右边之后以及打印四条边之后判断计数器即可。</p>
+<p>如果记不住，每条边打印前都判断一次也可</p>
+<h1 id="旋转图像"><a href="#旋转图像" class="headerlink" title="旋转图像"></a>旋转图像</h1><p><a href="https://leetcode-cn.com/problems/rotate-image/">https://leetcode-cn.com/problems/rotate-image/</a></p>
+<p>从左上角开始沿一条边逐个访问元素，</p>
+<p>每个元素和其他四条边中相对起始位置相同的元素交换</p>
+<p>他四条边中相对起始位置相同的元素坐标可以推算出来</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>矩阵</tag>
       </tags>
   </entry>
   <entry>
