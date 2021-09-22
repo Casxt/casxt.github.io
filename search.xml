@@ -57,48 +57,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 调用 Linux Netlink 管理路由表</title>
-    <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
-    <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
-<span id="more"></span>
-
-<h2 id="NetLink"><a href="#NetLink" class="headerlink" title="NetLink"></a>NetLink</h2><p>netlink 是一种与内核交互的方式，首先创建一个netlink类型的socket，之后向这个socket发送指定格式的数据，就可以从该socket拿到内核的返回。<br>linux的route就是通过这种方式来进行管理的。<br>关于netlink的详细信息建议直接<code>man 7 netlink</code>，网上的信息通常都不够直观。下面节选部分文档</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NETLINK(7) </span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">       netlink - communication between kernel and user space (AF_NETLINK)</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       #include &lt;asm&#x2F;types.h&gt;</span><br><span class="line">       #include &lt;sys&#x2F;socket.h&gt;</span><br><span class="line">       #include &lt;linux&#x2F;netlink.h&gt;</span><br><span class="line"></span><br><span class="line">       netlink_socket &#x3D; socket(AF_NETLINK, socket_type, netlink_family);</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Netlink  is  used to transfer information between the kernel and user-space processes.  It consists of a standard sockets-based interface for user space processes and an internal kernel API for</span><br><span class="line">       kernel modules.  The internal kernel interface is not documented in this manual page.  There is also an obsolete netlink interface via netlink character devices; this  interface  is  not  docu‐</span><br><span class="line">       mented here and is provided only for backward compatibility.</span><br><span class="line"></span><br><span class="line">       Netlink is a datagram-oriented service.  Both SOCK_RAW and SOCK_DGRAM are valid values for socket_type.  However, the netlink protocol does not distinguish between datagram and raw sockets.</span><br><span class="line"></span><br><span class="line">       netlink_family selects the kernel module or netlink group to communicate with.  The currently assigned netlink families are:</span><br><span class="line"></span><br><span class="line">       NETLINK_ROUTE</span><br><span class="line">              Receives routing and link updates and may be used to modify the routing tables (both IPv4 and IPv6), IP addresses, link parameters, neighbor setups, queueing disciplines, traffic classes</span><br><span class="line">              and packet classifiers (see rtnetlink(7)).</span><br><span class="line"></span><br><span class="line">       NETLINK_W1 (Linux 2.6.13 to 2.16.17)</span><br><span class="line">              Messages from 1-wire subsystem.</span><br><span class="line"></span><br><span class="line">       NETLINK_USERSOCK</span><br><span class="line">              Reserved for user-mode socket protocols.</span><br><span class="line"></span><br><span class="line">       NETLINK_FIREWALL (up to and including Linux 3.4)</span><br><span class="line">              Transport IPv4 packets from netfilter to user space.  Used by ip_queue kernel module.  After a long period of being declared obsolete (in favor of the more advanced nfnetlink_queue  fea‐</span><br><span class="line">              ture), NETLINK_FIREWALL was removed in Linux 3.5.</span><br></pre></td></tr></table></figure>
-
-<h2 id="golang-netlink-接口"><a href="#golang-netlink-接口" class="headerlink" title="golang netlink 接口"></a>golang netlink 接口</h2><h2 id="查询接口"><a href="#查询接口" class="headerlink" title="查询接口"></a>查询接口</h2><p>goalng的syscall库中包装了部分函数帮助我们通过netlink完成查询工作。方便起见我们使用最为通用的<code>syscall.NetlinkRIB</code>函数，该函数会一次将所有table查询出来，无法指定，但是不需要我们手动设置查询结构体，同时帮我们完成了数据接收工作，使用起来较为方便。<br><code>syscall.NetlinkRIB</code>的返回为[]byte，我们需要手动将该字节串转为结构体。在syscall中提供了<code>syscall.ParseNetlinkMessage</code>函数可以帮我们完成这一步操作。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">tab, err := syscall.NetlinkRIB(syscall.RTM_GETROUTE, syscall.AF_INET)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">msgs, err := syscall.ParseNetlinkMessage(tab)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>msgs</code>类型为<code>[]NetlinkMessage</code>每一个table中的路由都会被存储为一个<code>NetlinkMessage</code>结构体，接下来我们遍历<code>msgs</code>来取出所有table的路由。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> _, m := <span class="keyword">range</span> msgs &#123;</span><br><span class="line">	<span class="keyword">switch</span> m.Header.Type &#123;</span><br><span class="line">		<span class="keyword">case</span> syscall.NLMSG_DONE:</span><br><span class="line">			fmt.Println(<span class="string">&quot;recv done&quot;</span>)</span><br><span class="line">			<span class="keyword">goto</span> done</span><br><span class="line">        <span class="keyword">case</span> syscall.RTM_NEWROUTE:</span><br><span class="line">            <span class="comment">// 解析数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">done:</span><br></pre></td></tr></table></figure>
-
-<p>对于每一个<code>NetlinkMessage</code>结构，我们需要先判断其类型，如果为<code>NLMSG_DONE</code>则表示数据结束，有人可能觉得数组遍历完了就好，为什么非要把最后一个元素设置为<code>NLMSG_DONE</code>，这其实也是socket传输结束的标志，<code>NetlinkRIB</code>和<code>ParseNetlinkMessage</code>只是将他原样解析了而已。</p>
-<p>第二个需要注意的点是，我们使用<code>syscall.RTM_GETROUTE</code>标志get的到的路由表，其头类型为<code>syscall.RTM_NEWROUTE</code>而不是<code>syscall.RTM_GETROUTE</code>，其原因我还没有仔细查过。</p>
-<h2 id="路由-表属性-解析"><a href="#路由-表属性-解析" class="headerlink" title="路由 表属性 解析"></a>路由 表属性 解析</h2><p>当进入<code>case syscall.RTM_NEWROUTE:</code>分支后，我们就可以拿到一个路由表的具体数据了。首先需要使用unsafe指针将<code>NetlinkMessage</code>的data解析为<code>RtMsg</code>结构体。之后我们可以从<code>rtmsg</code>中解析出路由表的各项属性。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">rtmsg := (*syscall.RtMsg)(unsafe.Pointer(&amp;m.Data[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot;Scope &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Scope &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_UNIVERSE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_UNIVERSE &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_SITE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_SITE &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_LINK:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_LINK &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_HOST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_HOST &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_NOWHERE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_NOWHERE &quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot; Protocol &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Protocol &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_UNSPEC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_UNSPEC&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_REDIRECT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_REDIRECT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_KERNEL:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_KERNEL&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_BOOT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_BOOT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_STATIC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_STATIC&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot; Type &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Type &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNSPEC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNSPEC&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNICAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNICAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_LOCAL:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_LOCAL&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_BROADCAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_BROADCAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_ANYCAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_ANYCAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_MULTICAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_MULTICAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_BLACKHOLE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_BLACKHOLE&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNREACHABLE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNREACHABLE&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_PROHIBIT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_PROHIBIT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_THROW:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_THROW&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_NAT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_NAT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_XRESOLVE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_XRESOLVE&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Print(<span class="string">&quot; Family &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Family &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.AF_INET:</span><br><span class="line">        fmt.Print(<span class="string">&quot;AF_INET&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.AF_INET6:</span><br><span class="line">        fmt.Print(<span class="string">&quot;AF_INET6&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="路由-解析"><a href="#路由-解析" class="headerlink" title="路由 解析"></a>路由 解析</h2><p>使用<code>syscall.ParseNetlinkRouteAttr</code>函数可以将<code>NetlinkMessage</code>结构体中的每一项路由属性解析出来。每一个<code>attr</code>既代表路由表中的一项路由</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">attrs, err := syscall.ParseNetlinkRouteAttr(&amp;m)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> _, attr := <span class="keyword">range</span> attrs &#123;</span><br><span class="line">    <span class="keyword">switch</span> attr.Attr.Type &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_DST:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_DST &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_SRC:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_SRC &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_GATEWAY:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_GATEWAY &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_PRIORITY:</span><br><span class="line">        priority := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_PRIORITY &quot;</span>, priority, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_TABLE:</span><br><span class="line">        table := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_TABLE &quot;</span>, strconv.Itoa(table), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_METRICS:</span><br><span class="line">        metrics := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_METRICS &quot;</span>, metrics, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_IIF:</span><br><span class="line">        iif := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_IIF &quot;</span>, iif, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_OIF:</span><br><span class="line">        oif := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_OIF &quot;</span>, oif, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;&quot;</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;============&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="http://blog.studygolang.com/2017/07/linux-netlink-and-go-part-1-netlink/">LINUX，NETLINK 和 GO – 第 1 部分：NETLINK</a></li>
-<li><a href="https://mdlayher.com/blog/linux-netlink-and-go-part-1-netlink/">Linux, Netlink, and Go - Part 1: netlink</a></li>
-<li>[<a href="https://beej-zhcn.netdpi.net/]">https://beej-zhcn.netdpi.net/]</a>(Beej’s Guide to Network Programming)</li>
-<li><a href="https://tools.ietf.org/html/rfc3549#section-2.3.2">RFC3549</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-        <tag>linux</tag>
-        <tag>table</tag>
-        <tag>route</tag>
-        <tag>routing</tag>
-        <tag>netlink</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LRU相关题目</title>
     <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
@@ -133,8 +91,87 @@
         <category>网络技术</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>nfs</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang 调用 Linux Netlink 管理路由表</title>
+    <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
+    <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
+<span id="more"></span>
+
+<h2 id="NetLink"><a href="#NetLink" class="headerlink" title="NetLink"></a>NetLink</h2><p>netlink 是一种与内核交互的方式，首先创建一个netlink类型的socket，之后向这个socket发送指定格式的数据，就可以从该socket拿到内核的返回。<br>linux的route就是通过这种方式来进行管理的。<br>关于netlink的详细信息建议直接<code>man 7 netlink</code>，网上的信息通常都不够直观。下面节选部分文档</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NETLINK(7) </span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">       netlink - communication between kernel and user space (AF_NETLINK)</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       #include &lt;asm&#x2F;types.h&gt;</span><br><span class="line">       #include &lt;sys&#x2F;socket.h&gt;</span><br><span class="line">       #include &lt;linux&#x2F;netlink.h&gt;</span><br><span class="line"></span><br><span class="line">       netlink_socket &#x3D; socket(AF_NETLINK, socket_type, netlink_family);</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Netlink  is  used to transfer information between the kernel and user-space processes.  It consists of a standard sockets-based interface for user space processes and an internal kernel API for</span><br><span class="line">       kernel modules.  The internal kernel interface is not documented in this manual page.  There is also an obsolete netlink interface via netlink character devices; this  interface  is  not  docu‐</span><br><span class="line">       mented here and is provided only for backward compatibility.</span><br><span class="line"></span><br><span class="line">       Netlink is a datagram-oriented service.  Both SOCK_RAW and SOCK_DGRAM are valid values for socket_type.  However, the netlink protocol does not distinguish between datagram and raw sockets.</span><br><span class="line"></span><br><span class="line">       netlink_family selects the kernel module or netlink group to communicate with.  The currently assigned netlink families are:</span><br><span class="line"></span><br><span class="line">       NETLINK_ROUTE</span><br><span class="line">              Receives routing and link updates and may be used to modify the routing tables (both IPv4 and IPv6), IP addresses, link parameters, neighbor setups, queueing disciplines, traffic classes</span><br><span class="line">              and packet classifiers (see rtnetlink(7)).</span><br><span class="line"></span><br><span class="line">       NETLINK_W1 (Linux 2.6.13 to 2.16.17)</span><br><span class="line">              Messages from 1-wire subsystem.</span><br><span class="line"></span><br><span class="line">       NETLINK_USERSOCK</span><br><span class="line">              Reserved for user-mode socket protocols.</span><br><span class="line"></span><br><span class="line">       NETLINK_FIREWALL (up to and including Linux 3.4)</span><br><span class="line">              Transport IPv4 packets from netfilter to user space.  Used by ip_queue kernel module.  After a long period of being declared obsolete (in favor of the more advanced nfnetlink_queue  fea‐</span><br><span class="line">              ture), NETLINK_FIREWALL was removed in Linux 3.5.</span><br></pre></td></tr></table></figure>
+
+<h2 id="golang-netlink-接口"><a href="#golang-netlink-接口" class="headerlink" title="golang netlink 接口"></a>golang netlink 接口</h2><h2 id="查询接口"><a href="#查询接口" class="headerlink" title="查询接口"></a>查询接口</h2><p>goalng的syscall库中包装了部分函数帮助我们通过netlink完成查询工作。方便起见我们使用最为通用的<code>syscall.NetlinkRIB</code>函数，该函数会一次将所有table查询出来，无法指定，但是不需要我们手动设置查询结构体，同时帮我们完成了数据接收工作，使用起来较为方便。<br><code>syscall.NetlinkRIB</code>的返回为[]byte，我们需要手动将该字节串转为结构体。在syscall中提供了<code>syscall.ParseNetlinkMessage</code>函数可以帮我们完成这一步操作。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">tab, err := syscall.NetlinkRIB(syscall.RTM_GETROUTE, syscall.AF_INET)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">msgs, err := syscall.ParseNetlinkMessage(tab)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>msgs</code>类型为<code>[]NetlinkMessage</code>每一个table中的路由都会被存储为一个<code>NetlinkMessage</code>结构体，接下来我们遍历<code>msgs</code>来取出所有table的路由。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> _, m := <span class="keyword">range</span> msgs &#123;</span><br><span class="line">	<span class="keyword">switch</span> m.Header.Type &#123;</span><br><span class="line">		<span class="keyword">case</span> syscall.NLMSG_DONE:</span><br><span class="line">			fmt.Println(<span class="string">&quot;recv done&quot;</span>)</span><br><span class="line">			<span class="keyword">goto</span> done</span><br><span class="line">        <span class="keyword">case</span> syscall.RTM_NEWROUTE:</span><br><span class="line">            <span class="comment">// 解析数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">done:</span><br></pre></td></tr></table></figure>
+
+<p>对于每一个<code>NetlinkMessage</code>结构，我们需要先判断其类型，如果为<code>NLMSG_DONE</code>则表示数据结束，有人可能觉得数组遍历完了就好，为什么非要把最后一个元素设置为<code>NLMSG_DONE</code>，这其实也是socket传输结束的标志，<code>NetlinkRIB</code>和<code>ParseNetlinkMessage</code>只是将他原样解析了而已。</p>
+<p>第二个需要注意的点是，我们使用<code>syscall.RTM_GETROUTE</code>标志get的到的路由表，其头类型为<code>syscall.RTM_NEWROUTE</code>而不是<code>syscall.RTM_GETROUTE</code>，其原因我还没有仔细查过。</p>
+<h2 id="路由-表属性-解析"><a href="#路由-表属性-解析" class="headerlink" title="路由 表属性 解析"></a>路由 表属性 解析</h2><p>当进入<code>case syscall.RTM_NEWROUTE:</code>分支后，我们就可以拿到一个路由表的具体数据了。首先需要使用unsafe指针将<code>NetlinkMessage</code>的data解析为<code>RtMsg</code>结构体。之后我们可以从<code>rtmsg</code>中解析出路由表的各项属性。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">rtmsg := (*syscall.RtMsg)(unsafe.Pointer(&amp;m.Data[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot;Scope &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Scope &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_UNIVERSE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_UNIVERSE &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_SITE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_SITE &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_LINK:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_LINK &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_HOST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_HOST &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RT_SCOPE_NOWHERE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RT_SCOPE_NOWHERE &quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot; Protocol &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Protocol &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_UNSPEC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_UNSPEC&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_REDIRECT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_REDIRECT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_KERNEL:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_KERNEL&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_BOOT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_BOOT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTPROT_STATIC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTPROT_STATIC&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Print(<span class="string">&quot; Type &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Type &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNSPEC:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNSPEC&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNICAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNICAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_LOCAL:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_LOCAL&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_BROADCAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_BROADCAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_ANYCAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_ANYCAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_MULTICAST:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_MULTICAST&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_BLACKHOLE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_BLACKHOLE&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_UNREACHABLE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_UNREACHABLE&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_PROHIBIT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_PROHIBIT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_THROW:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_THROW&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_NAT:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_NAT&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTN_XRESOLVE:</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTN_XRESOLVE&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Print(<span class="string">&quot; Family &quot;</span>)</span><br><span class="line"><span class="keyword">switch</span> rtmsg.Family &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.AF_INET:</span><br><span class="line">        fmt.Print(<span class="string">&quot;AF_INET&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.AF_INET6:</span><br><span class="line">        fmt.Print(<span class="string">&quot;AF_INET6&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="路由-解析"><a href="#路由-解析" class="headerlink" title="路由 解析"></a>路由 解析</h2><p>使用<code>syscall.ParseNetlinkRouteAttr</code>函数可以将<code>NetlinkMessage</code>结构体中的每一项路由属性解析出来。每一个<code>attr</code>既代表路由表中的一项路由</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">attrs, err := syscall.ParseNetlinkRouteAttr(&amp;m)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> _, attr := <span class="keyword">range</span> attrs &#123;</span><br><span class="line">    <span class="keyword">switch</span> attr.Attr.Type &#123;</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_DST:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_DST &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_SRC:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_SRC &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_GATEWAY:</span><br><span class="line">        ip := net.IPv4(attr.Value[<span class="number">0</span>], attr.Value[<span class="number">1</span>], attr.Value[<span class="number">2</span>], attr.Value[<span class="number">3</span>])</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_GATEWAY &quot;</span>, ip.String(), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_PRIORITY:</span><br><span class="line">        priority := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_PRIORITY &quot;</span>, priority, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_TABLE:</span><br><span class="line">        table := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_TABLE &quot;</span>, strconv.Itoa(table), <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_METRICS:</span><br><span class="line">        metrics := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_METRICS &quot;</span>, metrics, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_IIF:</span><br><span class="line">        iif := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_IIF &quot;</span>, iif, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> syscall.RTA_OIF:</span><br><span class="line">        oif := *(*<span class="keyword">int32</span>)(unsafe.Pointer(&amp;attr.Value[<span class="number">0</span>]))</span><br><span class="line">        fmt.Print(<span class="string">&quot;RTA_OIF &quot;</span>, oif, <span class="string">&quot; &quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;&quot;</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;============&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="http://blog.studygolang.com/2017/07/linux-netlink-and-go-part-1-netlink/">LINUX，NETLINK 和 GO – 第 1 部分：NETLINK</a></li>
+<li><a href="https://mdlayher.com/blog/linux-netlink-and-go-part-1-netlink/">Linux, Netlink, and Go - Part 1: netlink</a></li>
+<li>[<a href="https://beej-zhcn.netdpi.net/]">https://beej-zhcn.netdpi.net/]</a>(Beej’s Guide to Network Programming)</li>
+<li><a href="https://tools.ietf.org/html/rfc3549#section-2.3.2">RFC3549</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>网络技术</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>golang</tag>
+        <tag>table</tag>
+        <tag>route</tag>
+        <tag>routing</tag>
+        <tag>netlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -193,8 +230,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import asyncio</span><br><span class="line">from functools import partial</span><br><span class="line"></span><br><span class="line">def callback(loop, future, result, error):</span><br><span class="line">    if error:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_exception, error)</span><br><span class="line">    else:</span><br><span class="line">        loop.call_soon_threadsafe(future.set_result, result)</span><br><span class="line"></span><br><span class="line">def await_infer(triton_client, model_name, inputs, outputs)</span><br><span class="line">    loop &#x3D; asyncio.get_running_loop()</span><br><span class="line">    future &#x3D; loop.create_future()</span><br><span class="line"></span><br><span class="line">    triton_client.async_infer(</span><br><span class="line">        model_name&#x3D;model_name,</span><br><span class="line">        inputs&#x3D;inputs,</span><br><span class="line">        callback&#x3D;partial(callback, loop, future),</span><br><span class="line">        outputs&#x3D;outputs)</span><br><span class="line">    return future</span><br></pre></td></tr></table></figure>
 
 <p>包装好后我们就可以使用<code>await</code>关键字去调用<code>await_infer</code>了</p>
-<p>```py3<br>async_result = await await_infer(<br>                triton_client = service.triton_client,<br>                model_name = model_name,<br>                inputs = inputs,<br>                outputs = outputs<br>            )</p>
-]]></content>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">async_result &#x3D; await await_infer(</span><br><span class="line">                triton_client &#x3D; service.triton_client, </span><br><span class="line">                model_name &#x3D; model_name, </span><br><span class="line">                inputs &#x3D; inputs,</span><br><span class="line">                outputs &#x3D; outputs</span><br><span class="line">            )</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>GPU</category>
       </categories>
@@ -202,43 +238,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -258,25 +257,6 @@
         <tag>python</tag>
         <tag>pipe</tag>
         <tag>ffmpeg</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Tensorrt Engine 输出模型输入输出信息.md</title>
-    <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
-    <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
-<span id="more"></span>
-
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import tensorrt as trt</span><br><span class="line">import sys</span><br><span class="line">import numpy as np</span><br><span class="line">trt_logger &#x3D; trt.Logger(trt.Logger.INFO)</span><br><span class="line">runtime &#x3D; trt.Runtime(trt_logger)</span><br><span class="line">with open(sys.argv[1], &quot;rb&quot;) as f:</span><br><span class="line">    engine &#x3D; runtime.deserialize_cuda_engine(f.read())</span><br><span class="line">print(&quot;Engine Info:&quot;)</span><br><span class="line">for i, binding in enumerate(engine):</span><br><span class="line">    shape &#x3D; [engine.max_batch_size, *engine.get_binding_shape(binding)]</span><br><span class="line">    dtype &#x3D; trt.nptype(engine.get_binding_dtype(binding))</span><br><span class="line">    volume &#x3D; abs(trt.volume(engine.get_binding_shape(binding)))</span><br><span class="line">    if engine.binding_is_input(binding):</span><br><span class="line">        desc &#x3D; &quot;input&quot; </span><br><span class="line">    else:</span><br><span class="line">        desc &#x3D; &quot;output&quot;</span><br><span class="line">    print(f&quot;&#123;i&#125; type:    &#123;desc&#125;\n  binding: &#123;binding&#125; \n  data:    &#123;np.dtype(dtype).name&#125;\n  shape:   &#123;shape&#125; &#x3D;&gt; &#123;volume&#125; \n&quot;)</span><br></pre></td></tr></table></figure>
-<p>输入形式如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[TensorRT] INFO: [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 341, GPU 999 (MiB)</span><br><span class="line">[TensorRT] INFO: Loaded engine size: 4 MB</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine begin: CPU 346 MiB, GPU 999 MiB</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +491, GPU +210, now: CPU 842, GPU 1211 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuDNN: CPU +287, GPU +200, now: CPU 1129, GPU 1411 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +0, GPU +0, now: CPU 1129, GPU 1393 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine end: CPU 1129 MiB, GPU 1393 MiB</span><br><span class="line">Engine Info:</span><br><span class="line">0 type:    input</span><br><span class="line">  binding: data </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 1, 3, 256, 256] &#x3D;&gt; 36864 </span><br><span class="line"></span><br><span class="line">1 type:    output</span><br><span class="line">  binding: result </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 8, 8] &#x3D;&gt; 8 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --gpus all \</span><br><span class="line">  --rm -v /home/user/trtdebug.py:/models/trtdebug.py \</span><br><span class="line">  --rm -v /home/user/model.plan:/models/model.plan \</span><br><span class="line">  geminihub.oa.com:80/karizhang/nvcr.io/nvidia/tensorrt:21.08-py3 python /models/trtdebug.py /models/model.plan</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
       </tags>
   </entry>
   <entry>
@@ -304,6 +284,25 @@
       </categories>
       <tags>
         <tag>Yolo发展整理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tensorrt Engine 输出模型输入输出信息.md</title>
+    <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
+    <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
+<span id="more"></span>
+
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import tensorrt as trt</span><br><span class="line">import sys</span><br><span class="line">import numpy as np</span><br><span class="line">trt_logger &#x3D; trt.Logger(trt.Logger.INFO)</span><br><span class="line">runtime &#x3D; trt.Runtime(trt_logger)</span><br><span class="line">with open(sys.argv[1], &quot;rb&quot;) as f:</span><br><span class="line">    engine &#x3D; runtime.deserialize_cuda_engine(f.read())</span><br><span class="line">print(&quot;Engine Info:&quot;)</span><br><span class="line">for i, binding in enumerate(engine):</span><br><span class="line">    shape &#x3D; [engine.max_batch_size, *engine.get_binding_shape(binding)]</span><br><span class="line">    dtype &#x3D; trt.nptype(engine.get_binding_dtype(binding))</span><br><span class="line">    volume &#x3D; abs(trt.volume(engine.get_binding_shape(binding)))</span><br><span class="line">    if engine.binding_is_input(binding):</span><br><span class="line">        desc &#x3D; &quot;input&quot; </span><br><span class="line">    else:</span><br><span class="line">        desc &#x3D; &quot;output&quot;</span><br><span class="line">    print(f&quot;&#123;i&#125; type:    &#123;desc&#125;\n  binding: &#123;binding&#125; \n  data:    &#123;np.dtype(dtype).name&#125;\n  shape:   &#123;shape&#125; &#x3D;&gt; &#123;volume&#125; \n&quot;)</span><br></pre></td></tr></table></figure>
+<p>输入形式如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[TensorRT] INFO: [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 341, GPU 999 (MiB)</span><br><span class="line">[TensorRT] INFO: Loaded engine size: 4 MB</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine begin: CPU 346 MiB, GPU 999 MiB</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +491, GPU +210, now: CPU 842, GPU 1211 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuDNN: CPU +287, GPU +200, now: CPU 1129, GPU 1411 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS&#x2F;cuBLASLt: CPU +0, GPU +0, now: CPU 1129, GPU 1393 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine end: CPU 1129 MiB, GPU 1393 MiB</span><br><span class="line">Engine Info:</span><br><span class="line">0 type:    input</span><br><span class="line">  binding: data </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 1, 3, 256, 256] &#x3D;&gt; 36864 </span><br><span class="line"></span><br><span class="line">1 type:    output</span><br><span class="line">  binding: result </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 8, 8] &#x3D;&gt; 8 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --gpus all \</span><br><span class="line">  --rm -v /home/user/trtdebug.py:/models/trtdebug.py \</span><br><span class="line">  --rm -v /home/user/model.plan:/models/model.plan \</span><br><span class="line">  geminihub.oa.com:80/karizhang/nvcr.io/nvidia/tensorrt:21.08-py3 python /models/trtdebug.py /models/model.plan</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
       </tags>
   </entry>
   <entry>
@@ -511,70 +510,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Wireguard 配置部署及技术讲解</title>
-    <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
-    <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
-<span id="more"></span>
-
-<h1 id="Wireguard-安装"><a href="#Wireguard-安装" class="headerlink" title="Wireguard 安装"></a>Wireguard 安装</h1><p>对于Ubuntu ≥ 19.10以上的用户, 直接安装即可</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install wireguard</span></span><br></pre></td></tr></table></figure>
-<p>对于19.04及以下用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo add-apt-repository ppa:wireguard/wireguard</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo apt-get update</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo apt-get install wireguard</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="Wireguard-组网设置"><a href="#Wireguard-组网设置" class="headerlink" title="Wireguard 组网设置"></a>Wireguard 组网设置</h1><p>早期的教程中经常使用名为 <code>wg-quick</code> 的命令, 我个人非常不建议使用该工具, 而且官网也移除了关于此命令的相关描述, 因此接下来的操作都讲直接使用 <code>wg</code> 和 <code>ip</code> 命令完成。</p>
-<p>wireguard必须在要组网的<strong>所有设备</strong>上都进行以下操作</p>
-<h1 id="添加网卡"><a href="#添加网卡" class="headerlink" title="添加网卡"></a>添加网卡</h1><p>首先我们需要添加一块网卡, 并将其命名为 <code>wg0</code></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip link add dev wg0 <span class="built_in">type</span> wireguard</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="设置ip"><a href="#设置ip" class="headerlink" title="设置ip"></a>设置ip</h1><p>添加网卡后为这张网卡配置ip, wireguard无法使用dhcp等功能，我们必须手动为其配置ip, 并且每个设备的ip都不能重复。</p>
-<p>注意此处的子网掩码。这里指定的掩码将会在之后被用于设置ip route, 通常wg会自动设置, 但我们也可以手动设置, 这在之后会进行讲解。</p>
-<p>因为我需要让所有设备都连接到一台公网设备, 所以我给我的公网设备分配了<code>192.168.100.1</code>的ip。其他设备依次使用<code>192.168.100.(2/3/4)</code>。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip address add dev wg0 192.168.100.1/24</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="生成连接密钥"><a href="#生成连接密钥" class="headerlink" title="生成连接密钥"></a>生成连接密钥</h1><p>密钥是wg连中最为重要的一环。在两个节点之间, 数据的的接受和发送都需要单独的密钥对。</p>
-<p>以A, B两设备为例。A需要持有A的私钥和B的公钥。B需要持有B的私钥和A的公钥。 B向A发送数据需要使用A的公钥。A接受B的数据需要使用A的私钥。</p>
-<p>因此两个节点互联共需要2对共4个密钥。注意三个节点互联需要3对共6个密钥而不是4对共8个。因为节点的公钥可以给多个其他节点使用，不需要生成新的密钥对。</p>
-<h2 id="生成一对密钥"><a href="#生成一对密钥" class="headerlink" title="生成一对密钥"></a>生成一对密钥</h2><h3 id="生成私钥"><a href="#生成私钥" class="headerlink" title="生成私钥"></a>生成私钥</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> wg genkey</span></span><br><span class="line">6EQR4ABmq4otoOhSYVCJP4BBWKgLzIlTJ4QSPQZAR3s=</span><br></pre></td></tr></table></figure>
-<h3 id="生成公钥"><a href="#生成公钥" class="headerlink" title="生成公钥"></a>生成公钥</h3><p>生成公钥需要使用之前的私钥</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> 6EQR4ABmq4otoOhSYVCJP4BBWKgLzIlTJ4QSPQZAR3s= | wg pubkey</span></span><br><span class="line">eCffMZ/2nN8nPDPap5lW4K4gDRw+UANqIQIvBebvTS4=</span><br></pre></td></tr></table></figure>
-
-<h1 id="编写配置文件"><a href="#编写配置文件" class="headerlink" title="编写配置文件"></a>编写配置文件</h1><p>以下以一个公网设备A和一个私网(家宽)设备B为例</p>
-<h2 id="有公网ip的设备-A"><a href="#有公网ip的设备-A" class="headerlink" title="有公网ip的设备 A"></a>有公网ip的设备 A</h2><p>对于有公网ip的设备, 我们不需要指定 peer 的地址(因为存在NAT指定了也没用), 我们只需要配置私钥和连接端口即可。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># file: A.conf</span><br><span class="line">[Interface]</span><br><span class="line"># Interface on A</span><br><span class="line">PrivateKey &#x3D; &lt;A的私钥&gt;</span><br><span class="line">ListenPort &#x3D; 10240</span><br><span class="line"></span><br><span class="line">[Peer]</span><br><span class="line"># A to B</span><br><span class="line">PublicKey &#x3D; &lt;B的公钥&gt;</span><br><span class="line">AllowedIPs &#x3D; 192.168.100.2&#x2F;32</span><br><span class="line">PersistentKeepalive &#x3D; 10</span><br></pre></td></tr></table></figure>
-
-<h2 id="无公网ip设备-B"><a href="#无公网ip设备-B" class="headerlink" title="无公网ip设备 B"></a>无公网ip设备 B</h2><p>对于有无公网ip的设备, 需要使用<code>Endpoint</code>指定 peer A 的地址, 这样才能在 A, B 之间建立起链接。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># file: B.conf</span><br><span class="line">[Interface]</span><br><span class="line"># Interface on B</span><br><span class="line">PrivateKey &#x3D; &lt;B的私钥&gt;</span><br><span class="line">ListenPort &#x3D; 51820</span><br><span class="line"></span><br><span class="line">[Peer]</span><br><span class="line"># B to A</span><br><span class="line">PublicKey &#x3D; &lt;A的公钥&gt;</span><br><span class="line">Endpoint &#x3D; &lt;A的公网ip:10240&gt;</span><br><span class="line">AllowedIPs &#x3D; 192.168.100.0&#x2F;24</span><br><span class="line">PersistentKeepalive &#x3D; 10</span><br></pre></td></tr></table></figure>
-
-<h2 id="AllowedIPs"><a href="#AllowedIPs" class="headerlink" title="AllowedIPs"></a>AllowedIPs</h2><p>需要注意两份配置的 AllowedIPs 不同, 对于A来说, peer B 的地址必须为<code>192.168.100.2/32</code>, 而对于B来说, 局域网中的所有 peer 都需要通过A来访问, 所以 AllowedIPs 被设置为 <code>192.168.100.0/24</code>。 </p>
-<p>AllowedIPs类似于一个白名单机制, 只有目的地址在AllowedIPs中的包才允许发往该 peer。</p>
-<h2 id="应用配置文件"><a href="#应用配置文件" class="headerlink" title="应用配置文件"></a>应用配置文件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo wg setconf wg0 xxxx.conf</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="启用网卡"><a href="#启用网卡" class="headerlink" title="启用网卡"></a>启用网卡</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip link <span class="built_in">set</span> up dev wg0</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h1><p>创建网卡之后, 我们还需要设置路由, 告诉系统使用wg0网卡处理发往192.168.100.0/24地址的数据。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route add 192.168.100.0/24 dev wg0</span></span><br></pre></td></tr></table></figure>
-
-<p>或者使用完整写法</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route add 192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.x</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 192.168.100.x 指本机ip</span></span><br></pre></td></tr></table></figure>
-
-<p>如果设置的时候提示 <code>RTNETLINK answers: File exists</code> 则表示wg已经自动设置过路由。可以使用以下命令查看</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route</span> </span><br><span class="line">default via 192.168.1.1 dev enp6s0 proto dhcp src 192.168.1.4 metric 100</span><br><span class="line">192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.2</span><br></pre></td></tr></table></figure>
-
-<h1 id="查看连接状态"><a href="#查看连接状态" class="headerlink" title="查看连接状态"></a>查看连接状态</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo wg</span></span><br><span class="line">interface: wg0</span><br><span class="line">  public key: SaarEV3HLvcAaaLhorieaaalNMhCaaaxqVmIpmKwjWY=</span><br><span class="line">  private key: (hidden)</span><br><span class="line">  listening port: 10240</span><br><span class="line"></span><br><span class="line">peer: taaSMAMx4fMaaXfd1g4Z/c+AaapQRapYnStJ/wVFNjk=</span><br><span class="line">  endpoint: 111.20.8.222:51820</span><br><span class="line">  allowed ips: 192.168.100.2/32</span><br><span class="line">  latest handshake: 1 minute, 48 seconds ago</span><br><span class="line">  transfer: 256.64 KiB received, 200.38 KiB sent</span><br><span class="line">  persistent keepalive: every 10 seconds</span><br></pre></td></tr></table></figure>
-
-<h1 id="网关设置"><a href="#网关设置" class="headerlink" title="网关设置"></a>网关设置</h1><p>请查看iptables forward 及 nat 相关讲解</p>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>route</tag>
-        <tag>wireguard</tag>
-        <tag>network</tag>
-        <tag>ip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>一个新奇的国产web引擎————YC编译器</title>
     <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
     <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
@@ -652,27 +587,67 @@
       </tags>
   </entry>
   <entry>
-    <title>堆相关知识点</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+    <title>Wireguard 配置部署及技术讲解</title>
+    <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
+    <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
 <span id="more"></span>
 
-<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
-<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
-<p>container/heap</p>
-<p>4.1 heap.Init</p>
-<p>4.2 heap.Push</p>
-<p>4.3 heap.Pop</p>
-<p>4.4 heap.Fix</p>
-<p>4.5 heap.Remove</p>
-<p>实现</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+<h1 id="Wireguard-安装"><a href="#Wireguard-安装" class="headerlink" title="Wireguard 安装"></a>Wireguard 安装</h1><p>对于Ubuntu ≥ 19.10以上的用户, 直接安装即可</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install wireguard</span></span><br></pre></td></tr></table></figure>
+<p>对于19.04及以下用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo add-apt-repository ppa:wireguard/wireguard</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo apt-get update</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo apt-get install wireguard</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Wireguard-组网设置"><a href="#Wireguard-组网设置" class="headerlink" title="Wireguard 组网设置"></a>Wireguard 组网设置</h1><p>早期的教程中经常使用名为 <code>wg-quick</code> 的命令, 我个人非常不建议使用该工具, 而且官网也移除了关于此命令的相关描述, 因此接下来的操作都讲直接使用 <code>wg</code> 和 <code>ip</code> 命令完成。</p>
+<p>wireguard必须在要组网的<strong>所有设备</strong>上都进行以下操作</p>
+<h1 id="添加网卡"><a href="#添加网卡" class="headerlink" title="添加网卡"></a>添加网卡</h1><p>首先我们需要添加一块网卡, 并将其命名为 <code>wg0</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip link add dev wg0 <span class="built_in">type</span> wireguard</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="设置ip"><a href="#设置ip" class="headerlink" title="设置ip"></a>设置ip</h1><p>添加网卡后为这张网卡配置ip, wireguard无法使用dhcp等功能，我们必须手动为其配置ip, 并且每个设备的ip都不能重复。</p>
+<p>注意此处的子网掩码。这里指定的掩码将会在之后被用于设置ip route, 通常wg会自动设置, 但我们也可以手动设置, 这在之后会进行讲解。</p>
+<p>因为我需要让所有设备都连接到一台公网设备, 所以我给我的公网设备分配了<code>192.168.100.1</code>的ip。其他设备依次使用<code>192.168.100.(2/3/4)</code>。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip address add dev wg0 192.168.100.1/24</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="生成连接密钥"><a href="#生成连接密钥" class="headerlink" title="生成连接密钥"></a>生成连接密钥</h1><p>密钥是wg连中最为重要的一环。在两个节点之间, 数据的的接受和发送都需要单独的密钥对。</p>
+<p>以A, B两设备为例。A需要持有A的私钥和B的公钥。B需要持有B的私钥和A的公钥。 B向A发送数据需要使用A的公钥。A接受B的数据需要使用A的私钥。</p>
+<p>因此两个节点互联共需要2对共4个密钥。注意三个节点互联需要3对共6个密钥而不是4对共8个。因为节点的公钥可以给多个其他节点使用，不需要生成新的密钥对。</p>
+<h2 id="生成一对密钥"><a href="#生成一对密钥" class="headerlink" title="生成一对密钥"></a>生成一对密钥</h2><h3 id="生成私钥"><a href="#生成私钥" class="headerlink" title="生成私钥"></a>生成私钥</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> wg genkey</span></span><br><span class="line">6EQR4ABmq4otoOhSYVCJP4BBWKgLzIlTJ4QSPQZAR3s=</span><br></pre></td></tr></table></figure>
+<h3 id="生成公钥"><a href="#生成公钥" class="headerlink" title="生成公钥"></a>生成公钥</h3><p>生成公钥需要使用之前的私钥</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> 6EQR4ABmq4otoOhSYVCJP4BBWKgLzIlTJ4QSPQZAR3s= | wg pubkey</span></span><br><span class="line">eCffMZ/2nN8nPDPap5lW4K4gDRw+UANqIQIvBebvTS4=</span><br></pre></td></tr></table></figure>
+
+<h1 id="编写配置文件"><a href="#编写配置文件" class="headerlink" title="编写配置文件"></a>编写配置文件</h1><p>以下以一个公网设备A和一个私网(家宽)设备B为例</p>
+<h2 id="有公网ip的设备-A"><a href="#有公网ip的设备-A" class="headerlink" title="有公网ip的设备 A"></a>有公网ip的设备 A</h2><p>对于有公网ip的设备, 我们不需要指定 peer 的地址(因为存在NAT指定了也没用), 我们只需要配置私钥和连接端口即可。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># file: A.conf</span><br><span class="line">[Interface]</span><br><span class="line"># Interface on A</span><br><span class="line">PrivateKey &#x3D; &lt;A的私钥&gt;</span><br><span class="line">ListenPort &#x3D; 10240</span><br><span class="line"></span><br><span class="line">[Peer]</span><br><span class="line"># A to B</span><br><span class="line">PublicKey &#x3D; &lt;B的公钥&gt;</span><br><span class="line">AllowedIPs &#x3D; 192.168.100.2&#x2F;32</span><br><span class="line">PersistentKeepalive &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<h2 id="无公网ip设备-B"><a href="#无公网ip设备-B" class="headerlink" title="无公网ip设备 B"></a>无公网ip设备 B</h2><p>对于有无公网ip的设备, 需要使用<code>Endpoint</code>指定 peer A 的地址, 这样才能在 A, B 之间建立起链接。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># file: B.conf</span><br><span class="line">[Interface]</span><br><span class="line"># Interface on B</span><br><span class="line">PrivateKey &#x3D; &lt;B的私钥&gt;</span><br><span class="line">ListenPort &#x3D; 51820</span><br><span class="line"></span><br><span class="line">[Peer]</span><br><span class="line"># B to A</span><br><span class="line">PublicKey &#x3D; &lt;A的公钥&gt;</span><br><span class="line">Endpoint &#x3D; &lt;A的公网ip:10240&gt;</span><br><span class="line">AllowedIPs &#x3D; 192.168.100.0&#x2F;24</span><br><span class="line">PersistentKeepalive &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<h2 id="AllowedIPs"><a href="#AllowedIPs" class="headerlink" title="AllowedIPs"></a>AllowedIPs</h2><p>需要注意两份配置的 AllowedIPs 不同, 对于A来说, peer B 的地址必须为<code>192.168.100.2/32</code>, 而对于B来说, 局域网中的所有 peer 都需要通过A来访问, 所以 AllowedIPs 被设置为 <code>192.168.100.0/24</code>。 </p>
+<p>AllowedIPs类似于一个白名单机制, 只有目的地址在AllowedIPs中的包才允许发往该 peer。</p>
+<h2 id="应用配置文件"><a href="#应用配置文件" class="headerlink" title="应用配置文件"></a>应用配置文件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo wg setconf wg0 xxxx.conf</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="启用网卡"><a href="#启用网卡" class="headerlink" title="启用网卡"></a>启用网卡</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip link <span class="built_in">set</span> up dev wg0</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h1><p>创建网卡之后, 我们还需要设置路由, 告诉系统使用wg0网卡处理发往192.168.100.0/24地址的数据。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route add 192.168.100.0/24 dev wg0</span></span><br></pre></td></tr></table></figure>
+
+<p>或者使用完整写法</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route add 192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.x</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 192.168.100.x 指本机ip</span></span><br></pre></td></tr></table></figure>
+
+<p>如果设置的时候提示 <code>RTNETLINK answers: File exists</code> 则表示wg已经自动设置过路由。可以使用以下命令查看</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo ip route</span> </span><br><span class="line">default via 192.168.1.1 dev enp6s0 proto dhcp src 192.168.1.4 metric 100</span><br><span class="line">192.168.100.0/24 dev wg0 proto kernel scope link src 192.168.100.2</span><br></pre></td></tr></table></figure>
+
+<h1 id="查看连接状态"><a href="#查看连接状态" class="headerlink" title="查看连接状态"></a>查看连接状态</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo wg</span></span><br><span class="line">interface: wg0</span><br><span class="line">  public key: SaarEV3HLvcAaaLhorieaaalNMhCaaaxqVmIpmKwjWY=</span><br><span class="line">  private key: (hidden)</span><br><span class="line">  listening port: 10240</span><br><span class="line"></span><br><span class="line">peer: taaSMAMx4fMaaXfd1g4Z/c+AaapQRapYnStJ/wVFNjk=</span><br><span class="line">  endpoint: 111.20.8.222:51820</span><br><span class="line">  allowed ips: 192.168.100.2/32</span><br><span class="line">  latest handshake: 1 minute, 48 seconds ago</span><br><span class="line">  transfer: 256.64 KiB received, 200.38 KiB sent</span><br><span class="line">  persistent keepalive: every 10 seconds</span><br></pre></td></tr></table></figure>
+
+<h1 id="网关设置"><a href="#网关设置" class="headerlink" title="网关设置"></a>网关设置</h1><p>请查看iptables forward 及 nat 相关讲解</p>
+]]></content>
       <categories>
-        <category>刷题笔记</category>
+        <category>网络技术</category>
       </categories>
       <tags>
-        <tag>知识点速查</tag>
-        <tag>堆</tag>
+        <tag>route</tag>
+        <tag>wireguard</tag>
+        <tag>network</tag>
+        <tag>ip</tag>
       </tags>
   </entry>
   <entry>
@@ -710,6 +685,30 @@
       </categories>
       <tags>
         <tag>子序列</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关知识点</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+<span id="more"></span>
+
+<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
+<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
+<p>container/heap</p>
+<p>4.1 heap.Init</p>
+<p>4.2 heap.Push</p>
+<p>4.3 heap.Pop</p>
+<p>4.4 heap.Fix</p>
+<p>4.5 heap.Remove</p>
+<p>实现</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>堆</tag>
+        <tag>知识点速查</tag>
       </tags>
   </entry>
   <entry>
@@ -878,34 +877,6 @@
       </tags>
   </entry>
   <entry>
-    <title>树相关题目</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>树类相关题目</p>
-<span id="more"></span>
-
-<h1 id="检查子树"><a href="#检查子树" class="headerlink" title="检查子树"></a>检查子树</h1><p><a href="https://leetcode-cn.com/problems/check-subtree-lcci/">https://leetcode-cn.com/problems/check-subtree-lcci/</a></p>
-<p>递归比较，以每一个节点为头，比较2树是否相同即可</p>
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p><a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<p>经过某一结点的最长路径为 左子树高度+右子树高度</p>
-<p>遍历每一个树中每一个节点，求得其左右子树高度并计算路径，取最大值作为树的直径</p>
-<h1 id="完全二叉树的最后一层的最后一个节点"><a href="#完全二叉树的最后一层的最后一个节点" class="headerlink" title="完全二叉树的最后一层的最后一个节点"></a>完全二叉树的最后一层的最后一个节点</h1><p><a href="https://blog.csdn.net/fangjian1204/article/details/39179343">https://blog.csdn.net/fangjian1204/article/details/39179343</a></p>
-<p>先计算树的高度，由于是完全二叉树，左节点遍历到底得到树高h。</p>
-<p>之后进入算法</p>
-<p>从根节点开始</p>
-<p>若h==2，返回当前节点右，左中第一个非空的。</p>
-<p>计算右子树高度，若高h，以右节点为根节点重新开始，否则以左节点为根节点重新开始。并令h-1</p>
-<h1 id="之字形打印二叉树"><a href="#之字形打印二叉树" class="headerlink" title="之字形打印二叉树"></a>之字形打印二叉树</h1><p><a href="https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/">https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/</a></p>
-<p>压栈法循环取出层</p>
-<p>因为之字形打印，倒序遍历上一层，并根据需要按照从右到左或从左到右的顺序压节点</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>知识点扫盲</title>
     <url>/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/</url>
     <content><![CDATA[<span id="more"></span>
@@ -941,6 +912,34 @@
       </categories>
       <tags>
         <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树相关题目</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>树类相关题目</p>
+<span id="more"></span>
+
+<h1 id="检查子树"><a href="#检查子树" class="headerlink" title="检查子树"></a>检查子树</h1><p><a href="https://leetcode-cn.com/problems/check-subtree-lcci/">https://leetcode-cn.com/problems/check-subtree-lcci/</a></p>
+<p>递归比较，以每一个节点为头，比较2树是否相同即可</p>
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p><a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<p>经过某一结点的最长路径为 左子树高度+右子树高度</p>
+<p>遍历每一个树中每一个节点，求得其左右子树高度并计算路径，取最大值作为树的直径</p>
+<h1 id="完全二叉树的最后一层的最后一个节点"><a href="#完全二叉树的最后一层的最后一个节点" class="headerlink" title="完全二叉树的最后一层的最后一个节点"></a>完全二叉树的最后一层的最后一个节点</h1><p><a href="https://blog.csdn.net/fangjian1204/article/details/39179343">https://blog.csdn.net/fangjian1204/article/details/39179343</a></p>
+<p>先计算树的高度，由于是完全二叉树，左节点遍历到底得到树高h。</p>
+<p>之后进入算法</p>
+<p>从根节点开始</p>
+<p>若h==2，返回当前节点右，左中第一个非空的。</p>
+<p>计算右子树高度，若高h，以右节点为根节点重新开始，否则以左节点为根节点重新开始。并令h-1</p>
+<h1 id="之字形打印二叉树"><a href="#之字形打印二叉树" class="headerlink" title="之字形打印二叉树"></a>之字形打印二叉树</h1><p><a href="https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/">https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/</a></p>
+<p>压栈法循环取出层</p>
+<p>因为之字形打印，倒序遍历上一层，并根据需要按照从右到左或从左到右的顺序压节点</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>树</tag>
       </tags>
   </entry>
   <entry>
