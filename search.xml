@@ -57,24 +57,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -114,6 +96,24 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -260,7 +260,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Tensorrt Engine 输出模型输入输出信息.md</title>
+    <title>Tensorrt Engine 输出模型输入输出信息</title>
     <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
     <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
 <span id="more"></span>
@@ -276,6 +276,47 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>tensorrt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tensorrt shared memory</title>
+    <url>/2021/11/22/Tensorrt%20shared%20memory/</url>
+    <content><![CDATA[<p>在使用triton时，可以使用shared memory方式加速数据传输的过程</p>
+<span id="more"></span>
+
+<h1 id="shared-memory-与-cuda-shared-memory"><a href="#shared-memory-与-cuda-shared-memory" class="headerlink" title="shared memory 与 cuda shared memory"></a>shared memory 与 cuda shared memory</h1><ul>
+<li>在<code>shared memory</code>模式下，triton会在数据存放于<code>/dev/shm</code>目录下，之后将文件路径通过rpc接口发送给triton server</li>
+<li>在<code>cuda shared memory</code>模式下，triton会在指定显卡上申请一块显存区域，之后直接将数据存放于显存中并通过rpc通知triton server</li>
+</ul>
+<p>两种shm模式均会使用额外的显存或内存区域，并且依赖程序主动注销申请的空间，因此程序编写时需要特别注意资源的回收和释放，否则将会导致内存或显存泄露</p>
+<p>考虑到一般情况下内存空间会远大于显存空间，在发生泄漏时内存空间也比显存空间更好回收，因此虽然cuda-shm模式的速度相比shm更快，但是我依旧更推荐使用shm模式。</p>
+<h1 id="shm-memory-pool"><a href="#shm-memory-pool" class="headerlink" title="shm memory pool"></a>shm memory pool</h1><p>使用shm模式的最简单的方式是每次使用随机或顺序递增的文件名去申请内存，在使用结束后立刻释放，但是考虑到保持内存用量的稳定以及复用内存空间来进一步加速，可以使用shm内存池来更好的使用shm模式</p>
+<p>内存池的代码如下，主要特性：</p>
+<ol>
+<li>根据用户提供的<code>shm_name_prefix, shm_key_prefix</code>创建指定数量的共享内存对象，如果使用该名称的对象已经存在则原有对象删除重新创建，这一步保证了过去泄露的内存空间能够被回收</li>
+<li>将申请的所有内存空间注册到triton server</li>
+<li>支持asyncio，使用await语句等待空闲内存对象</li>
+</ol>
+<figure class="highlight py"><figcaption><span>3</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tritonclient.grpc <span class="keyword">as</span> grpcclient</span><br><span class="line"><span class="keyword">import</span> tritonclient.utils.shared_memory <span class="keyword">as</span> shm</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> asyncio <span class="keyword">import</span> Queue</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> Awaitable</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShmRegion</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, triton_client: grpcclient, shm_queue: Queue, max_data_size, shm_name, shm_key</span>):</span></span><br><span class="line">        self.name = shm_name</span><br><span class="line">        self.key = shm_key</span><br><span class="line">        self.shm_queue = shm_queue</span><br><span class="line">        self.size = max_data_size</span><br><span class="line">        self.triton_client: grpcclient = triton_client</span><br><span class="line">        <span class="comment"># 这里要注意，也许triton升级之后shm就不放这里了，这样清理过期资源不是长久之计</span></span><br><span class="line">        self.shm_path = Path(<span class="string">f&quot;/dev/shm/<span class="subst">&#123;self.key&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> self.shm_path.exists():</span><br><span class="line">            os.remove(self.shm_path)</span><br><span class="line">        self.triton_client.unregister_system_shared_memory(self.name)</span><br><span class="line">        self.handle = shm.create_shared_memory_region(self.name, self.key, max_data_size)</span><br><span class="line">        self.triton_client.register_system_shared_memory(self.name, self.key, max_data_size)</span><br><span class="line">        logging.info(<span class="string">f&quot;shm region <span class="subst">&#123;self.name&#125;</span> registered&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addToQueue</span>(<span class="params">self, shm_queue=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="keyword">if</span> shm_queue <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">assert</span> self.shm_queue <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> self.shm_queue <span class="keyword">is</span> shm_queue</span><br><span class="line">            self.shm_queue = shm_queue</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">assert</span> self.shm_queue <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">        self.shm_queue.put_nowait(self)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span> </span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, <span class="built_in">type</span>, value, trace</span>):</span></span><br><span class="line">        self.addToQueue()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span>(<span class="params">self</span>):</span></span><br><span class="line">        logging.info(<span class="string">f&quot;shm region <span class="subst">&#123;self.name&#125;</span> removed&quot;</span>)</span><br><span class="line">        self.triton_client.unregister_system_shared_memory(self.name)</span><br><span class="line">        shm.destroy_shared_memory_region(self.handle)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShmTritonClient</span>(<span class="params"><span class="built_in">object</span></span>):</span> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, triton_client, max_queue_size, max_data_size, shm_name_prefix, shm_key_prefix</span>):</span></span><br><span class="line">        self.triton_client = triton_client</span><br><span class="line">        <span class="comment"># self.triton_client.unregister_system_shared_memory()</span></span><br><span class="line">        <span class="comment"># 这似乎是一个异步请求，执行后会导致后面的注册失效</span></span><br><span class="line">        <span class="comment"># 等到能拿到loop的时候再执行</span></span><br><span class="line">        <span class="comment"># self.shm_queue = Queue(maxsize=max_queue_size, loop=None)</span></span><br><span class="line">        self.shm_queue = <span class="literal">None</span></span><br><span class="line">        self.max_queue_size = max_queue_size</span><br><span class="line">        self.regions = []</span><br><span class="line">        self.registered_regions = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(max_queue_size):</span><br><span class="line">            region = ShmRegion(self.triton_client, self.shm_queue, max_data_size, <span class="string">f&quot;<span class="subst">&#123;shm_name_prefix&#125;</span>_<span class="subst">&#123;i&#125;</span>&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;shm_key_prefix&#125;</span>_<span class="subst">&#123;i&#125;</span>&quot;</span>)</span><br><span class="line">            self.regions.append(region)</span><br><span class="line">            <span class="comment"># 等到能拿到loop的时候再执行</span></span><br><span class="line">            <span class="comment"># region.addToQueue()</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getRegion</span>(<span class="params">self</span>) -&gt; Awaitable[ShmRegion] :</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;每次调用时如果还有未被注册的region, 则注册一个, &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> self.shm_queue <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            loop = asyncio.get_running_loop()</span><br><span class="line">            self.shm_queue = Queue(maxsize=self.max_queue_size, loop=loop)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.regions) &gt; self.registered_regions:</span><br><span class="line">            self.regions[self.registered_regions].addToQueue(self.shm_queue)</span><br><span class="line">            self.registered_regions += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> self.shm_queue.get()</span><br></pre></td></tr></table></figure>
+
+<p>使用例子如下：</p>
+<ol>
+<li>初始化</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import tritonclient.grpc as grpcclient</span><br><span class="line">triton_client &#x3D; grpcclient.InferenceServerClient(url&#x3D;&quot;localhost:8001&quot;)</span><br><span class="line"># 计算你的数据的最大内存使用，比如最大的batch&#x3D;32，最大size&#x3D;3*512*512</span><br><span class="line">max_data &#x3D; np.zeros(shape&#x3D;(32, 3, 512, 512), dtype&#x3D;np.float32)</span><br><span class="line">byte_size &#x3D; max_data.size * max_data.itemsize</span><br><span class="line">shm_client &#x3D; ShmTritonClient(triton_client, max_queue_size&#x3D;16, max_data_size&#x3D;byte_size, shm_name_prefix&#x3D;&quot;shm_data&quot;, shm_key_prefix&#x3D;&quot;&#x2F;shm_data&quot;)</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>调用</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import tritonclient.utils as utils</span><br><span class="line">import tritonclient.utils.shared_memory as shm</span><br><span class="line">from await_infer import await_infer</span><br><span class="line"></span><br><span class="line">async def infer(img, triton_client):</span><br><span class="line">    input_byte_size &#x3D; img.size * img.itemsize</span><br><span class="line">    # 一次性获取2个region分别用于输入输出</span><br><span class="line">    with (await shm_client.getRegion()) as inpRegion, \</span><br><span class="line">        (await shm_client.getRegion()) as outRegion:</span><br><span class="line">        shm.set_shared_memory_region(inpRegion.handle, [img])</span><br><span class="line">        inputs &#x3D; [grpcclient.InferInput(&#39;input&#39;, [*img.shape], &quot;FP32&quot;)]</span><br><span class="line">        # 输入为FP32的图片，很大，需要使用shm加速</span><br><span class="line">        inputs[0].set_shared_memory(inpRegion.name, input_byte_size)</span><br><span class="line">        # 假设网络有2个输出，第一个输出比较大使用shm模式，第二个输出很小，直接使用grpc完成传输</span><br><span class="line">        outputs &#x3D; [grpcclient.InferRequestedOutput(name) for name in [&#39;shm_output&#39;， &#39;plain_output&#39;]]</span><br><span class="line">        outputs[0].set_shared_memory(outRegion.name, outRegion.size)</span><br><span class="line">        # await_inferd的代码参考文章 &quot;Tensorrt Engine 输出模型输入输出信息&quot;</span><br><span class="line">        # https:&#x2F;&#x2F;maple.link&#x2F;2021&#x2F;06&#x2F;10&#x2F;Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8&#x2F;</span><br><span class="line">        results &#x3D; await await_infer(</span><br><span class="line">                triton_client &#x3D; triton_client, </span><br><span class="line">                model_name &#x3D; &quot;model_name&quot;, </span><br><span class="line">                inputs &#x3D; inputs,</span><br><span class="line">                outputs &#x3D; outputs</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        shm_output &#x3D; results.get_output(&quot;shm_output&quot;)</span><br><span class="line">        shm_output &#x3D; shm.get_contents_as_numpy(</span><br><span class="line">            outRegion.handle, utils.triton_to_np_dtype(shm_output.datatype),</span><br><span class="line">            shm_output.shape)</span><br><span class="line">        plain_output &#x3D; results.as_numpy(&#39;plain_output&#39;)</span><br><span class="line">        # copy前shm_output, plain_output都是只读的，无法编辑</span><br><span class="line">        shm_output &#x3D; shm_output.copy()</span><br><span class="line">        plain_output &#x3D; plain_output.copy()</span><br><span class="line"></span><br><span class="line">    return shm_output, plain_output</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>shared memory</tag>
       </tags>
   </entry>
   <entry>
@@ -396,23 +437,6 @@
       </tags>
   </entry>
   <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>leveldb编译及demo</title>
     <url>/2021/11/17/leveldb%E7%BC%96%E8%AF%91%E5%8F%8Ademo/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -470,6 +494,23 @@
         <tag>gcc</tag>
         <tag>g++</tag>
         <tag>cmake</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
       </tags>
   </entry>
   <entry>
@@ -553,6 +594,23 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch 矩阵操作</title>
+    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Wireguard 配置部署及技术讲解</title>
     <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
@@ -617,71 +675,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch 矩阵操作</title>
-    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>动态规划相关题目</title>
-    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>动态规划类题目笔记</p>
-<span id="more"></span>
-
-<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
-<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
-<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
-<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
-<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>… …</p>
-<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
-<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
-<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>动态规划</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>堆相关知识点</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>堆类题目堆相关知识点</p>
-<span id="more"></span>
-
-<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
-<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
-<p>container/heap</p>
-<p>4.1 heap.Init</p>
-<p>4.2 heap.Push</p>
-<p>4.3 heap.Pop</p>
-<p>4.4 heap.Fix</p>
-<p>4.5 heap.Remove</p>
-<p>实现</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>堆</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>一个新奇的国产web引擎————YC编译器</title>
     <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
     <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
@@ -732,6 +725,54 @@
         <tag>yc</tag>
         <tag>浏览器</tag>
         <tag>c++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动态规划相关题目</title>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关知识点</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+<span id="more"></span>
+
+<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
+<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
+<p>container/heap</p>
+<p>4.1 heap.Init</p>
+<p>4.2 heap.Push</p>
+<p>4.3 heap.Pop</p>
+<p>4.4 heap.Fix</p>
+<p>4.5 heap.Remove</p>
+<p>实现</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>堆</tag>
       </tags>
   </entry>
   <entry>
