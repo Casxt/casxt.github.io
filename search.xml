@@ -441,8 +441,8 @@
       </tags>
   </entry>
   <entry>
-    <title>leveldb编译及demo</title>
-    <url>/2021/11/17/leveldb%E7%BC%96%E8%AF%91%E5%8F%8Ademo/</url>
+    <title>leveldb静态编译及snappy支持</title>
+    <url>/2021/11/17/leveldb%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E5%8F%8Asnappy%E6%94%AF%E6%8C%81/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
 <span id="more"></span>
 <h2 id="leveldb依赖安装"><a href="#leveldb依赖安装" class="headerlink" title="leveldb依赖安装"></a>leveldb依赖安装</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install cmake gcc g++</span><br></pre></td></tr></table></figure>
