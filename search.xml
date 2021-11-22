@@ -186,7 +186,8 @@
 <p>这样可以确保你的依赖被安装到你使用的python环境中。</p>
 <h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>根据我的测试，grpc方式调用triton的性能远远高于http方式，在极端情况下甚至可以达到十倍的性能差距，因此如果没有特殊需要，我不建议使用http方式调用。</p>
 <p>客户端示例可以看<a href="https://github.com/triton-inference-server/client/tree/main/src/python/examples">此处</a>，推荐从<code>simple_grpc_infer_client.py</code>这个例子入手</p>
-<h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中，grpc性能已经足够支撑，不需要在进行shm方式的优化了。</p>
+<h2 id="shared-memory"><a href="#shared-memory" class="headerlink" title="shared memory"></a>shared memory</h2><p>对于本机内部调用，triton还支持使用shm方式进行数据共享，减小通信开销。更进一步的，你还可以使用cuda shm方式直接共享显存，在数据发送端就将显存设置好，直接调用triton进行推理。但需要注意的是cuda shm会消耗较多显存，需要用户自己去控制，否则会导致显存用尽，在我自己的测试中。</p>
+<p>如果有这部分需要可以参考<a href="https://maple.link/2021/11/22/Tensorrt%20shared%20memory/">Triton shared memory</a></p>
 <h2 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式(async mode)"></a>异步模式(async mode)</h2><p>triton client还支持异步调用，可以查看<code>simple_grpc_async_infer_client.py</code>。</p>
 <h2 id="将triton客户端封装为协程"><a href="#将triton客户端封装为协程" class="headerlink" title="将triton客户端封装为协程"></a>将triton客户端封装为协程</h2><p>triton的客户端仅支持异步模式而不支持协程，需要我们手动进行封装</p>
 <p>一次原始的异步调用形式如下，当执行结束，callback函数会被调用</p>
@@ -311,7 +312,7 @@
 <ol>
 <li>调用</li>
 </ol>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tritonclient.utils <span class="keyword">as</span> utils</span><br><span class="line"><span class="keyword">import</span> tritonclient.utils.shared_memory <span class="keyword">as</span> shm</span><br><span class="line"><span class="keyword">from</span> await_infer <span class="keyword">import</span> await_infer</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">infer</span>(<span class="params">img, triton_client</span>):</span></span><br><span class="line">    input_byte_size = img.size * img.itemsize</span><br><span class="line">    <span class="comment"># 一次性获取2个region分别用于输入输出</span></span><br><span class="line">    <span class="keyword">with</span> (<span class="keyword">await</span> shm_client.getRegion()) <span class="keyword">as</span> inpRegion, \</span><br><span class="line">        (<span class="keyword">await</span> shm_client.getRegion()) <span class="keyword">as</span> outRegion:</span><br><span class="line">        shm.set_shared_memory_region(inpRegion.handle, [img])</span><br><span class="line">        inputs = [grpcclient.InferInput(<span class="string">&#x27;input&#x27;</span>, [*img.shape], <span class="string">&quot;FP32&quot;</span>)]</span><br><span class="line">        <span class="comment"># 输入为FP32的图片，很大，需要使用shm加速</span></span><br><span class="line">        inputs[<span class="number">0</span>].set_shared_memory(inpRegion.name, input_byte_size)</span><br><span class="line">        <span class="comment"># 假设网络有2个输出，第一个输出比较大使用shm模式，第二个输出很小，直接使用grpc完成传输</span></span><br><span class="line">        outputs = [grpcclient.InferRequestedOutput(name) <span class="keyword">for</span> name <span class="keyword">in</span> [<span class="string">&#x27;shm_output&#x27;</span>， <span class="string">&#x27;plain_output&#x27;</span>]]</span><br><span class="line">        outputs[<span class="number">0</span>].set_shared_memory(outRegion.name, outRegion.size)</span><br><span class="line">        <span class="comment"># await_inferd的代码参考文章 &quot;Tensorrt Engine 输出模型输入输出信息&quot;</span></span><br><span class="line">        <span class="comment"># https://maple.link/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/</span></span><br><span class="line">        results = <span class="keyword">await</span> await_infer(</span><br><span class="line">                triton_client = triton_client, </span><br><span class="line">                model_name = <span class="string">&quot;model_name&quot;</span>, </span><br><span class="line">                inputs = inputs,</span><br><span class="line">                outputs = outputs</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        shm_output = results.get_output(<span class="string">&quot;shm_output&quot;</span>)</span><br><span class="line">        shm_output = shm.get_contents_as_numpy(</span><br><span class="line">            outRegion.handle, utils.triton_to_np_dtype(shm_output.datatype),</span><br><span class="line">            shm_output.shape)</span><br><span class="line">        plain_output = results.as_numpy(<span class="string">&#x27;plain_output&#x27;</span>)</span><br><span class="line">        <span class="comment"># copy前shm_output, plain_output都是只读的，无法编辑</span></span><br><span class="line">        shm_output = shm_output.copy()</span><br><span class="line">        plain_output = plain_output.copy()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> shm_output, plain_output</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tritonclient.utils <span class="keyword">as</span> utils</span><br><span class="line"><span class="keyword">import</span> tritonclient.utils.shared_memory <span class="keyword">as</span> shm</span><br><span class="line"><span class="keyword">from</span> await_infer <span class="keyword">import</span> await_infer</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">infer</span>(<span class="params">img, triton_client</span>):</span></span><br><span class="line">    input_byte_size = img.size * img.itemsize</span><br><span class="line">    <span class="comment"># 一次性获取2个region分别用于输入输出</span></span><br><span class="line">    <span class="keyword">with</span> (<span class="keyword">await</span> shm_client.getRegion()) <span class="keyword">as</span> inpRegion, \</span><br><span class="line">        (<span class="keyword">await</span> shm_client.getRegion()) <span class="keyword">as</span> outRegion:</span><br><span class="line">        shm.set_shared_memory_region(inpRegion.handle, [img])</span><br><span class="line">        inputs = [grpcclient.InferInput(<span class="string">&#x27;input&#x27;</span>, [*img.shape], <span class="string">&quot;FP32&quot;</span>)]</span><br><span class="line">        <span class="comment"># 输入为FP32的图片，很大，需要使用shm加速</span></span><br><span class="line">        inputs[<span class="number">0</span>].set_shared_memory(inpRegion.name, input_byte_size)</span><br><span class="line">        <span class="comment"># 假设网络有2个输出，第一个输出比较大使用shm模式，第二个输出很小，直接使用grpc完成传输</span></span><br><span class="line">        outputs = [grpcclient.InferRequestedOutput(name) <span class="keyword">for</span> name <span class="keyword">in</span> [<span class="string">&#x27;shm_output&#x27;</span>， <span class="string">&#x27;plain_output&#x27;</span>]]</span><br><span class="line">        outputs[<span class="number">0</span>].set_shared_memory(outRegion.name, outRegion.size)</span><br><span class="line">        <span class="comment"># await_inferd的代码参考文章 &quot;Nvidia Triton 使用教程&quot;</span></span><br><span class="line">        <span class="comment"># https://maple.link/2021/06/10/Nvidia%20Triton%20Server%E7%9A%84%E4%BD%BF%E7%94%A8/</span></span><br><span class="line">        results = <span class="keyword">await</span> await_infer(</span><br><span class="line">                triton_client = triton_client, </span><br><span class="line">                model_name = <span class="string">&quot;model_name&quot;</span>, </span><br><span class="line">                inputs = inputs,</span><br><span class="line">                outputs = outputs</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        shm_output = results.get_output(<span class="string">&quot;shm_output&quot;</span>)</span><br><span class="line">        shm_output = shm.get_contents_as_numpy(</span><br><span class="line">            outRegion.handle, utils.triton_to_np_dtype(shm_output.datatype),</span><br><span class="line">            shm_output.shape)</span><br><span class="line">        plain_output = results.as_numpy(<span class="string">&#x27;plain_output&#x27;</span>)</span><br><span class="line">        <span class="comment"># copy前shm_output, plain_output都是只读的，无法编辑</span></span><br><span class="line">        shm_output = shm_output.copy()</span><br><span class="line">        plain_output = plain_output.copy()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> shm_output, plain_output</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>GPU</category>
       </categories>
@@ -953,34 +954,6 @@
       </tags>
   </entry>
   <entry>
-    <title>树相关题目</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>树类相关题目</p>
-<span id="more"></span>
-
-<h1 id="检查子树"><a href="#检查子树" class="headerlink" title="检查子树"></a>检查子树</h1><p><a href="https://leetcode-cn.com/problems/check-subtree-lcci/">https://leetcode-cn.com/problems/check-subtree-lcci/</a></p>
-<p>递归比较，以每一个节点为头，比较2树是否相同即可</p>
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p><a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<p>经过某一结点的最长路径为 左子树高度+右子树高度</p>
-<p>遍历每一个树中每一个节点，求得其左右子树高度并计算路径，取最大值作为树的直径</p>
-<h1 id="完全二叉树的最后一层的最后一个节点"><a href="#完全二叉树的最后一层的最后一个节点" class="headerlink" title="完全二叉树的最后一层的最后一个节点"></a>完全二叉树的最后一层的最后一个节点</h1><p><a href="https://blog.csdn.net/fangjian1204/article/details/39179343">https://blog.csdn.net/fangjian1204/article/details/39179343</a></p>
-<p>先计算树的高度，由于是完全二叉树，左节点遍历到底得到树高h。</p>
-<p>之后进入算法</p>
-<p>从根节点开始</p>
-<p>若h==2，返回当前节点右，左中第一个非空的。</p>
-<p>计算右子树高度，若高h，以右节点为根节点重新开始，否则以左节点为根节点重新开始。并令h-1</p>
-<h1 id="之字形打印二叉树"><a href="#之字形打印二叉树" class="headerlink" title="之字形打印二叉树"></a>之字形打印二叉树</h1><p><a href="https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/">https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/</a></p>
-<p>压栈法循环取出层</p>
-<p>因为之字形打印，倒序遍历上一层，并根据需要按照从右到左或从左到右的顺序压节点</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>树相关知识点</title>
     <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>树类题目相关知识点</p>
@@ -1005,6 +978,34 @@
       </categories>
       <tags>
         <tag>知识点速查</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树相关题目</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>树类相关题目</p>
+<span id="more"></span>
+
+<h1 id="检查子树"><a href="#检查子树" class="headerlink" title="检查子树"></a>检查子树</h1><p><a href="https://leetcode-cn.com/problems/check-subtree-lcci/">https://leetcode-cn.com/problems/check-subtree-lcci/</a></p>
+<p>递归比较，以每一个节点为头，比较2树是否相同即可</p>
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p><a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<p>经过某一结点的最长路径为 左子树高度+右子树高度</p>
+<p>遍历每一个树中每一个节点，求得其左右子树高度并计算路径，取最大值作为树的直径</p>
+<h1 id="完全二叉树的最后一层的最后一个节点"><a href="#完全二叉树的最后一层的最后一个节点" class="headerlink" title="完全二叉树的最后一层的最后一个节点"></a>完全二叉树的最后一层的最后一个节点</h1><p><a href="https://blog.csdn.net/fangjian1204/article/details/39179343">https://blog.csdn.net/fangjian1204/article/details/39179343</a></p>
+<p>先计算树的高度，由于是完全二叉树，左节点遍历到底得到树高h。</p>
+<p>之后进入算法</p>
+<p>从根节点开始</p>
+<p>若h==2，返回当前节点右，左中第一个非空的。</p>
+<p>计算右子树高度，若高h，以右节点为根节点重新开始，否则以左节点为根节点重新开始。并令h-1</p>
+<h1 id="之字形打印二叉树"><a href="#之字形打印二叉树" class="headerlink" title="之字形打印二叉树"></a>之字形打印二叉树</h1><p><a href="https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/">https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-iii-lcof/submissions/</a></p>
+<p>压栈法循环取出层</p>
+<p>因为之字形打印，倒序遍历上一层，并根据需要按照从右到左或从左到右的顺序压节点</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
         <tag>树</tag>
       </tags>
   </entry>
@@ -1047,25 +1048,6 @@
       </tags>
   </entry>
   <entry>
-    <title>链表相关题目</title>
-    <url>/2021/05/03/%E9%93%BE%E8%A1%A8%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>链表类相关题目</p>
-<span id="more"></span>
-
-<h1 id="判断链表是否有环"><a href="#判断链表是否有环" class="headerlink" title="判断链表是否有环"></a>判断链表是否有环</h1><p><a href="https://leetcode-cn.com/problems/linked-list-cycle/submissions/">https://leetcode-cn.com/problems/linked-list-cycle/submissions/</a></p>
-<p>快慢指针法, 快指针一次2步，慢指针一次1步，如果指针之一发现nil尾节点，则返回无环。<br>如果指针重合，返回有环。</p>
-<h1 id="两个链表的第一个公共节点"><a href="#两个链表的第一个公共节点" class="headerlink" title="两个链表的第一个公共节点"></a>两个链表的第一个公共节点</h1><p><a href="https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/">https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/</a></p>
-<p>使用双指针，分别从a, b开始遍历，到达a的末尾后衔接b的头。b也同理。</p>
-<p>注意完成跳转的轮次不能进行其他工作，否则会导致头节点被错过。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> pointA == <span class="literal">nil</span> &#123;</span><br><span class="line">    pointA = headB</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    pointA = pointA.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>矩阵相关题目</title>
     <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>矩阵类相关题目</p>
@@ -1085,6 +1067,25 @@
       </categories>
       <tags>
         <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>链表相关题目</title>
+    <url>/2021/05/03/%E9%93%BE%E8%A1%A8%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>链表类相关题目</p>
+<span id="more"></span>
+
+<h1 id="判断链表是否有环"><a href="#判断链表是否有环" class="headerlink" title="判断链表是否有环"></a>判断链表是否有环</h1><p><a href="https://leetcode-cn.com/problems/linked-list-cycle/submissions/">https://leetcode-cn.com/problems/linked-list-cycle/submissions/</a></p>
+<p>快慢指针法, 快指针一次2步，慢指针一次1步，如果指针之一发现nil尾节点，则返回无环。<br>如果指针重合，返回有环。</p>
+<h1 id="两个链表的第一个公共节点"><a href="#两个链表的第一个公共节点" class="headerlink" title="两个链表的第一个公共节点"></a>两个链表的第一个公共节点</h1><p><a href="https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/">https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/</a></p>
+<p>使用双指针，分别从a, b开始遍历，到达a的末尾后衔接b的头。b也同理。</p>
+<p>注意完成跳转的轮次不能进行其他工作，否则会导致头节点被错过。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> pointA == <span class="literal">nil</span> &#123;</span><br><span class="line">    pointA = headB</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    pointA = pointA.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
       </tags>
   </entry>
 </search>
