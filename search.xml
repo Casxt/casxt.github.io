@@ -22,7 +22,7 @@
   </entry>
   <entry>
     <title>C++重写和虚函数对比</title>
-    <url>/2021/11/19/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
+    <url>/2021/11/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
 <span id="more"></span>
 
@@ -54,6 +54,24 @@
       </categories>
       <tags>
         <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -96,24 +114,6 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -396,6 +396,23 @@
       </tags>
   </entry>
   <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>leveldb编译及demo</title>
     <url>/2021/11/17/leveldb%E7%BC%96%E8%AF%91%E5%8F%8Ademo/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -408,22 +425,35 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https:&#x2F;&#x2F;github.com&#x2F;google&#x2F;leveldb.git</span><br><span class="line">cd leveldb</span><br><span class="line">git tag</span><br><span class="line">git checkout 1.23</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir -p build &amp;&amp; cd build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE&#x3D;Release .. &amp;&amp; cmake --build .</span><br></pre></td></tr></table></figure>
-<p>执行测试检查文件</p>
+<p>执行测试检查编译是否成功</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;db_bench</span><br></pre></td></tr></table></figure>
 
 <h3 id="snappy支持"><a href="#snappy支持" class="headerlink" title="snappy支持"></a>snappy支持</h3><p>修改<code>leveldb/CMakeLists.txt</code>, 在<code>check_library_exists(snappy snappy_compress &quot;&quot; HAVE_SNAPPY)</code>语句前后添加依赖</p>
 <p>其中<code>/home/someone/project/snappy</code>和<code>/home/someone/project/snappy/build</code>需要替换成自己的snappy源码目录和build目录<br>添加后形式如下：</p>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 之前添加依赖</span></span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;/home/someone/project/snappy&quot;</span> <span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line">check_library_exists(snappy snappy_compress <span class="string">&quot;&quot;</span> HAVE_SNAPPY)</span><br><span class="line"><span class="comment"># 之后强制开启HAVE_SNAPPY</span></span><br><span class="line"><span class="keyword">set</span>(HAVE_SNAPPY <span class="keyword">ON</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 之前添加依赖</span></span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;/home/someone/project/snappy&quot;</span> <span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line">check_library_exists(snappy snappy_compress <span class="string">&quot;&quot;</span> HAVE_SNAPPY)</span><br><span class="line"><span class="comment"># 之后强制开启HAVE_SNAPPY</span></span><br><span class="line"><span class="keyword">set</span>(HAVE_SNAPPY <span class="keyword">ON</span>)</span><br></pre></td></tr></table></figure>
 <p>重新编译和测试</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p build &amp;&amp; <span class="built_in">cd</span> build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE=Release .. &amp;&amp; cmake --build .</span><br><span class="line">./db_bench</span><br></pre></td></tr></table></figure>
-<p>可以看到输出如下</p>
-<p>可能会遇到如下报错：</p>
-<ol>
-<li>找不到成员<br> 这种情况是由于gcc、g++版本太低导致的，需要升级版本 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">leveldb&#x2F;third_party&#x2F;googletest&#x2F;googletest&#x2F;include&#x2F;gtest&#x2F;gtest-matchers.h:414:12: error: ‘is_trivially_copy_constructible’ is not a member of ‘std’</span><br><span class="line">            std::is_trivially_copy_constructible&lt;M&gt;::value &amp;&amp;</span><br><span class="line">            ^</span><br></pre></td></tr></table></figure>
- 使用如下命令检查版本 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -v</span><br><span class="line">g++ -v</span><br></pre></td></tr></table></figure></li>
-<li>/bin/c++ /bin/cc缺失<br> 这种情况是软链缺失导致的，报错如下 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CMake Error at CMakeLists.txt:7 (project):</span><br><span class="line">  The CMAKE_CXX_COMPILER:</span><br><span class="line"></span><br><span class="line">    &#x2F;bin&#x2F;c++</span><br><span class="line"></span><br><span class="line">  is not a full path to an existing compiler tool.</span><br><span class="line"></span><br><span class="line">  Tell CMake where to find the compiler by setting either the environment</span><br><span class="line">  variable &quot;CXX&quot; or the CMake cache entry CMAKE_CXX_COMPILER to the full path</span><br><span class="line">  to the compiler, or to the compiler name if it is in the PATH.</span><br></pre></td></tr></table></figure>
- 此时需要手动恢复软链，使用<code>which gcc</code>和<code>which g++</code>确定安装位置，然后使用ln设置软链 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/g++ /bin/c++</span><br><span class="line">ln -s gcc /bin/cc</span><br></pre></td></tr></table></figure></li>
+
+<h3 id="静态编译leveldb"><a href="#静态编译leveldb" class="headerlink" title="静态编译leveldb"></a>静态编译leveldb</h3><p>因为服务器环境问题，需要静态编译leveldb, 尤其是静态编译libgcc和libg++</p>
+<p>在<code>check_library_exists(snappy snappy_compress &quot;&quot; HAVE_SNAPPY)</code>语句前后添加<code>link_libraries</code>标签配置所有的目标静态链接gcc和g++</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">link_libraries(-static-libgcc -static-libstdc++)</span><br></pre></td></tr></table></figure>
+<p>执行<code>ldd db_bench</code>可以看到已经不再依赖gcc和g++了</p>
+<p>执行<code>strings /lib64/libstdc++.so.6 | grep GLIBCXX</code>可以查看目前支持的版本</p>
+<h3 id="可能会遇到如下报错："><a href="#可能会遇到如下报错：" class="headerlink" title="可能会遇到如下报错："></a>可能会遇到如下报错：</h3><ol>
+<li><p>找不到成员</p>
+<p> 这种情况是由于gcc、g++版本太低导致的，需要升级版本</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">leveldb&#x2F;third_party&#x2F;googletest&#x2F;googletest&#x2F;include&#x2F;gtest&#x2F;gtest-matchers.h:414:12: error: ‘is_trivially_copy_constructible’ is not a member of ‘std’</span><br><span class="line">            std::is_trivially_copy_constructible&lt;M&gt;::value &amp;&amp;</span><br><span class="line">            ^</span><br></pre></td></tr></table></figure>
+<p> 使用如下命令检查版本</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -v</span><br><span class="line">g++ -v</span><br></pre></td></tr></table></figure></li>
+<li><p>/bin/c++ /bin/cc缺失</p>
+<p> 这种情况是软链缺失导致的，报错如下</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CMake Error at CMakeLists.txt:7 (project):</span><br><span class="line">  The CMAKE_CXX_COMPILER:</span><br><span class="line"></span><br><span class="line">    &#x2F;bin&#x2F;c++</span><br><span class="line"></span><br><span class="line">  is not a full path to an existing compiler tool.</span><br><span class="line"></span><br><span class="line">  Tell CMake where to find the compiler by setting either the environment</span><br><span class="line">  variable &quot;CXX&quot; or the CMake cache entry CMAKE_CXX_COMPILER to the full path</span><br><span class="line">  to the compiler, or to the compiler name if it is in the PATH.</span><br></pre></td></tr></table></figure>
+<p> 此时需要手动恢复软链，使用<code>which gcc</code>和<code>which g++</code>确定安装位置，然后使用ln设置软链</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/g++ /bin/c++</span><br><span class="line">ln -s gcc /bin/cc</span><br></pre></td></tr></table></figure></li>
+<li><p>/lib64/libstdc++.so.6: version `GLIBCXX_3.4.22’ not found</p>
+</li>
 </ol>
+<p>  建议使用静态链接</p>
 <h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><p>编写一个简单的测试demo, 放在与leveldb根目录同级的目录下</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;leveldb/db.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    leveldb::DB *db;</span><br><span class="line">    leveldb::Options options;</span><br><span class="line">    options.create_if_missing = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// open</span></span><br><span class="line">    leveldb::Status status = leveldb::DB::<span class="built_in">Open</span>(options, <span class="string">&quot;testdb&quot;</span>, &amp;db);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    string key = <span class="string">&quot;name&quot;</span>;</span><br><span class="line">    string value = <span class="string">&quot;shane&quot;</span>;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;write:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="comment">// write</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Put</span>(leveldb::<span class="built_in">WriteOptions</span>(), key, value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// delete</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Delete</span>(leveldb::<span class="built_in">WriteOptions</span>(), key);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;delete:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read error: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//close</span></span><br><span class="line">    <span class="keyword">delete</span> db;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -440,23 +470,6 @@
         <tag>gcc</tag>
         <tag>g++</tag>
         <tag>cmake</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
       </tags>
   </entry>
   <entry>
@@ -540,23 +553,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch 矩阵操作</title>
-    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Wireguard 配置部署及技术讲解</title>
     <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
@@ -621,6 +617,71 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch 矩阵操作</title>
+    <url>/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 1, 1</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">y, x &#x3D; 5, 2</span><br><span class="line">nearby_mask &#x3D; torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] &#x3D; 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] &#x3D; 1</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动态规划相关题目</title>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关知识点</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+<span id="more"></span>
+
+<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
+<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
+<p>container/heap</p>
+<p>4.1 heap.Init</p>
+<p>4.2 heap.Push</p>
+<p>4.3 heap.Pop</p>
+<p>4.4 heap.Fix</p>
+<p>4.5 heap.Remove</p>
+<p>实现</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>堆</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一个新奇的国产web引擎————YC编译器</title>
     <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
     <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
@@ -671,54 +732,6 @@
         <tag>yc</tag>
         <tag>浏览器</tag>
         <tag>c++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>动态规划相关题目</title>
-    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>动态规划类题目笔记</p>
-<span id="more"></span>
-
-<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
-<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
-<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
-<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
-<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>… …</p>
-<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
-<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
-<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>动态规划</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>堆相关知识点</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>堆类题目堆相关知识点</p>
-<span id="more"></span>
-
-<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
-<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
-<p>container/heap</p>
-<p>4.1 heap.Init</p>
-<p>4.2 heap.Push</p>
-<p>4.3 heap.Pop</p>
-<p>4.4 heap.Fix</p>
-<p>4.5 heap.Remove</p>
-<p>实现</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>堆</tag>
       </tags>
   </entry>
   <entry>
