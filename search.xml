@@ -38,6 +38,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+<span id="more"></span>
+
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++重写和虚函数对比</title>
     <url>/2021/09/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
@@ -100,23 +120,21 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
 <span id="more"></span>
 
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
 ]]></content>
       <categories>
         <category>刷题笔记</category>
       </categories>
       <tags>
-        <tag>stdio</tag>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -162,24 +180,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -198,6 +198,43 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -268,43 +305,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python使用Pipe控制命令行输入输出</title>
     <url>/2021/07/13/Python%E4%BD%BF%E7%94%A8Pipe%E6%8E%A7%E5%88%B6%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/</url>
     <content><![CDATA[<p>在开发过程中，我们有时需要在python中调用诸如ffmpeg这样的命令。此时就不可避免的需要用到pipe。</p>
@@ -340,6 +340,33 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>tensorrt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -384,30 +411,27 @@
       </tags>
   </entry>
   <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+    <title>hive中操作json以及对list的处理</title>
+    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
 <span id="more"></span>
 
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+
+<p>假设json数据为</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
 ]]></content>
       <categories>
-        <category>草稿</category>
+        <category>前端技术</category>
+        <category>容器技术</category>
       </categories>
       <tags>
-        <tag>Yolo发展整理</tag>
+        <tag>get_json_object</tag>
+        <tag>hive</tag>
+        <tag>json</tag>
+        <tag>array</tag>
       </tags>
   </entry>
   <entry>
@@ -501,6 +525,23 @@
       </tags>
   </entry>
   <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>leveldb静态编译及snappy支持</title>
     <url>/2021/11/17/leveldb%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E5%8F%8Asnappy%E6%94%AF%E6%8C%81/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -561,68 +602,6 @@
       </tags>
   </entry>
   <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>python 删除超大目录</title>
-    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
-    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
-<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
-<span id="more"></span>
-
-<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
-<li>读取目录数据，获得全部的文件</li>
-<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-</ol>
-<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
-<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
-<p>例如：</p>
-<ul>
-<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
-<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
-</ul>
-<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
-<li>读取目录数据，获得一个文件</li>
-<li>获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-<li>休眠一小段时间</li>
-<li>回到第一步</li>
-</ol>
-<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
-<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
-<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
-<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>sata</tag>
-        <tag>超大目录</tag>
-        <tag>os.listdir</tag>
-        <tag>os.walk</tag>
-        <tag>os.scandir</tag>
-        <tag>dirent</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch GCN 实现以及使用</title>
     <url>/2020/03/05/pytorch-GCN-%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络</p>
@@ -672,6 +651,51 @@
       </categories>
       <tags>
         <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>python 删除超大目录</title>
+    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
+    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
+<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
+<span id="more"></span>
+
+<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
+<li>读取目录数据，获得全部的文件</li>
+<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+</ol>
+<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
+<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
+<p>例如：</p>
+<ul>
+<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
+<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
+</ul>
+<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>读取目录数据，获得一个文件</li>
+<li>获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+<li>休眠一小段时间</li>
+<li>回到第一步</li>
+</ol>
+<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
+<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
+<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
+<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>sata</tag>
+        <tag>超大目录</tag>
+        <tag>os.listdir</tag>
+        <tag>os.walk</tag>
+        <tag>os.scandir</tag>
+        <tag>dirent</tag>
       </tags>
   </entry>
   <entry>
@@ -1067,6 +1091,26 @@
       </categories>
       <tags>
         <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>模型转换时打包归一化预处理操作</title>
+    <url>/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>在模型运行时，预处理是一个非常耗时的操作，其实在进行模型转换时就可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后就可以随着模型一起被加速执行。</p>
+<p>归一化Module如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#39;mean&#39;, torch.tensor([0.485, 0.456, 0.406], dtype&#x3D;torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#39;std&#39;, torch.tensor([0.229, 0.224, 0.225], dtype&#x3D;torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#39;norm&#39;, torch.tensor([255.0], dtype&#x3D;torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images &#x2F; self.norm - self.mean) &#x2F; self.std</span><br></pre></td></tr></table></figure>
+
+<p>使用时修改模型的inti和forward函数即可</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize &#x3D; Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x &#x3D; self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>归一化</tag>
+        <tag>预处理</tag>
+        <tag>Normalize</tag>
+        <tag>ONNX</tag>
+        <tag>Tensorrt</tag>
       </tags>
   </entry>
   <entry>
