@@ -263,7 +263,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>624</span>
+              <span>662</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -289,8 +289,9 @@
 <p>假设json数据为</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
-<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
+<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
 
     </div>
 
@@ -444,7 +445,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">55k</span>
+    <span title="站点总字数">56k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
