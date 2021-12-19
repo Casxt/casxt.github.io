@@ -764,6 +764,30 @@
       </tags>
   </entry>
   <entry>
+    <title>动态规划相关题目</title>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一个新奇的国产web引擎————YC编译器</title>
     <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
     <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
@@ -814,30 +838,6 @@
         <tag>yc</tag>
         <tag>浏览器</tag>
         <tag>c++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>动态规划相关题目</title>
-    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>动态规划类题目笔记</p>
-<span id="more"></span>
-
-<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
-<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
-<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
-<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
-<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>… …</p>
-<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
-<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
-<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>动态规划</tag>
       </tags>
   </entry>
   <entry>
@@ -1172,6 +1172,26 @@
       </categories>
       <tags>
         <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次libc损坏惊险经历</title>
+    <url>/2021/12/19/%E8%AE%B0%E4%B8%80%E6%AC%A1libc%E6%8D%9F%E5%9D%8F%E7%9A%84%E6%95%91%E6%8F%B4/</url>
+    <content><![CDATA[<p>最近看到知乎的上关于最让自己印象深刻的一次bug的经历，不经把我的思绪拉回了研一时代，那一次libc依赖损坏的事故。</p>
+<span id="more"></span>
+
+<p>当时需要在断网服务器集群上部署一个caffe程序，负责部署的同学跟我说他的程序需要升级libc，我并未多想，给他的账号开通root权限后让他自行操作(我以为他会使用yum安装)。</p>
+<p>许久之后，他突然找到我说，服务器崩溃了，ssh无法连接，我立刻新建了一个ssh测试了一下，果然出了错误，我的心一下子就揪了起来，因为此时我还无法确定ssh崩溃的原因是什么，如果只是配置文件的问题还好说，如果是系统问题那麻烦就大了。</p>
+<p>当时我非常慌张，这台服务器上已经配置了许多服务，如果此时重装服务器，之前的努力将会前功尽弃，而且重装需要专人上门配置，如此一来工期就会大大拖延，我用最短的时间跟他确认了在崩溃之前进行的操作，在一大通对账之后，我惊讶的发现他自己编译出libc并直接使用make install安装到了系统里，由于一些现在已经不可考据的原因跟系统不兼容，大部分命令已经无法使用了。</p>
+<p>根据回忆，当时的情况是原系统中/lib64/libc.so.6软链到/lib64/libc-2.12.so，被手动make install之后软链变成了指向/lib64/libc-2.23.so，之后大量的命令无法使用</p>
+<p>报错类似于<code>error while loading shared libraries: __vdso_time: invalid mode for dlopen(): Invalid argument</code></p>
+<p>万幸的是手上当时还有一个ssh连接没有关闭，我冷静下来，使用LD_PRELOAD=/lib64/libc-2.12.so [cmd]进行尝试，发现还可以恢复这部分命令。最后在小心翼翼的恢复了软链之后，又从集群中的其他机器上复制了根目录下的文件进行替换，才彻底解决了这次事件，之后我第一时间下掉了他的root权限，并告知他以后他的libc依赖只能自己指定环境变量来加载。</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
