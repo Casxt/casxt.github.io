@@ -202,6 +202,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">protobuf repeated 字段操作总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-27 16:10:00" itemprop="dateCreated datePublished" datetime="2021-12-27T16:10:00+08:00">2021-12-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/" itemprop="url" rel="index"><span itemprop="name">编程技巧</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <span id="more"></span>
+
+<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://maple.link/2021/12/20/hdfs%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1014,97 +1106,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/" class="post-title-link" itemprop="url">python 删除超大目录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-11 16:31:00" itemprop="dateCreated datePublished" datetime="2021-08-11T16:31:00+08:00">2021-08-11</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
-<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1174,7 +1175,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1187,7 +1188,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1225,12 +1226,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">57k</span>
+    <span title="站点总字数">58k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">52 分钟</span>
+    <span title="站点阅读时长">53 分钟</span>
 </div>
 
         
