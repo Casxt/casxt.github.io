@@ -120,24 +120,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -177,6 +159,24 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -343,33 +343,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
-<span id="more"></span>
-
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
-]]></content>
-      <categories>
-        <category>草稿</category>
-      </categories>
-      <tags>
-        <tag>Yolo发展整理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Triton shared memory</title>
     <url>/2021/11/22/Triton%20shared%20memory/</url>
     <content><![CDATA[<p>在使用triton时，可以使用shared memory方式加速数据传输的过程</p>
@@ -411,6 +384,33 @@
       </tags>
   </entry>
   <entry>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hdfs命令行流式处理</title>
     <url>/2021/12/20/hdfs%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<h1 id="文件流式处理"><a href="#文件流式处理" class="headerlink" title="文件流式处理"></a>文件流式处理</h1><p>在处理hdfs数据时，可能会遇到本地磁盘空间不足以存放数据的问题，这时我们可以使用linux的stdio对数据进行流式处理，以替换每行内容为例</p>
@@ -433,31 +433,6 @@
         <tag>hdfs</tag>
         <tag>stdin</tag>
         <tag>stream</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>hive中操作json以及对list的处理</title>
-    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
-<span id="more"></span>
-
-
-<p>假设json数据为</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
-<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
-<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
-]]></content>
-      <categories>
-        <category>前端技术</category>
-        <category>容器技术</category>
-      </categories>
-      <tags>
-        <tag>get_json_object</tag>
-        <tag>hive</tag>
-        <tag>json</tag>
-        <tag>array</tag>
       </tags>
   </entry>
   <entry>
@@ -496,6 +471,31 @@
         <tag>CI/CD</tag>
         <tag>Github Action</tag>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hive中操作json以及对list的处理</title>
+    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
+<span id="more"></span>
+
+
+<p>假设json数据为</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
+<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
+]]></content>
+      <categories>
+        <category>前端技术</category>
+        <category>容器技术</category>
+      </categories>
+      <tags>
+        <tag>get_json_object</tag>
+        <tag>hive</tag>
+        <tag>json</tag>
+        <tag>array</tag>
       </tags>
   </entry>
   <entry>
@@ -548,46 +548,6 @@
         <tag>chain</tag>
         <tag>rule</tag>
         <tag>filter</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>protobuf repeated 字段操作总结</title>
-    <url>/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
-
-<h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>编程技巧</category>
-      </categories>
-      <tags>
-        <tag>protobuf</tag>
-        <tag>c++</tag>
-        <tag>cpp</tag>
       </tags>
   </entry>
   <entry>
@@ -651,6 +611,136 @@
       </tags>
   </entry>
   <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>protobuf repeated 字段操作总结</title>
+    <url>/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>编程技巧</category>
+      </categories>
+      <tags>
+        <tag>protobuf</tag>
+        <tag>c++</tag>
+        <tag>cpp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>python import 机制</title>
+    <url>/2021/08/11/python-import-%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>python中的各种import方式</p>
+<span id="more"></span>
+
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p>目录结构默认如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;root&#x2F;project</span><br><span class="line">├── &#x2F;animal</span><br><span class="line">│   ├── cat.py</span><br><span class="line">│   ├── dog.py</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── main.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>animal/__init__.py</code>中内容为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">print(&quot;animal imported&quot;)</span><br><span class="line">from .cat import Cat</span><br><span class="line">from .cat import Dog</span><br></pre></td></tr></table></figure>
+
+<p><code>animal/cat.py</code>中内容为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">print(&quot;Cat imported&quot;)</span><br><span class="line">class Cat(object):</span><br><span class="line">    def __init__(self) -&gt; None:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
+<p>其他文件同理</p>
+<h2 id="在main中进行import"><a href="#在main中进行import" class="headerlink" title="在main中进行import"></a>在main中进行import</h2><p>import时一定会执行文件夹下的<code>__init__.py</code></p>
+<p><code>main.py</code>中为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import animal</span><br><span class="line"># 或</span><br><span class="line">from animal import Cat</span><br><span class="line"># 或</span><br><span class="line">from animal.cat import Cat</span><br><span class="line"># 或</span><br><span class="line">import animal.cat</span><br></pre></td></tr></table></figure>
+
+<p>在<code>/root/project</code>下执行<code>python main.py</code></p>
+<p>此时import执行步骤为<br><code>animal/__init__.py</code> -&gt; <code>animal/cat.py</code><br>输出为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="在子目录中执行-init-py"><a href="#在子目录中执行-init-py" class="headerlink" title="在子目录中执行__init__.py"></a>在子目录中执行__init__.py</h2><p>在<code>/root/project/animal</code>下执行<code>python __init__.py</code></p>
+<p>会发生报错</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;__init__.py&quot;, line 3, in &lt;module&gt;</span><br><span class="line">    from .cat import Cat</span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
+
+<p>此时可以通过修改sys.path来自定义搜索范围</p>
+<p>修改<code>animal/__init__.py</code>中内容为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root &#x3D; Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;animal imported, add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">from animal.cat import Cat</span><br><span class="line">from animal.dog import Dog</span><br></pre></td></tr></table></figure>
+
+<p>此时输出为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">animal imported, add &#x2F;data&#x2F;karizhang&#x2F;triton&#x2F;python_pkg_test to sys.path</span><br><span class="line">animal imported, add &#x2F;data&#x2F;karizhang&#x2F;triton&#x2F;python_pkg_test to sys.path</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+
+<p>可以发现print被执行了两遍，实际上所有语句都被执行了两遍</p>
+]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>import</tag>
+        <tag>from</tag>
+        <tag>sys.path</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>python 删除超大目录</title>
+    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
+    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
+<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
+<span id="more"></span>
+
+<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
+<li>读取目录数据，获得全部的文件</li>
+<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+</ol>
+<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
+<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
+<p>例如：</p>
+<ul>
+<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
+<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
+</ul>
+<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>读取目录数据，获得一个文件</li>
+<li>获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+<li>休眠一小段时间</li>
+<li>回到第一步</li>
+</ol>
+<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
+<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
+<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
+<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>sata</tag>
+        <tag>超大目录</tag>
+        <tag>os.listdir</tag>
+        <tag>os.walk</tag>
+        <tag>os.scandir</tag>
+        <tag>dirent</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>pytorch GCN 实现以及使用</title>
     <url>/2020/03/05/pytorch-GCN-%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>从最为广泛和简单的理解来看, 在图上利用多个个节点数据进行计算的操作都可以称之为图网络</p>
@@ -700,51 +790,6 @@
       </categories>
       <tags>
         <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>python 删除超大目录</title>
-    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
-    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
-<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
-<span id="more"></span>
-
-<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
-<li>读取目录数据，获得全部的文件</li>
-<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-</ol>
-<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
-<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
-<p>例如：</p>
-<ul>
-<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
-<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
-</ul>
-<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
-<li>读取目录数据，获得一个文件</li>
-<li>获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-<li>休眠一小段时间</li>
-<li>回到第一步</li>
-</ol>
-<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
-<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
-<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
-<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>sata</tag>
-        <tag>超大目录</tag>
-        <tag>os.listdir</tag>
-        <tag>os.walk</tag>
-        <tag>os.scandir</tag>
-        <tag>dirent</tag>
       </tags>
   </entry>
   <entry>
@@ -865,6 +910,30 @@
       </tags>
   </entry>
   <entry>
+    <title>动态规划相关题目</title>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>堆相关知识点</title>
     <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>堆类题目堆相关知识点</p>
@@ -889,27 +958,20 @@
       </tags>
   </entry>
   <entry>
-    <title>动态规划相关题目</title>
-    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>动态规划类题目笔记</p>
+    <title>堆相关题目</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>堆类相关题目</p>
 <span id="more"></span>
 
-<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
-<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
-<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
-<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
-<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>… …</p>
-<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
-<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
-<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+<h1 id="连续中值"><a href="#连续中值" class="headerlink" title="连续中值"></a>连续中值</h1><p>将半段数字放于一个小根堆，后半段放入大根堆</p>
+<p>取小根堆和大根堆的堆顶即可推导出中位数</p>
+<p>实际操作时，ruo</p>
 ]]></content>
       <categories>
         <category>刷题笔记</category>
       </categories>
       <tags>
-        <tag>动态规划</tag>
+        <tag>堆</tag>
       </tags>
   </entry>
   <entry>
@@ -978,48 +1040,6 @@
       </tags>
   </entry>
   <entry>
-    <title>堆相关题目</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>堆类相关题目</p>
-<span id="more"></span>
-
-<h1 id="连续中值"><a href="#连续中值" class="headerlink" title="连续中值"></a>连续中值</h1><p>将半段数字放于一个小根堆，后半段放入大根堆</p>
-<p>取小根堆和大根堆的堆顶即可推导出中位数</p>
-<p>实际操作时，ruo</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>堆</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数学相关题目</title>
-    <url>/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>数学类相关题目</p>
-<span id="more"></span>
-
-<h1 id="整数拆分"><a href="#整数拆分" class="headerlink" title="整数拆分"></a>整数拆分</h1><p><a href="https://leetcode-cn.com/problems/integer-break/">https://leetcode-cn.com/problems/integer-break/</a></p>
-<p>考虑数字为4的情况，最大结果为2<em>2<br>考虑数字为5的情况，最大结果为2</em>3<br>考虑数字为6的情况，最大结果为3<em>3<br>考虑数字为7的情况，最大结果为3</em>2<em>2<br>考虑数字为8的情况，最大结果为3</em>3*2<br>所有大于3的数字一定可由2和3相加得到，归纳可证，需要将数字尽可能拆分为3相加</p>
-<p>根据 n 除以 3 的余数进行分类讨论：</p>
-<p>如果余数为 0，拆分为 n//3个3</p>
-<p>如果余数为 1，拆分为 (n//3)-1 个 3和1个4</p>
-<p>如果余数为 2，拆分为 n//3 个 3和1个2</p>
-<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><p><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a></p>
-<p>较为复杂，多复习</p>
-<p>不断将位置i和赋值给i+k,直到回到i</p>
-<p>从i+1开始重复上述过程</p>
-<p>直到处理过的数字和数组长度相等</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>手动挂载Nvidia显卡到docker容器中</title>
     <url>/2020/03/29/%E6%89%8B%E5%8A%A8%E6%8C%82%E8%BD%BDNvidia%E6%98%BE%E5%8D%A1%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD/</url>
     <content><![CDATA[<p>在docker使用显卡往往需要nvidia的nvidia-container驱动，本文将叫你如何使用原生docker挂载显卡。<br>虽然在最新版的docker中已经内置了nvidia驱动，但是对于podman等其他容器管理来说，这套方法依旧是有意义的。</p>
@@ -1054,6 +1074,31 @@
         <tag>nvidia</tag>
         <tag>device</tag>
         <tag>driver</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数学相关题目</title>
+    <url>/2021/05/03/%E6%95%B0%E5%AD%A6%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>数学类相关题目</p>
+<span id="more"></span>
+
+<h1 id="整数拆分"><a href="#整数拆分" class="headerlink" title="整数拆分"></a>整数拆分</h1><p><a href="https://leetcode-cn.com/problems/integer-break/">https://leetcode-cn.com/problems/integer-break/</a></p>
+<p>考虑数字为4的情况，最大结果为2<em>2<br>考虑数字为5的情况，最大结果为2</em>3<br>考虑数字为6的情况，最大结果为3<em>3<br>考虑数字为7的情况，最大结果为3</em>2<em>2<br>考虑数字为8的情况，最大结果为3</em>3*2<br>所有大于3的数字一定可由2和3相加得到，归纳可证，需要将数字尽可能拆分为3相加</p>
+<p>根据 n 除以 3 的余数进行分类讨论：</p>
+<p>如果余数为 0，拆分为 n//3个3</p>
+<p>如果余数为 1，拆分为 (n//3)-1 个 3和1个4</p>
+<p>如果余数为 2，拆分为 n//3 个 3和1个2</p>
+<h1 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h1><p><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a></p>
+<p>较为复杂，多复习</p>
+<p>不断将位置i和赋值给i+k,直到回到i</p>
+<p>从i+1开始重复上述过程</p>
+<p>直到处理过的数字和数组长度相等</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
