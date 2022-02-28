@@ -258,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -283,7 +283,7 @@
 <h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p>目录结构默认如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;root&#x2F;project</span><br><span class="line">├── &#x2F;animal</span><br><span class="line">│   ├── cat.py</span><br><span class="line">│   ├── dog.py</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── main.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p><code>animal/__init__.py</code>中内容为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;animal imported&quot;)</span><br><span class="line">from .cat import Cat</span><br><span class="line">from .cat import Dog</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;animal imported&quot;)</span><br><span class="line">from .cat import Cat</span><br><span class="line">from .dog import Dog</span><br></pre></td></tr></table></figure>
 
 <p><code>animal/cat.py</code>中内容为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;Cat imported&quot;)</span><br><span class="line">class Cat(object):</span><br><span class="line">    def __init__(self) -&gt; None:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
@@ -301,14 +301,24 @@
 <p>会发生报错</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;__init__.py&quot;, line 3, in &lt;module&gt;</span><br><span class="line">    from .cat import Cat</span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
 
+
+<h2 id="在子目录中直接运行文件"><a href="#在子目录中直接运行文件" class="headerlink" title="在子目录中直接运行文件"></a>在子目录中直接运行文件</h2><p>有时需要在子目录中执行方便的脚本，但是这时就会遇到报错</p>
 <p>此时可以通过修改sys.path来自定义搜索范围</p>
-<p>修改<code>animal/__init__.py</code>中内容为</p>
+<p>首先尝试修改<code>animal/__init__.py</code>中内容为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root &#x3D; Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;animal imported, add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">from animal.cat import Cat</span><br><span class="line">from animal.dog import Dog</span><br></pre></td></tr></table></figure>
 
+<p>在<code>/root/project/animal</code>下执行<code>python __init__.py</code></p>
 <p>此时输出为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">animal imported, add &#x2F;data&#x2F;karizhang&#x2F;triton&#x2F;python_pkg_test to sys.path</span><br><span class="line">animal imported, add &#x2F;data&#x2F;karizhang&#x2F;triton&#x2F;python_pkg_test to sys.path</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">animal imported, add &#x2F;root&#x2F;project&#x2F;python_pkg_test to sys.path</span><br><span class="line">animal imported, add &#x2F;root&#x2F;project&#x2F;python_pkg_test to sys.path</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
 
-<p>可以发现print被执行了两遍，实际上所有语句都被执行了两遍</p>
+<p>可以发现print被执行了两遍，实际上所有语句都被执行了两遍，此时打印sys.path会发现存在两个<code>/root/project</code></p>
+<p>所以不能直接这样设置, 首先恢复<code>animal/__init__.py</code></p>
+<p>新建<code>animal/__init__.py</code>, 其中内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root &#x3D; Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">print(len(sys.path))</span><br></pre></td></tr></table></figure>
+<p>在<code>/root/project/animal</code>下执行<code>python mian.py</code></p>
+<p>此时输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add &#x2F;root&#x2F;project to sys.path</span><br><span class="line">[&#39;&#x2F;root&#x2F;project&#39;, &#39;&#x2F;root&#x2F;project&#x2F;animal&#39;, ...]</span><br><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -397,7 +407,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8main%E4%B8%AD%E8%BF%9B%E8%A1%8Cimport"><span class="nav-number">2.</span> <span class="nav-text">在main中进行import</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%AD%90%E7%9B%AE%E5%BD%95%E4%B8%AD%E6%89%A7%E8%A1%8C-init-py"><span class="nav-number">3.</span> <span class="nav-text">在子目录中执行__init__.py</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8main%E4%B8%AD%E8%BF%9B%E8%A1%8Cimport"><span class="nav-number">2.</span> <span class="nav-text">在main中进行import</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%AD%90%E7%9B%AE%E5%BD%95%E4%B8%AD%E6%89%A7%E8%A1%8C-init-py"><span class="nav-number">3.</span> <span class="nav-text">在子目录中执行__init__.py</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%AD%90%E7%9B%AE%E5%BD%95%E4%B8%AD%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">在子目录中直接运行文件</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -467,7 +477,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">54 分钟</span>
+    <span title="站点阅读时长">55 分钟</span>
 </div>
 
         
