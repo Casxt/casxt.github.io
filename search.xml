@@ -38,26 +38,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
-<span id="more"></span>
-
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>stdio</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++重写和虚函数对比</title>
     <url>/2021/09/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
@@ -120,6 +100,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+<span id="more"></span>
+
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LRU相关题目</title>
     <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
@@ -135,27 +135,6 @@
       </categories>
       <tags>
         <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>NFS挂载失效处理</title>
-    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
-<span id="more"></span>
-
-<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
-<ol>
-<li><code>nfsstat -m</code></li>
-<li><code>mount</code></li>
-</ol>
-<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>nfs</tag>
-        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -192,8 +171,8 @@
         <category>网络技术</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>golang</tag>
+        <tag>linux</tag>
         <tag>table</tag>
         <tag>route</tag>
         <tag>routing</tag>
@@ -201,40 +180,24 @@
       </tags>
   </entry>
   <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+    <title>NFS挂载失效处理</title>
+    <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
 <span id="more"></span>
 
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
+<h2 id="查找NFS目录位置"><a href="#查找NFS目录位置" class="headerlink" title="查找NFS目录位置"></a>查找NFS目录位置</h2><p>由于NFS目录直接卡死，导致df等命令直接失效，我们只能曲线救国查询NFS目录位置。通常来说，下述两条命令都可以正确执行。</p>
+<ol>
+<li><code>nfsstat -m</code></li>
+<li><code>mount</code></li>
+</ol>
+<h2 id="解挂"><a href="#解挂" class="headerlink" title="解挂"></a>解挂</h2><p>解挂可以尝试<code>umount -f /path</code>如果提示目录忙，可以继续尝<code>umount -l /path</code>。解挂后相关程序就可以正常退出，此时在重新挂载NFS启动即可。</p>
 ]]></content>
       <categories>
-        <category>GPU</category>
+        <category>网络技术</category>
       </categories>
       <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
+        <tag>linux</tag>
+        <tag>nfs</tag>
       </tags>
   </entry>
   <entry>
@@ -302,6 +265,43 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -488,66 +488,14 @@
 <p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
 ]]></content>
       <categories>
-        <category>前端技术</category>
-        <category>容器技术</category>
+        <category>大数据</category>
       </categories>
       <tags>
         <tag>get_json_object</tag>
         <tag>hive</tag>
-        <tag>json</tag>
-        <tag>array</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iptables基础概念</title>
-    <url>/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</url>
-    <content><![CDATA[<p>iptables 是标准的linux防火墙命令行控制工具, 其底层调用netfilter来实现各种功能</p>
-<p>iptables 中最重要的概念就是 table, chain 和 rule</p>
-<span id="more"></span>
-<h1 id="table"><a href="#table" class="headerlink" title="table"></a>table</h1><p>iptables 中包含多个 table, 每个 table 又包含多个 chain, table 是 chain 的集合, 通常可以将 table 视作 chain 按照目的进行的分类</p>
-<p>从数据进入网卡到流出网卡的过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们可以在某个 table 中添加 chain 或 rule 来在某个特定的时间点处理数据。</p>
-<p>iptables 中包含了 raw, filter, nat, mangle, security 五个 table, 其中最常用的就是 nat 和 filter。</p>
-<p>nat 中包含了会在数据<strong>收发阶段</strong>被调用的 chain, 因此可以用来对数据进行预处理和后处理。</p>
-<p>filter 中包含了会在<strong>收发阶段</strong>和<strong>转发阶段</strong>被调用的 chain, 因此通常用来实现防火墙, 对数据的原目的地址端口协议等进行检查。</p>
-<h1 id="chain"><a href="#chain" class="headerlink" title="chain"></a>chain</h1><p>chain 是规则(rule)的集合, 每个 table 中会包含数量不定的 chain, 不同 table 中的 chain 可能具有相同的名字 </p>
-<p>例如 nat 中包含了 PREROUTING, POSTROUTING, OUTPUT 三个 chain, filter 中包含了 INPUT, OUTPUT, FORWARD 三个 chain</p>
-<p>在 iptables 默认的5个 table 中, 每个 table 都包含了数量不一的 chain, 这些 chain 会在数据处理的各个节点被调用, 我们通过在这些默认的 chain 中添加 rule 就可以实现对数据包的捕获和处理。</p>
-<h1 id="rule"><a href="#rule" class="headerlink" title="rule"></a>rule</h1><p>rule 是处理数据的具体规则, 数据收发过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们在这些 chain 中添加规则就可以随心所欲的处理数据。</p>
-<p>通常来说, 一个 rule 功能包括:</p>
-<ol>
-<li>接受或拒绝一个包</li>
-<li>将一个包送到某个 chain 里继续处理</li>
-<li>改写包</li>
-</ol>
-<h1 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h1><p>按照下图所示, 我们只关注 filter 和 nat</p>
-<p>对于收到的目的地址为本机的数据包, 依次经过 filter 和 nat 的5个 chain:</p>
-<ol>
-<li>nat: PEROUTING</li>
-<li>filter: INPUT</li>
-<li>nat: OUTPUT</li>
-<li>filter: OUTPUT</li>
-<li>nat: POSTOUTING</li>
-</ol>
-<p>对于收到的目的地址不为本机的数据包, 依次经过 filter 和 nat 的3个 chain:</p>
-<ol>
-<li>nat: PEROUTING</li>
-<li>filter: FORWARD</li>
-<li>nat: POSTOUTING</li>
-</ol>
-<blockquote>
-<div style="width:50%;margin:auto"> <img src="/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/iptables.jpg" class="" title="iptables 200"> </div>
-<small>https://www.it.uu.se/edu/course/homepage/sakdat/vt09/pm/programme/iptables.pdfhexo</small>
-</blockquote>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>table</tag>
-        <tag>iptables</tag>
-        <tag>chain</tag>
-        <tag>rule</tag>
-        <tag>filter</tag>
+        <tag>spark</tag>
+        <tag>presto</tag>
+        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
@@ -611,6 +559,58 @@
       </tags>
   </entry>
   <entry>
+    <title>iptables基础概念</title>
+    <url>/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</url>
+    <content><![CDATA[<p>iptables 是标准的linux防火墙命令行控制工具, 其底层调用netfilter来实现各种功能</p>
+<p>iptables 中最重要的概念就是 table, chain 和 rule</p>
+<span id="more"></span>
+<h1 id="table"><a href="#table" class="headerlink" title="table"></a>table</h1><p>iptables 中包含多个 table, 每个 table 又包含多个 chain, table 是 chain 的集合, 通常可以将 table 视作 chain 按照目的进行的分类</p>
+<p>从数据进入网卡到流出网卡的过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们可以在某个 table 中添加 chain 或 rule 来在某个特定的时间点处理数据。</p>
+<p>iptables 中包含了 raw, filter, nat, mangle, security 五个 table, 其中最常用的就是 nat 和 filter。</p>
+<p>nat 中包含了会在数据<strong>收发阶段</strong>被调用的 chain, 因此可以用来对数据进行预处理和后处理。</p>
+<p>filter 中包含了会在<strong>收发阶段</strong>和<strong>转发阶段</strong>被调用的 chain, 因此通常用来实现防火墙, 对数据的原目的地址端口协议等进行检查。</p>
+<h1 id="chain"><a href="#chain" class="headerlink" title="chain"></a>chain</h1><p>chain 是规则(rule)的集合, 每个 table 中会包含数量不定的 chain, 不同 table 中的 chain 可能具有相同的名字 </p>
+<p>例如 nat 中包含了 PREROUTING, POSTROUTING, OUTPUT 三个 chain, filter 中包含了 INPUT, OUTPUT, FORWARD 三个 chain</p>
+<p>在 iptables 默认的5个 table 中, 每个 table 都包含了数量不一的 chain, 这些 chain 会在数据处理的各个节点被调用, 我们通过在这些默认的 chain 中添加 rule 就可以实现对数据包的捕获和处理。</p>
+<h1 id="rule"><a href="#rule" class="headerlink" title="rule"></a>rule</h1><p>rule 是处理数据的具体规则, 数据收发过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们在这些 chain 中添加规则就可以随心所欲的处理数据。</p>
+<p>通常来说, 一个 rule 功能包括:</p>
+<ol>
+<li>接受或拒绝一个包</li>
+<li>将一个包送到某个 chain 里继续处理</li>
+<li>改写包</li>
+</ol>
+<h1 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h1><p>按照下图所示, 我们只关注 filter 和 nat</p>
+<p>对于收到的目的地址为本机的数据包, 依次经过 filter 和 nat 的5个 chain:</p>
+<ol>
+<li>nat: PEROUTING</li>
+<li>filter: INPUT</li>
+<li>nat: OUTPUT</li>
+<li>filter: OUTPUT</li>
+<li>nat: POSTOUTING</li>
+</ol>
+<p>对于收到的目的地址不为本机的数据包, 依次经过 filter 和 nat 的3个 chain:</p>
+<ol>
+<li>nat: PEROUTING</li>
+<li>filter: FORWARD</li>
+<li>nat: POSTOUTING</li>
+</ol>
+<blockquote>
+<div style="width:50%;margin:auto"> <img src="/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/iptables.jpg" class="" title="iptables 200"> </div>
+<small>https://www.it.uu.se/edu/course/homepage/sakdat/vt09/pm/programme/iptables.pdfhexo</small>
+</blockquote>
+]]></content>
+      <categories>
+        <category>网络技术</category>
+      </categories>
+      <tags>
+        <tag>table</tag>
+        <tag>iptables</tag>
+        <tag>chain</tag>
+        <tag>rule</tag>
+        <tag>filter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>matplotlib 多图组合显示</title>
     <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
     <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
@@ -625,6 +625,29 @@
         <tag>python</tag>
         <tag>matplotlib</tag>
         <tag>jupyter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ORDER BY 与 SORT BY</title>
+    <url>/2022/02/28/order-by%E4%B8%8Esort-by/</url>
+    <content><![CDATA[<p>一次写sql的时候，脑子发晕，把<code>order by</code>写成了<code>sort by</code></p>
+<p>在spark生态中</p>
+<ul>
+<li><p><code>ORDER BY</code>代表每个分片内部进行排序，使用后，会发现全部数据呈现局部有序性，详情可参考<a href="https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-sortby.html">文档</a></p>
+</li>
+<li><p><code>SORT BY</code>代表整体排序，它保证最后返回的数据是全部有序的，详情可参考<a href="https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-orderby.html">文档</a></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>get_json_object</tag>
+        <tag>hive</tag>
+        <tag>spark</tag>
+        <tag>presto</tag>
+        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
@@ -920,30 +943,6 @@
       </tags>
   </entry>
   <entry>
-    <title>动态规划相关题目</title>
-    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>动态规划类题目笔记</p>
-<span id="more"></span>
-
-<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
-<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
-<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
-<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
-<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
-<p>… …</p>
-<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
-<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
-<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>动态规划</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>堆相关知识点</title>
     <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>堆类题目堆相关知识点</p>
@@ -965,6 +964,30 @@
       <tags>
         <tag>知识点速查</tag>
         <tag>堆</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动态规划相关题目</title>
+    <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>动态规划类题目笔记</p>
+<span id="more"></span>
+
+<h1 id="买卖K次股票"><a href="#买卖K次股票" class="headerlink" title="买卖K次股票"></a>买卖K次股票</h1><p>假设当前天数为i，股价为p。</p>
+<p>若此前一直不进行买卖，其最优利润为<code>dp[0] = 0</code>。</p>
+<p>若此前只做过1次买入操作，且最优利润为<code>dp[1]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入操作的最优利润为<code>max(dp[1], dp[0]-p)</code>。<code>dp[0]-p</code>表示如果以此前的最优无操作利润，在今天买入可获得的利润。</p>
+<p>若此前只做过1次买入1次卖出操作，且最优利润为<code>dp[2]</code>，考虑到今天的股价p。<br>则前i天只做过1次买入1次卖出操作的最优利润为<code>max(dp[2], dp[1]+p)</code>。<code>dp[1]+p</code>表示如果以此前的最优1次买入的最优利润在今天卖出可获得的总利润。<code>dp[1]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>若此前只做过2次买入1次卖出操作，且最优利润为<code>dp[3]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[3], dp[2]-p)</code>。<code>dp[2]-p</code>表示如果以此前的最优1次买入1次卖出可得利润的基础上，如果在今天买入可获得的利润。<code>dp[2]-p</code>更大则表示考虑到之前的买卖价格和今天的价格，在今天进行第2次买入要比在之前买入更合适。</p>
+<p>若此前只做过2次买入2次卖出操作，且最优利润为<code>dp[4]</code>，考虑到今天的股价p。<br>则前i天只做过2次买入1次卖出操作的最优利润为<code>max(dp[4], dp[3]+p)</code>。<code>dp[3]+p</code>表示如果以此前的最优2次买入1次卖出的最优利润，在今天卖出可获得的总利润。<code>dp[3]+p</code>更大则表示考虑到今天的价格，在今天卖出更合适。</p>
+<p>… …</p>
+<h1 id="戳气球"><a href="#戳气球" class="headerlink" title="戳气球"></a>戳气球</h1><p><a href="https://leetcode-cn.com/problems/burst-balloons/">https://leetcode-cn.com/problems/burst-balloons/</a></p>
+<p>使用逆向思维，从戳气球变为安置气球，对于区间[i,j]，遍历[i+1,j-1], 假设每一个位置k为第一插入气球，然后其值加上[i,k]和[k,j]的最优结果。</p>
+<p>所有的k中，值最大的即为[i,j]中的最优结果。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
       </tags>
   </entry>
   <entry>
