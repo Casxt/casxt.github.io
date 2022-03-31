@@ -120,24 +120,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
-<span id="more"></span>
-
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>LRU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -177,6 +159,24 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
       </tags>
   </entry>
   <entry>
@@ -343,33 +343,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
-<span id="more"></span>
-
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
-]]></content>
-      <categories>
-        <category>草稿</category>
-      </categories>
-      <tags>
-        <tag>Yolo发展整理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Triton shared memory</title>
     <url>/2021/11/22/Triton%20shared%20memory/</url>
     <content><![CDATA[<p>在使用triton时，可以使用shared memory方式加速数据传输的过程</p>
@@ -408,6 +381,33 @@
         <tag>nvidia</tag>
         <tag>tensorrt</tag>
         <tag>shared memory</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
+<span id="more"></span>
+
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
+      <categories>
+        <category>草稿</category>
+      </categories>
+      <tags>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -499,6 +499,58 @@
       </tags>
   </entry>
   <entry>
+    <title>iptables基础概念</title>
+    <url>/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</url>
+    <content><![CDATA[<p>iptables 是标准的linux防火墙命令行控制工具, 其底层调用netfilter来实现各种功能</p>
+<p>iptables 中最重要的概念就是 table, chain 和 rule</p>
+<span id="more"></span>
+<h1 id="table"><a href="#table" class="headerlink" title="table"></a>table</h1><p>iptables 中包含多个 table, 每个 table 又包含多个 chain, table 是 chain 的集合, 通常可以将 table 视作 chain 按照目的进行的分类</p>
+<p>从数据进入网卡到流出网卡的过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们可以在某个 table 中添加 chain 或 rule 来在某个特定的时间点处理数据。</p>
+<p>iptables 中包含了 raw, filter, nat, mangle, security 五个 table, 其中最常用的就是 nat 和 filter。</p>
+<p>nat 中包含了会在数据<strong>收发阶段</strong>被调用的 chain, 因此可以用来对数据进行预处理和后处理。</p>
+<p>filter 中包含了会在<strong>收发阶段</strong>和<strong>转发阶段</strong>被调用的 chain, 因此通常用来实现防火墙, 对数据的原目的地址端口协议等进行检查。</p>
+<h1 id="chain"><a href="#chain" class="headerlink" title="chain"></a>chain</h1><p>chain 是规则(rule)的集合, 每个 table 中会包含数量不定的 chain, 不同 table 中的 chain 可能具有相同的名字 </p>
+<p>例如 nat 中包含了 PREROUTING, POSTROUTING, OUTPUT 三个 chain, filter 中包含了 INPUT, OUTPUT, FORWARD 三个 chain</p>
+<p>在 iptables 默认的5个 table 中, 每个 table 都包含了数量不一的 chain, 这些 chain 会在数据处理的各个节点被调用, 我们通过在这些默认的 chain 中添加 rule 就可以实现对数据包的捕获和处理。</p>
+<h1 id="rule"><a href="#rule" class="headerlink" title="rule"></a>rule</h1><p>rule 是处理数据的具体规则, 数据收发过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们在这些 chain 中添加规则就可以随心所欲的处理数据。</p>
+<p>通常来说, 一个 rule 功能包括:</p>
+<ol>
+<li>接受或拒绝一个包</li>
+<li>将一个包送到某个 chain 里继续处理</li>
+<li>改写包</li>
+</ol>
+<h1 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h1><p>按照下图所示, 我们只关注 filter 和 nat</p>
+<p>对于收到的目的地址为本机的数据包, 依次经过 filter 和 nat 的5个 chain:</p>
+<ol>
+<li>nat: PEROUTING</li>
+<li>filter: INPUT</li>
+<li>nat: OUTPUT</li>
+<li>filter: OUTPUT</li>
+<li>nat: POSTOUTING</li>
+</ol>
+<p>对于收到的目的地址不为本机的数据包, 依次经过 filter 和 nat 的3个 chain:</p>
+<ol>
+<li>nat: PEROUTING</li>
+<li>filter: FORWARD</li>
+<li>nat: POSTOUTING</li>
+</ol>
+<blockquote>
+<div style="width:50%;margin:auto"> <img src="/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/iptables.jpg" class="" title="iptables 200"> </div>
+<small>https://www.it.uu.se/edu/course/homepage/sakdat/vt09/pm/programme/iptables.pdfhexo</small>
+</blockquote>
+]]></content>
+      <categories>
+        <category>网络技术</category>
+      </categories>
+      <tags>
+        <tag>table</tag>
+        <tag>iptables</tag>
+        <tag>chain</tag>
+        <tag>rule</tag>
+        <tag>filter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>leveldb静态编译及snappy支持</title>
     <url>/2021/11/17/leveldb%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E5%8F%8Asnappy%E6%94%AF%E6%8C%81/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -556,58 +608,6 @@
         <tag>gcc</tag>
         <tag>g++</tag>
         <tag>cmake</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iptables基础概念</title>
-    <url>/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</url>
-    <content><![CDATA[<p>iptables 是标准的linux防火墙命令行控制工具, 其底层调用netfilter来实现各种功能</p>
-<p>iptables 中最重要的概念就是 table, chain 和 rule</p>
-<span id="more"></span>
-<h1 id="table"><a href="#table" class="headerlink" title="table"></a>table</h1><p>iptables 中包含多个 table, 每个 table 又包含多个 chain, table 是 chain 的集合, 通常可以将 table 视作 chain 按照目的进行的分类</p>
-<p>从数据进入网卡到流出网卡的过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们可以在某个 table 中添加 chain 或 rule 来在某个特定的时间点处理数据。</p>
-<p>iptables 中包含了 raw, filter, nat, mangle, security 五个 table, 其中最常用的就是 nat 和 filter。</p>
-<p>nat 中包含了会在数据<strong>收发阶段</strong>被调用的 chain, 因此可以用来对数据进行预处理和后处理。</p>
-<p>filter 中包含了会在<strong>收发阶段</strong>和<strong>转发阶段</strong>被调用的 chain, 因此通常用来实现防火墙, 对数据的原目的地址端口协议等进行检查。</p>
-<h1 id="chain"><a href="#chain" class="headerlink" title="chain"></a>chain</h1><p>chain 是规则(rule)的集合, 每个 table 中会包含数量不定的 chain, 不同 table 中的 chain 可能具有相同的名字 </p>
-<p>例如 nat 中包含了 PREROUTING, POSTROUTING, OUTPUT 三个 chain, filter 中包含了 INPUT, OUTPUT, FORWARD 三个 chain</p>
-<p>在 iptables 默认的5个 table 中, 每个 table 都包含了数量不一的 chain, 这些 chain 会在数据处理的各个节点被调用, 我们通过在这些默认的 chain 中添加 rule 就可以实现对数据包的捕获和处理。</p>
-<h1 id="rule"><a href="#rule" class="headerlink" title="rule"></a>rule</h1><p>rule 是处理数据的具体规则, 数据收发过程中, iptables 会按照一定顺序调用各个 table 的 chain, 我们在这些 chain 中添加规则就可以随心所欲的处理数据。</p>
-<p>通常来说, 一个 rule 功能包括:</p>
-<ol>
-<li>接受或拒绝一个包</li>
-<li>将一个包送到某个 chain 里继续处理</li>
-<li>改写包</li>
-</ol>
-<h1 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h1><p>按照下图所示, 我们只关注 filter 和 nat</p>
-<p>对于收到的目的地址为本机的数据包, 依次经过 filter 和 nat 的5个 chain:</p>
-<ol>
-<li>nat: PEROUTING</li>
-<li>filter: INPUT</li>
-<li>nat: OUTPUT</li>
-<li>filter: OUTPUT</li>
-<li>nat: POSTOUTING</li>
-</ol>
-<p>对于收到的目的地址不为本机的数据包, 依次经过 filter 和 nat 的3个 chain:</p>
-<ol>
-<li>nat: PEROUTING</li>
-<li>filter: FORWARD</li>
-<li>nat: POSTOUTING</li>
-</ol>
-<blockquote>
-<div style="width:50%;margin:auto"> <img src="/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/iptables.jpg" class="" title="iptables 200"> </div>
-<small>https://www.it.uu.se/edu/course/homepage/sakdat/vt09/pm/programme/iptables.pdfhexo</small>
-</blockquote>
-]]></content>
-      <categories>
-        <category>网络技术</category>
-      </categories>
-      <tags>
-        <tag>table</tag>
-        <tag>iptables</tag>
-        <tag>chain</tag>
-        <tag>rule</tag>
-        <tag>filter</tag>
       </tags>
   </entry>
   <entry>
@@ -943,30 +943,6 @@
       </tags>
   </entry>
   <entry>
-    <title>堆相关知识点</title>
-    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>堆类题目堆相关知识点</p>
-<span id="more"></span>
-
-<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
-<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
-<p>container/heap</p>
-<p>4.1 heap.Init</p>
-<p>4.2 heap.Push</p>
-<p>4.3 heap.Pop</p>
-<p>4.4 heap.Fix</p>
-<p>4.5 heap.Remove</p>
-<p>实现</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>堆</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>动态规划相关题目</title>
     <url>/2021/05/03/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>动态规划类题目笔记</p>
@@ -988,6 +964,30 @@
       </categories>
       <tags>
         <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆相关知识点</title>
+    <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>堆类题目堆相关知识点</p>
+<span id="more"></span>
+
+<h1 id="golang-最小堆实现"><a href="#golang-最小堆实现" class="headerlink" title="golang 最小堆实现"></a>golang 最小堆实现</h1><p><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/">https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/submissions/</a></p>
+<p>参考 <a href="https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95">https://ieevee.com/tech/2018/01/29/go-heap.html#2-containerheap%E6%8F%90%E4%BE%9B%E7%9A%84%E6%96%B9%E6%B3%95</a></p>
+<p>container/heap</p>
+<p>4.1 heap.Init</p>
+<p>4.2 heap.Push</p>
+<p>4.3 heap.Pop</p>
+<p>4.4 heap.Fix</p>
+<p>4.5 heap.Remove</p>
+<p>实现</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> KthLargest <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// IntSlice类型替我们实现了</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">func (h KthLargest) Len() int           &#123; return len(h) &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Less(i, j int) bool &#123; return h[i] &lt; h[j] &#125;</span></span><br><span class="line"><span class="comment">func (h KthLargest) Swap(i, j int)      &#123; h[i], h[j] = h[j], h[i] &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// add x as element Len()</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    kl.IntSlice = <span class="built_in">append</span>(kl.IntSlice, v.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// !!注意此处Pop的实现，由于golang heap库在调用heap.Pop方法时，先把元素和最后一个节点的值交换，然后弹出，然后调用 down。因此我们自己实现的方法接收到Pop时，需要被pop的元素实际已经被放置到队尾了</span></span><br><span class="line"><span class="comment">// remove and return element Len() - 1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *KthLargest)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := kl.IntSlice</span><br><span class="line">    v := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    kl.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// heap.Push(kl, val)</span></span><br><span class="line"><span class="comment">// val = heap.Pop(kl)</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>堆</tag>
       </tags>
   </entry>
   <entry>
@@ -1319,6 +1319,31 @@
       </categories>
       <tags>
         <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次rpc接口无返回调试经历</title>
+    <url>/2022/03/18/%E8%AE%B0%E4%B8%80%E6%AC%A1rpc%E6%8E%A5%E5%8F%A3%E6%97%A0%E8%BF%94%E5%9B%9E%E8%B0%83%E8%AF%95%E7%BB%8F%E5%8E%86/</url>
+    <content><![CDATA[<h1 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h1><p>偶然发现一个线上服务不返回的badcase，在输入特定一张图片时，分析服务会直接断开连接而不返回任何数据，这种情况是非常罕见的，因为通常来说即便是内部服务报错的情况下，也会被框架捕获从而返回一组错误码，而不会直接断开连接不返回任何数据。</p>
+<h1 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h1><p>考虑到这个现象可以被特定数据触发，且触发后业务依旧可以正常处理后续请求，因此认为是业务逻辑的问题，但是还不清楚业务逻辑是如何影响框架导致连接被关闭的。</p>
+<h1 id="初步调试"><a href="#初步调试" class="headerlink" title="初步调试"></a>初步调试</h1><p>现象能稳定复现，应该是比较容易调试的，我首先将一台线上服务熔断，手动登录后打开日志调试。</p>
+<p>请求后惊奇的发现业务逻辑<code>没有任何报错</code>，由于业务逻辑不是我写的，所以整个逻辑对我来说如同黑箱一样。</p>
+<p>为了找到问题的原因，我将一张正常图片产生的日志和问题图片产生的日志都记录下来，并逐行对比，遗憾的是<code>没有发现任何不同</code>。</p>
+<h1 id="再次分析"><a href="#再次分析" class="headerlink" title="再次分析"></a>再次分析</h1><p>到这一步已经是山穷水尽了，因为通过日志打点分析，整个业务逻辑是正常return的，现在只能将目光转向框架层，但是遗憾的是框架层同样是一个黑箱，并且通过分析框架层的日志，也没有发现任何异常。</p>
+<p>结合连接直接断开的现象，我怀疑框架层中的worker在返回请求时崩溃，并且被自动重启了。而导致崩溃的原因，只能是在业务逻辑中返回的response结构体上。</p>
+<p>大胆猜测，是返回值被设置了特殊值导致框架层崩溃的。</p>
+<h1 id="再次调试"><a href="#再次调试" class="headerlink" title="再次调试"></a>再次调试</h1><p>将设置response的代码全部注释后，果然可以正常返回空结构体，确认了之前的猜测。</p>
+<p>之后通过二分注释的方法，确认了问题出在一个float字段上，当float字段被设置为Nan时，会导致无返回的现象发生，至此问题确认。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>protobuf本身是支持nan作为值的，因此是框架层自己的兼容性问题，但是这种一言不合就暴毙的问题排查，着实令人头疼。</p>
+]]></content>
+      <categories>
+        <category>编程技巧</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>protobuf</tag>
+        <tag>c++</tag>
+        <tag>cpp</tag>
       </tags>
   </entry>
   <entry>
