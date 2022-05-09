@@ -38,26 +38,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
-<span id="more"></span>
-
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>stdio</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++重写和虚函数对比</title>
     <url>/2021/09/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
@@ -120,21 +100,23 @@
       </tags>
   </entry>
   <entry>
-    <title>LRU相关题目</title>
-    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
 <span id="more"></span>
 
-<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
-<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
-<p>每次进行put或get时操作链表，将节点移动至队头。</p>
-<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>刷题笔记</category>
       </categories>
       <tags>
-        <tag>LRU</tag>
+        <tag>stdio</tag>
       </tags>
   </entry>
   <entry>
@@ -180,6 +162,24 @@
       </tags>
   </entry>
   <entry>
+    <title>LRU相关题目</title>
+    <url>/2021/05/03/LRU%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>LRU(最近最少使用缓存)相关题目</p>
+<span id="more"></span>
+
+<h1 id="LRU-最近最少使用-缓存机制-MD"><a href="#LRU-最近最少使用-缓存机制-MD" class="headerlink" title="LRU (最近最少使用) 缓存机制.MD"></a>LRU (最近最少使用) 缓存机制.MD</h1><p><a href="https://leetcode-cn.com/problems/lru-cache/submissions/">https://leetcode-cn.com/problems/lru-cache/submissions/</a></p>
+<p>需要用到一个哈希表和一个双向链表。哈希表记录链表节点和键值</p>
+<p>每次进行put或get时操作链表，将节点移动至队头。</p>
+<p>使用一个伪头部（dummy head）和伪尾部（dummy tail）标记界限，这样在添加节点和删除节点的时候就不需要检查相邻的节点是否存在。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>LRU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -198,43 +198,6 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -302,6 +265,43 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python</span><br><span class="line"># coding&#x3D;utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH &#x3D; 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">    parser &#x3D; argparse.ArgumentParser(description&#x3D;&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;onnx_path&quot;, help&#x3D;&quot;path to onnx file&quot;, type&#x3D;str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default&#x3D;&quot;&quot;, dest&#x3D;&quot;trt_path&quot;, help&#x3D;&quot;path to trt file&quot;, type&#x3D;str)</span><br><span class="line">    args &#x3D; parser.parse_args()</span><br><span class="line">    onnx_file_path &#x3D; args.onnx_path</span><br><span class="line">    engine_file_path &#x3D; args.trt_path</span><br><span class="line">    print(&#39;get start&#39;)</span><br><span class="line">    TRT_LOGGER &#x3D; trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config &#x3D; builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size &#x3D;( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size &#x3D;( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size &#x3D; 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode &#x3D; True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#39;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#39;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#39;Loading ONNX file from path &#123;&#125;...&#39;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#39;rb&#39;) as model:</span><br><span class="line">            print(&#39;Beginning ONNX file parsing&#39;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#39;ERROR: Failed to parse the ONNX file.&#39;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape &#x3D; [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile &#x3D; builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#39;Completed parsing of ONNX file&#39;)</span><br><span class="line">        print(&#39;Building an engine from file &#123;&#125;; this may take a while...&#39;.format(onnx_file_path))</span><br><span class="line">        engine &#x3D; builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --rm -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\<span class="string">&#x27;data\&#x27;</span>:1x3x32x32 --optShapes=\<span class="string">&#x27;data\&#x27;</span>:128x3x32x320 --maxShapes=\<span class="string">&#x27;data\&#x27;</span>:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -628,29 +628,6 @@
       </tags>
   </entry>
   <entry>
-    <title>protobuf repeated 字段操作总结</title>
-    <url>/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
-
-<h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>编程技巧</category>
-      </categories>
-      <tags>
-        <tag>protobuf</tag>
-        <tag>c++</tag>
-        <tag>cpp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ORDER BY 与 SORT BY</title>
     <url>/2022/02/28/order-by%E4%B8%8Esort-by/</url>
     <content><![CDATA[<p>一次写sql的时候，脑子发晕，把<code>order by</code>写成了<code>sort by</code></p>
@@ -671,6 +648,29 @@
         <tag>spark</tag>
         <tag>presto</tag>
         <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>protobuf repeated 字段操作总结</title>
+    <url>/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>编程技巧</category>
+      </categories>
+      <tags>
+        <tag>protobuf</tag>
+        <tag>c++</tag>
+        <tag>cpp</tag>
       </tags>
   </entry>
   <entry>
@@ -890,13 +890,13 @@
       </tags>
   </entry>
   <entry>
-    <title>word文档参考文献按引用顺序自动调整编</title>
+    <title>word文档参考文献按引用顺序自动调整编号</title>
     <url>/2022/05/09/word%E6%96%87%E6%A1%A3%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%E6%8C%89%E5%BC%95%E7%94%A8%E9%A1%BA%E5%BA%8F%E8%87%AA%E5%8A%A8%E8%B0%83%E6%95%B4%E7%BC%96%E5%8F%B7/</url>
-    <content><![CDATA[<p>最近在写毕业论文，因为不断的修改添加了大量了引用，不断插入的引用导致编号非常混乱，显得非常不美观，</p>
-<p>又恰逢女朋友学校强制要求引用按照引用顺序排序，因此不得已开发了一个程序来自对引用进行自动编号，</p>
+    <content><![CDATA[<p>最近在写毕业论文，因为不断的修改添加了大量了引用，导致编号非常混乱，显得非常不美观，</p>
+<p>又恰逢女朋友学校强制要求引用目录按照引用顺序排序，因此不得已开发了一个程序来对引用进行自动编号，</p>
 <p>开发过程一波三折，难度也比一开始的设想大了很多，</p>
 <p>因为需要处理书签引用和纯手写的引用，本来是想使用PyDocX的，测试后发现PyDocX读取书签引用有问题，</p>
-<p>最后只能手写个简单的docx解析库，虽然很麻烦但是总算是搞定了。</p>
+<p>最后只能手写个简单的代码解析docx，虽然很麻烦但是总算是搞定了。</p>
 <p>项目地址：<a href="https://github.com/Casxt/SortReference">https://github.com/Casxt/SortReference</a></p>
 <span id="more"></span>
 
@@ -1201,6 +1201,34 @@
       </tags>
   </entry>
   <entry>
+    <title>树相关知识点</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>树类题目相关知识点</p>
+<span id="more"></span>
+
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
+<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
+<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
+<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
+<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
+<p>层次遍历：只需按层次遍历即可</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
+<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
+<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
+<p>通过记录前缀和并搜索的方式快速求解</p>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
+<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>树相关题目</title>
     <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>树类相关题目</p>
@@ -1371,34 +1399,6 @@
       </categories>
       <tags>
         <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树相关知识点</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>树类题目相关知识点</p>
-<span id="more"></span>
-
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
-<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
-<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
-<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
-<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
-<p>层次遍历：只需按层次遍历即可</p>
-<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
-<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
-<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
-<p>通过记录前缀和并搜索的方式快速求解</p>
-<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
-<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>树</tag>
       </tags>
   </entry>
 </search>
