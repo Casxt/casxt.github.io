@@ -1171,6 +1171,34 @@
       </tags>
   </entry>
   <entry>
+    <title>树相关知识点</title>
+    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<p>树类题目相关知识点</p>
+<span id="more"></span>
+
+<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
+<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
+<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
+<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
+<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
+<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
+<p>层次遍历：只需按层次遍历即可</p>
+<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
+<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
+<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
+<p>通过记录前缀和并搜索的方式快速求解</p>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
+<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>知识点速查</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数组相关题目</title>
     <url>/2021/05/03/%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
     <content><![CDATA[<p>数组类相关题目</p>
@@ -1198,34 +1226,6 @@
       </categories>
       <tags>
         <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树相关知识点</title>
-    <url>/2021/05/03/%E6%A0%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
-    <content><![CDATA[<p>树类题目相关知识点</p>
-<span id="more"></span>
-
-<h1 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h1><p>直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。<a href="https://leetcode-cn.com/problems/diameter-of-binary-tree/">https://leetcode-cn.com/problems/diameter-of-binary-tree/</a></p>
-<h1 id="完全二叉树和满二叉树的区别"><a href="#完全二叉树和满二叉树的区别" class="headerlink" title="完全二叉树和满二叉树的区别"></a>完全二叉树和满二叉树的区别</h1><p>完全二叉树: 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边。</p>
-<p>满二叉树: 除最后一层无任何子 节点 外，每一层上的所有结点都有两个子结点</p>
-<h1 id="前中后层序遍历"><a href="#前中后层序遍历" class="headerlink" title="前中后层序遍历"></a>前中后层序遍历</h1><p>前序遍历：根结点 —&gt; 左子树 —&gt; 右子树</p>
-<p>中序遍历：左子树—&gt; 根结点 —&gt; 右子树</p>
-<p>后序遍历：左子树 —&gt; 右子树 —&gt; 根结点</p>
-<p>层次遍历：只需按层次遍历即可</p>
-<h1 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h1><p>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。</p>
-<h1 id="求和路径"><a href="#求和路径" class="headerlink" title="求和路径"></a>求和路径</h1><p><a href="https://leetcode-cn.com/problems/paths-with-sum-lcci/">https://leetcode-cn.com/problems/paths-with-sum-lcci/</a></p>
-<p><a href="https://leetcode-cn.com/problems/path-sum-iii/">https://leetcode-cn.com/problems/path-sum-iii/</a></p>
-<p>通过记录前缀和并搜索的方式快速求解</p>
-<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><p><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/">https://leetcode-cn.com/problems/implement-trie-prefix-tree/</a></p>
-<p>每一个节点可以延伸出26路支路代表26个字母的树。</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>知识点速查</tag>
-        <tag>树</tag>
       </tags>
   </entry>
   <entry>
@@ -1380,6 +1380,35 @@
         <tag>protobuf</tag>
         <tag>c++</tag>
         <tag>cpp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>配置一个Jetbrain风格的MacOS Terminal</title>
+    <url>/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/</url>
+    <content><![CDATA[<h2 id="1-获取Jetbrain终端配色"><a href="#1-获取Jetbrain终端配色" class="headerlink" title="1. 获取Jetbrain终端配色"></a>1. 获取Jetbrain终端配色</h2><p>方便起见我使用<code>macos-terminal-themes</code>的脚本来一键输出终端配色方案</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:lysyi3m/macos-terminal-themes.git</span><br><span class="line"><span class="built_in">cd</span> macos-terminal-themes/tool</span><br><span class="line">chmod +x preview.sh</span><br><span class="line">./preview.sh</span><br></pre></td></tr></table></figure>
+
+<p>得到的输出如图</p>
+<div style="width:50%;margin:auto"> <img src="/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/jetbrain_color_schema.webp" class="" title="jetbrain原版效果 200"> </div>
+
+<p>之后只需要抄色即可</p>
+<h2 id="2-获取jetbrain-mono字体"><a href="#2-获取jetbrain-mono字体" class="headerlink" title="2. 获取jetbrain mono字体"></a>2. 获取jetbrain mono字体</h2><p>项目地址：<a href="https://github.com/JetBrains/JetBrainsMono">https://github.com/JetBrains/JetBrainsMono</a></p>
+<p>可以使用homebrew安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew tap homebrew/cask-fonts</span><br><span class="line">brew install --cask font-jetbrains-mono</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-配置MacOS-Terminal"><a href="#3-配置MacOS-Terminal" class="headerlink" title="3. 配置MacOS Terminal"></a>3. 配置MacOS Terminal</h2><p>打开Terminal，点击屏幕右上角“终端”，“偏好设置“进行配置。</p>
+<p>配置好的配置文件可以在此下载/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/Jetbrain.terminal </p>
+<p>得到的输出效果如图</p>
+<div style="width:50%;margin:auto"> <img src="/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect.webp" class="" title="terminal效果 200"> </div>
+
+<div style="width:50%;margin:auto"> <img src="/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp" class="" title="terminal效果 200"> </div>]]></content>
+      <categories>
+        <category>macos</category>
+      </categories>
+      <tags>
+        <tag>terminal</tag>
+        <tag>color schema</tag>
+        <tag>jerbrain mono</tag>
       </tags>
   </entry>
   <entry>
