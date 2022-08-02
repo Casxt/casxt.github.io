@@ -926,6 +926,28 @@
       </tags>
   </entry>
   <entry>
+    <title>一次线上数据库结构修改</title>
+    <url>/2022/08/02/%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9/</url>
+    <content><![CDATA[<p>由于早期数据库设计不合理，需要修改线上数据库表结构，比较麻烦的是新设计将原来的一个表拆成了两个表，并且允许了表之间存在一对多关系。</p>
+<span id="more"></span>
+
+<p>为了保证安全的线上变更，设计了如下变更步骤</p>
+<h2 id="引入新表"><a href="#引入新表" class="headerlink" title="引入新表"></a>引入新表</h2><p>第一步也是最简单的一步，创建新表结构，此时不会产生任何影响。</p>
+<h2 id="并行逻辑执行"><a href="#并行逻辑执行" class="headerlink" title="并行逻辑执行"></a>并行逻辑执行</h2><p>按照新表执行逻辑，将所有涉及旧表的逻辑重写，注意此时并不删除或修改旧逻辑，新老逻辑同时执行，但是忽略新逻辑的报错和结果，只返回旧逻辑结果</p>
+<h2 id="数据库双写"><a href="#数据库双写" class="headerlink" title="数据库双写"></a>数据库双写</h2><p>所有数据的读写操作，尤其是写入操作，同时写入新库和旧库</p>
+<h2 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h2><p>历史数据通过离线系统，逐渐迁移到新表</p>
+<h2 id="并行逻辑切换校验"><a href="#并行逻辑切换校验" class="headerlink" title="并行逻辑切换校验"></a>并行逻辑切换校验</h2><p>返回新逻辑结果，检查是否正确，通过测试后可以删除旧逻辑</p>
+]]></content>
+      <categories>
+        <category>backend</category>
+      </categories>
+      <tags>
+        <tag>schema</tag>
+        <tag>mysql</tag>
+        <tag>database</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一个新奇的国产web引擎————YC编译器</title>
     <url>/2020/03/12/%E4%B8%80%E4%B8%AA%E6%96%B0%E5%A5%87%E7%9A%84%E5%9B%BD%E4%BA%A7web%E5%BC%95%E6%93%8E%E2%80%94%E2%80%94%E2%80%94%E2%80%94YC%E7%BC%96%E8%AF%91%E5%99%A8/</url>
     <content><![CDATA[<p>最近在网上听说了一个国产的“浏览器”叫做YC浏览器，说是已经开发了好几年了，能把c++像js一样跑。</p>
@@ -1385,7 +1407,10 @@
   <entry>
     <title>配置一个Jetbrain风格的MacOS Terminal</title>
     <url>/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/</url>
-    <content><![CDATA[<h2 id="1-获取Jetbrain终端配色"><a href="#1-获取Jetbrain终端配色" class="headerlink" title="1. 获取Jetbrain终端配色"></a>1. 获取Jetbrain终端配色</h2><p>方便起见我使用<code>macos-terminal-themes</code>的脚本来一键输出终端配色方案</p>
+    <content><![CDATA[<div style="width:50%;margin:auto"> <img src="/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp" class="" title="terminal效果 200"> </div>
+<span id="more"></span>
+
+<h2 id="1-获取Jetbrain终端配色"><a href="#1-获取Jetbrain终端配色" class="headerlink" title="1. 获取Jetbrain终端配色"></a>1. 获取Jetbrain终端配色</h2><p>方便起见我使用<code>macos-terminal-themes</code>的脚本来一键输出终端配色方案</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:lysyi3m/macos-terminal-themes.git</span><br><span class="line"><span class="built_in">cd</span> macos-terminal-themes/tool</span><br><span class="line">chmod +x preview.sh</span><br><span class="line">./preview.sh</span><br></pre></td></tr></table></figure>
 
 <p>得到的输出如图</p>

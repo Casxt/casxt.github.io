@@ -20,13 +20,12 @@
     var CONFIG = {"hostname":"maple.link","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1. 获取Jetbrain终端配色方便起见我使用macos-terminal-themes的脚本来一键输出终端配色方案 1234git clone git@github.com:lysyi3m&#x2F;macos-terminal-themes.gitcd macos-terminal-themes&#x2F;toolchmod +x preview.sh.&#x2F;preview.sh  得到的输出如图     之后只需">
-<meta property="og:type" content="article">
+  <meta property="og:type" content="article">
 <meta property="og:title" content="配置一个Jetbrain风格的MacOS Terminal">
 <meta property="og:url" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/index.html">
 <meta property="og:site_name" content="Maple.Link">
-<meta property="og:description" content="1. 获取Jetbrain终端配色方便起见我使用macos-terminal-themes的脚本来一键输出终端配色方案 1234git clone git@github.com:lysyi3m&#x2F;macos-terminal-themes.gitcd macos-terminal-themes&#x2F;toolchmod +x preview.sh.&#x2F;preview.sh  得到的输出如图     之后只需">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp">
 <meta property="og:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/jetbrain_color_schema.webp">
 <meta property="og:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect.webp">
 <meta property="og:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp">
@@ -37,7 +36,7 @@
 <meta property="article:tag" content="color schema">
 <meta property="article:tag" content="jerbrain mono">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/jetbrain_color_schema.webp">
+<meta name="twitter:image" content="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp">
 
 <link rel="canonical" href="https://maple.link/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/">
 
@@ -281,7 +280,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="1-获取Jetbrain终端配色"><a href="#1-获取Jetbrain终端配色" class="headerlink" title="1. 获取Jetbrain终端配色"></a>1. 获取Jetbrain终端配色</h2><p>方便起见我使用<code>macos-terminal-themes</code>的脚本来一键输出终端配色方案</p>
+        <div style="width:50%;margin:auto"> <img src="/2022/07/27/%E9%85%8D%E7%BD%AE%E4%B8%80%E4%B8%AAJetbrain%E9%A3%8E%E6%A0%BC%E7%9A%84MacOS-Terminal/final_effect_cli.webp" class="" title="terminal效果 200"> </div>
+<span id="more"></span>
+
+<h2 id="1-获取Jetbrain终端配色"><a href="#1-获取Jetbrain终端配色" class="headerlink" title="1. 获取Jetbrain终端配色"></a>1. 获取Jetbrain终端配色</h2><p>方便起见我使用<code>macos-terminal-themes</code>的脚本来一键输出终端配色方案</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:lysyi3m/macos-terminal-themes.git</span><br><span class="line"><span class="built_in">cd</span> macos-terminal-themes/tool</span><br><span class="line">chmod +x preview.sh</span><br><span class="line">./preview.sh</span><br></pre></td></tr></table></figure>
 
 <p>得到的输出如图</p>
@@ -322,7 +324,10 @@
     <a href="/2022/05/09/word%E6%96%87%E6%A1%A3%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%E6%8C%89%E5%BC%95%E7%94%A8%E9%A1%BA%E5%BA%8F%E8%87%AA%E5%8A%A8%E8%B0%83%E6%95%B4%E7%BC%96%E5%8F%B7/" rel="prev" title="word文档参考文献按引用顺序自动调整编号">
       <i class="fa fa-chevron-left"></i> word文档参考文献按引用顺序自动调整编号
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/02/%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9/" rel="next" title="一次线上数据库结构修改">
+      一次线上数据库结构修改 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -396,20 +401,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-count">92</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
