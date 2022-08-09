@@ -411,6 +411,27 @@
       </tags>
   </entry>
   <entry>
+    <title>acme使用AliyunDNS验证</title>
+    <url>/2022/08/05/acme%E4%BD%BF%E7%94%A8AliyunDNS%E9%AA%8C%E8%AF%81/</url>
+    <content><![CDATA[<h2 id="安装acme"><a href="#安装acme" class="headerlink" title="安装acme"></a>安装acme</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl https://get.acme.sh | sh -s email=your@email.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用阿里云dns认证方式"><a href="#使用阿里云dns认证方式" class="headerlink" title="使用阿里云dns认证方式"></a>使用阿里云dns认证方式</h2><p>文档: <a href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi">https://github.com/acmesh-official/acme.sh/wiki/dnsapi</a></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> Ali_Key=<span class="string">&quot;xxxxxxxxxxxxxxxx&quot;</span></span><br><span class="line"><span class="built_in">export</span> Ali_Secret=<span class="string">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span></span><br><span class="line">acme.sh --issue --dns dns_ali -d your.domain.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装密钥"><a href="#安装密钥" class="headerlink" title="安装密钥"></a>安装密钥</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">acme.sh --install-cert -d your.domain.com --key-file /etc/nginx/your.domain.com.key --fullchain-file /etc/nginx/your.domain.com.pem --reloadcmd <span class="string">&quot;sudo systemctl restart nginx&quot;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>acme</tag>
+        <tag>dns</tag>
+        <tag>aliyun</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hdfs命令行流式处理</title>
     <url>/2021/12/20/hdfs%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<h1 id="文件流式处理"><a href="#文件流式处理" class="headerlink" title="文件流式处理"></a>文件流式处理</h1><p>在处理hdfs数据时，可能会遇到本地磁盘空间不足以存放数据的问题，这时我们可以使用linux的stdio对数据进行流式处理，以替换每行内容为例</p>
@@ -474,31 +495,6 @@
       </tags>
   </entry>
   <entry>
-    <title>hive中操作json以及对list的处理</title>
-    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
-<span id="more"></span>
-
-
-<p>假设json数据为</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
-<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
-<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>get_json_object</tag>
-        <tag>hive</tag>
-        <tag>spark</tag>
-        <tag>presto</tag>
-        <tag>sql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>iptables基础概念</title>
     <url>/2020/03/02/iptables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</url>
     <content><![CDATA[<p>iptables 是标准的linux防火墙命令行控制工具, 其底层调用netfilter来实现各种功能</p>
@@ -548,6 +544,31 @@
         <tag>chain</tag>
         <tag>rule</tag>
         <tag>filter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hive中操作json以及对list的处理</title>
+    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
+<span id="more"></span>
+
+
+<p>假设json数据为</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: [<span class="string">&quot;text1&quot;</span>, <span class="string">&quot;text1&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
+<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>get_json_object</tag>
+        <tag>hive</tag>
+        <tag>spark</tag>
+        <tag>presto</tag>
+        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
