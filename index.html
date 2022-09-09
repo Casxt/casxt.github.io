@@ -216,7 +216,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/08/terraform%E4%BD%BF%E7%94%A8jsonencod%E8%BE%93%E5%87%BAjson%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="post-title-link" itemprop="url">谨terraform使用jsonencod输出json字符串</a>
+            <a href="/2022/09/08/terraform%E4%BD%BF%E7%94%A8jsonencod%E8%BE%93%E5%87%BAjson%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="post-title-link" itemprop="url">terraform使用jsonencod输出json字符串</a>
         </h2>
 
         <div class="post-meta">
@@ -275,7 +275,7 @@
 <blockquote>
 <p>上述代码的json中便缺失一个逗号，读者是否有看出来呢？</p>
 </blockquote>
-<p>为了解决这些问题，建议大家使用jsonencode代替直接编写字符串，得益于jsonencode在语法上的良好兼容，从json建议到jsonencode并不需要多少工作。</p>
+<p>为了解决这些问题，建议大家使用<code>jsonencode</code>函数代替直接编写字符串，得益于tf在语法上的良好兼容，从json迁移到<code>jsonencode</code>并不需要多少工作。</p>
 <p>例如上述代码使用jsonencode可以简单的写成如下形式</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;user&quot;</span> <span class="string">&quot;admin&quot;</span> &#123;</span><br><span class="line">  name = <span class="string">&quot;admin&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = jsonencode(&#123;</span><br><span class="line">    <span class="string">&quot;user&quot;</span>: <span class="string">&quot;$&#123;user.admin.name&#125;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;permission&quot;</span>: <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看到几乎就是简单的使用jsonencode讲原来的内容包了起来。</p>

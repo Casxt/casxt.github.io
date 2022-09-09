@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>C++异常捕获</title>
-    <url>/2021/12/02/C++%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7/</url>
-    <content><![CDATA[<p>有时我们无法确定一段代码会抛出何种异常，但是又希望能捕获这些异常</p>
-<span id="more"></span>
-
-<p>在不能确定异常类型时，首先应该尝试捕获std::exception, 通过what()方法可以得到一个较为详细的报错信息。</p>
-<p>但有时，也可能会遇到一些不按套路出牌的代码，这时就需要使用<code>catch(...)</code>来进行捕获，通过<code>__cxa_exception_type</code>可以大致确定报错的类型，之后再修改代码进行进一步的处理</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">// some thing</span></span><br><span class="line">&#125; <span class="built_in"><span class="keyword">catch</span></span> (<span class="keyword">const</span> std::exception &amp;e) &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span>* describe = e.<span class="built_in">what</span>();</span><br><span class="line">  <span class="comment">// some print describe</span></span><br><span class="line">&#125; <span class="built_in"><span class="keyword">catch</span></span>(...) &#123;</span><br><span class="line">  std::exception_ptr p = std::<span class="built_in">current_exception</span>();</span><br><span class="line">  std::string type_name = (p ? p.__cxa_exception_type()-&gt;<span class="built_in">name</span>() : <span class="string">&quot;null&quot;</span>);</span><br><span class="line">  <span class="comment">// some print type_name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>编程技巧</category>
-      </categories>
-      <tags>
-        <tag>c++/cpp</tag>
-        <tag>exception</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++字符串分割</title>
     <url>/2021/05/10/C++%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E5%89%B2/</url>
     <content><![CDATA[<p>字符串分割方式汇总</p>
@@ -35,6 +18,23 @@
       <tags>
         <tag>c++/cpp</tag>
         <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C++异常捕获</title>
+    <url>/2021/12/02/C++%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7/</url>
+    <content><![CDATA[<p>有时我们无法确定一段代码会抛出何种异常，但是又希望能捕获这些异常</p>
+<span id="more"></span>
+
+<p>在不能确定异常类型时，首先应该尝试捕获std::exception, 通过what()方法可以得到一个较为详细的报错信息。</p>
+<p>但有时，也可能会遇到一些不按套路出牌的代码，这时就需要使用<code>catch(...)</code>来进行捕获，通过<code>__cxa_exception_type</code>可以大致确定报错的类型，之后再修改代码进行进一步的处理</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">// some thing</span></span><br><span class="line">&#125; <span class="built_in"><span class="keyword">catch</span></span> (<span class="keyword">const</span> std::exception &amp;e) &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span>* describe = e.<span class="built_in">what</span>();</span><br><span class="line">  <span class="comment">// some print describe</span></span><br><span class="line">&#125; <span class="built_in"><span class="keyword">catch</span></span>(...) &#123;</span><br><span class="line">  std::exception_ptr p = std::<span class="built_in">current_exception</span>();</span><br><span class="line">  std::string type_name = (p ? p.__cxa_exception_type()-&gt;<span class="built_in">name</span>() : <span class="string">&quot;null&quot;</span>);</span><br><span class="line">  <span class="comment">// some print type_name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>编程技巧</category>
+      </categories>
+      <tags>
+        <tag>c++/cpp</tag>
+        <tag>exception</tag>
       </tags>
   </entry>
   <entry>
@@ -100,26 +100,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
-<span id="more"></span>
-
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>stdio</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -159,6 +139,26 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+<span id="more"></span>
+
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
       </tags>
   </entry>
   <entry>
@@ -572,6 +572,23 @@
       </tags>
   </entry>
   <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>leveldb静态编译及snappy支持</title>
     <url>/2021/11/17/leveldb%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E5%8F%8Asnappy%E6%94%AF%E6%8C%81/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -629,23 +646,6 @@
         <tag>gcc</tag>
         <tag>g++</tag>
         <tag>cmake</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
       </tags>
   </entry>
   <entry>
@@ -847,7 +847,7 @@
       </tags>
   </entry>
   <entry>
-    <title>谨terraform使用jsonencod输出json字符串</title>
+    <title>terraform使用jsonencod输出json字符串</title>
     <url>/2022/09/08/terraform%E4%BD%BF%E7%94%A8jsonencod%E8%BE%93%E5%87%BAjson%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
     <content><![CDATA[<p>在terraform中，常见的输出json字符串或创建json文件的手段是使用流式标记, 如下代码所示:</p>
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">resource <span class="string">&quot;user&quot;</span> <span class="string">&quot;admin&quot;</span> &#123;</span><br><span class="line">  name = <span class="string">&quot;admin&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = &lt;&lt;DATA</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="string">&quot;user&quot;</span>: <span class="string">&quot;$&#123;user.admin.name&#125;&quot;</span></span><br><span class="line">    <span class="string">&quot;permission&quot;</span>: <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">  DATA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -861,7 +861,7 @@
 <blockquote>
 <p>上述代码的json中便缺失一个逗号，读者是否有看出来呢？</p>
 </blockquote>
-<p>为了解决这些问题，建议大家使用jsonencode代替直接编写字符串，得益于jsonencode在语法上的良好兼容，从json建议到jsonencode并不需要多少工作。</p>
+<p>为了解决这些问题，建议大家使用<code>jsonencode</code>函数代替直接编写字符串，得益于tf在语法上的良好兼容，从json迁移到<code>jsonencode</code>并不需要多少工作。</p>
 <p>例如上述代码使用jsonencode可以简单的写成如下形式</p>
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">resource <span class="string">&quot;user&quot;</span> <span class="string">&quot;admin&quot;</span> &#123;</span><br><span class="line">  name = <span class="string">&quot;admin&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = jsonencode(&#123;</span><br><span class="line">    <span class="string">&quot;user&quot;</span>: <span class="string">&quot;$&#123;user.admin.name&#125;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;permission&quot;</span>: <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看到几乎就是简单的使用jsonencode讲原来的内容包了起来。</p>
