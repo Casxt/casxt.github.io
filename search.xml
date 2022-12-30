@@ -100,6 +100,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+<span id="more"></span>
+
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -139,26 +159,6 @@
         <tag>route</tag>
         <tag>routing</tag>
         <tag>netlink</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
-<span id="more"></span>
-
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="keyword">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="keyword">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>stdio</tag>
       </tags>
   </entry>
   <entry>
@@ -321,6 +321,39 @@
         <tag>python</tag>
         <tag>pipe</tag>
         <tag>ffmpeg</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis中的时间计算</title>
+    <url>/2022/12/30/Redis%E4%B8%AD%E7%9A%84%E6%97%B6%E9%97%B4%E8%AE%A1%E7%AE%97/</url>
+    <content><![CDATA[<p>在使用Redis时, 通常会使用<code>EXPIRE</code>, <code>PEXPIRE</code>系列函数设置生存时间, 当需要获取超时时间时使用<code>TTL</code>, <code>PTTL</code>获取剩余的生存时间。</p>
+<p>同样的, 还可以使用<code>EXPIREAT</code>, <code>PEXPIREAT</code>以unix timestamp格式设置超时时间点, 但需要注意的是, Redis 7.0 之前没有函数能获取设置timestamp, 只能使用<code>TTL</code>, <code>PTTL</code>获取剩余的生存时间。</p>
+<p>在实际使用中, 经常需要比较新旧生存周期的大小来决定是否更新数据, 如果你很幸运的使用7.0及之后的版本, 可以使用<code>EXPIREAT</code>, <code>PEXPIREAT</code>配合<code>GT</code>参数来设置过期时间, 如果新的过期时间小于已有过期时间, 则会返回<code>0</code>。</p>
+<p>那么老版本的Redis该如何实现这种功能呢？</p>
+<span id="more"></span>
+
+<p>在Redis中使用<code>TIME</code>命令可以获取当当前的timestamp, 加上<code>TTL</code>, <code>PTTL</code>获取的值之后就可以得到原本设置的过期时间。</p>
+<p>需要注意的是<code>TIME</code>命令返回两个字符串(比如 “1672400893” 和 “528370” ), 第一个字符串中的数字代表以秒计时的unix timestamp, 第二个字符串中的数字代表当前这一秒中已经过去多少微秒。</p>
+<p>为了完成数学计算, 需要使用<code>tonumber</code>函数将字符串转换为数字, 如果只需要秒及精度, 只使用第一个字符串的返回值即可, 如果需要毫秒级精度, 则需要将第一个数字乘1000, 将第二个数字除以1000, 并将两个数字相加。</p>
+<p>以下LUA展示了如何实现带超时的SET命令毫秒时间戳的比较, 只有当新的超时时间戳大于已有的超时时间戳, 新的value才能成功设置, 返回服务器最终采用的时间戳, 客户端应该比较返回时间戳与传入时间戳是否相等, 若不等于则说明设置失败。</p>
+<p>参数<br>KEYS[1]: SET 命令的 KEY<br>AEGV[1]: SET 命令的 VAL<br>AEGV[2]: 超时时间戳(ms)</p>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="comment">-- 如果PTTL返回值&lt;0则说明key不存在或者没有设置过expire, 此时直接设置新值</span></span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">  <span class="comment">-- 计算原始过期时间戳</span></span><br><span class="line">  <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">  <span class="comment">-- 如果原始过期时间戳大于传入时间戳则直接返回</span></span><br><span class="line">  <span class="comment">-- 此处没有使用大于等于保证了如果返回时间戳与传入时间戳相等, 那么传入值一定被设置过一次</span></span><br><span class="line">  <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">2</span>]))  <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> expireTime</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置值和过期时间</span></span><br><span class="line">redis.call(<span class="string">&#x27;SET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>backend</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>unix time</tag>
+        <tag>timestamp</tag>
+        <tag>EXPIRE</tag>
+        <tag>PEXPIRE</tag>
+        <tag>TTL</tag>
+        <tag>PTTL</tag>
+        <tag>EXPIREAT</tag>
+        <tag>PEXPIREAT</tag>
+        <tag>EXPIRETIME</tag>
+        <tag>PEXPIRETIME</tag>
       </tags>
   </entry>
   <entry>
@@ -572,23 +605,6 @@
       </tags>
   </entry>
   <entry>
-    <title>matplotlib 多图组合显示</title>
-    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>只有一行时使用一维坐标</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>python</tag>
-        <tag>matplotlib</tag>
-        <tag>jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>leveldb静态编译及snappy支持</title>
     <url>/2021/11/17/leveldb%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E5%8F%8Asnappy%E6%94%AF%E6%8C%81/</url>
     <content><![CDATA[<p>由于服务器依赖比较老旧，因此需要重新安装各种依赖</p>
@@ -646,6 +662,23 @@
         <tag>gcc</tag>
         <tag>g++</tag>
         <tag>cmake</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>matplotlib 多图组合显示</title>
+    <url>/2020/05/28/matplotlib%E5%A4%9A%E5%9B%BE%E7%BB%84%E5%90%88%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">0</span>, <span class="number">1</span>].imshow(im2)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">0</span>].imshow(im3)</span><br><span class="line">axes[<span class="number">1</span>, <span class="number">1</span>].imshow(im4)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>只有一行时使用一维坐标</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, dpi=<span class="number">150</span>)</span><br><span class="line">axes[<span class="number">0</span>].imshow(im1)</span><br><span class="line">axes[<span class="number">1</span>].imshow(im2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>matplotlib</tag>
+        <tag>jupyter</tag>
       </tags>
   </entry>
   <entry>
