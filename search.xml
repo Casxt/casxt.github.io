@@ -1146,14 +1146,10 @@
         <tag>redis</tag>
         <tag>unix time</tag>
         <tag>timestamp</tag>
-        <tag>EXPIRE</tag>
-        <tag>PEXPIRE</tag>
-        <tag>TTL</tag>
-        <tag>PTTL</tag>
-        <tag>EXPIREAT</tag>
-        <tag>PEXPIREAT</tag>
-        <tag>EXPIRETIME</tag>
-        <tag>PEXPIRETIME</tag>
+        <tag>debug</tag>
+        <tag>lua</tag>
+        <tag>script</tag>
+        <tag>redis-cli</tag>
       </tags>
   </entry>
   <entry>

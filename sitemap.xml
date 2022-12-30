@@ -1019,6 +1019,34 @@
   </url>
   
   <url>
+    <loc>https://maple.link/tags/debug/</loc>
+    <lastmod>2022-12-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/lua/</loc>
+    <lastmod>2022-12-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/script/</loc>
+    <lastmod>2022-12-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/redis-cli/</loc>
+    <lastmod>2022-12-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://maple.link/tags/%E7%9F%A5%E8%AF%86%E7%82%B9%E9%80%9F%E6%9F%A5/</loc>
     <lastmod>2022-12-30</lastmod>
     <changefreq>daily</changefreq>
