@@ -1115,6 +1115,48 @@
       </tags>
   </entry>
   <entry>
+    <title>在RedisCluster中Debug lua 脚本.md</title>
+    <url>/2022/12/30/%E5%9C%A8RedisCluster%E4%B8%ADDebug-lua-%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>在使用单实例Redis时, 我们可以使用<code>./redis-cli -h redis_ip -p redis 6379 --ldb --eval script.lua somekey , arg1 arg2</code>命令轻松的进入debug模式调试lua脚本<br>在正常情况下, 进入debug模式后可以使用一系列命令来执行控制脚本的执行, 使用help命令应该可以看到如下界面</p>
+<span id="more"></span>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">lua debugger&gt; <span class="built_in">help</span></span><br><span class="line">Redis Lua debugger <span class="built_in">help</span>:</span><br><span class="line">[h]elp               Show this <span class="built_in">help</span>.</span><br><span class="line">[s]tep               Run current line and stop again.</span><br><span class="line">[n]ext               Alias <span class="keyword">for</span> step.</span><br><span class="line">[c]<span class="built_in">continue</span>          Run till next breakpoint.</span><br><span class="line">[l]list              List <span class="built_in">source</span> code around current line.</span><br><span class="line">[l]list [line]       List <span class="built_in">source</span> code around [line].</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>但是如果你使用的是redis cluster, 当你执行debug后, 大概率会看到如下内容</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Lua debugging session started, please use:</span><br><span class="line">quit    -- End the session.</span><br><span class="line">restart -- Restart the script <span class="keyword">in</span> debug mode again.</span><br><span class="line"><span class="built_in">help</span>    -- Show Lua script debugging commands.</span><br><span class="line"></span><br><span class="line">MOVED 6918 127.0.0.1:6001</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>通常你还会看到lua脚本的输出，但是却无法设置任何debug或者断点</p>
+<p>即使你输入help, 也只是会看到如下报错, 这种情况下所有的debug命令都无法使用</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">lua debugger&gt; <span class="built_in">help</span></span><br><span class="line">ERR unknown <span class="built_in">command</span> `<span class="built_in">help</span>`, with args beginning with: </span><br></pre></td></tr></table></figure>
+
+
+
+<p>造成这种现象的原因是你登陆的节点不包含key所属的slot,</p>
+<p>解决方法也很简单, 根据consloe输出的<code>MOVED 6918 127.0.0.1:6001</code>指令, 使用redis-cli直接连接对应的redis node就可以顺利进入debug模式。<br>如果丢失了一开始的输出, 可以在界面中执行get操作, 就可以再次看到<code>MOVED</code>关键字。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">lua debugger&gt; get somekey</span><br><span class="line">MOVED 6918 127.0.0.1:6001</span><br></pre></td></tr></table></figure>
+
+<p>重新连接后即可看到正常输出</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Lua debugging session started, please use:</span><br><span class="line">quit    -- End the session.</span><br><span class="line">restart -- Restart the script <span class="keyword">in</span> debug mode again.</span><br><span class="line"><span class="built_in">help</span>    -- Show Lua script debugging commands.</span><br><span class="line"></span><br><span class="line">* Stopped at 1, stop reason = step over</span><br><span class="line">-&gt; 1   <span class="built_in">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[1])</span><br><span class="line">lua debugger&gt; </span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>backend</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>unix time</tag>
+        <tag>timestamp</tag>
+        <tag>EXPIRE</tag>
+        <tag>PEXPIRE</tag>
+        <tag>TTL</tag>
+        <tag>PTTL</tag>
+        <tag>EXPIREAT</tag>
+        <tag>PEXPIREAT</tag>
+        <tag>EXPIRETIME</tag>
+        <tag>PEXPIRETIME</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>堆相关知识点</title>
     <url>/2021/05/03/%E5%A0%86%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>堆类题目堆相关知识点</p>
