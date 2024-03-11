@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -55,7 +55,7 @@
   <title>python 删除超大目录 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -309,7 +309,7 @@
 <p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
 <p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
 <p>关于sata在不同平台上的差异，请参考：<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -481,7 +481,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -491,7 +491,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -524,6 +524,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -539,11 +540,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -587,6 +647,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -611,5 +672,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -52,7 +52,7 @@
   <title>pytorch GCN 实现以及使用 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -259,7 +259,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -293,7 +293,7 @@
 
 <p>表示节点0, 和节点0/2相连。</p>
 <h1 id="GCN-定义"><a href="#GCN-定义" class="headerlink" title="GCN 定义"></a>GCN 定义</h1><h1 id="如何实现一个GCN模块"><a href="#如何实现一个GCN模块" class="headerlink" title="如何实现一个GCN模块"></a>如何实现一个GCN模块</h1><p>注意网络输入尺寸为<code>b*(n+c)*n</code>, 前<code>n</code>个channel构成的<code>b*n*n</code>表示邻接矩阵。后<code>b*c*n</code>表示节点数据。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch import nn</span><br><span class="line">class GraphConvolution(nn.Module):</span><br><span class="line"></span><br><span class="line">    def __init__(self, node_num, input_feature_num, output_feature_num, add_bias&#x3D;True, dtype&#x3D;torch.float,</span><br><span class="line">                 batch_normal&#x3D;True):</span><br><span class="line">        super().__init__()</span><br><span class="line">        # shapes</span><br><span class="line">        self.graph_num &#x3D; node_num</span><br><span class="line">        self.input_feature_num &#x3D; input_feature_num</span><br><span class="line">        self.output_feature_num &#x3D; output_feature_num</span><br><span class="line">        self.add_bias &#x3D; add_bias</span><br><span class="line">        self.batch_normal &#x3D; batch_normal</span><br><span class="line"></span><br><span class="line">        # params</span><br><span class="line">        self.weight &#x3D; nn.Parameter(torch.empty(self.output_feature_num, input_feature_num, dtype&#x3D;dtype))</span><br><span class="line">        self.bias &#x3D; nn.Parameter(torch.empty(self.output_feature_num, self.graph_num, dtype&#x3D;dtype))</span><br><span class="line">        if batch_normal:</span><br><span class="line">            self.norm &#x3D; nn.InstanceNorm1d(node_num)</span><br><span class="line">            </span><br><span class="line">    def set_trainable(self, train&#x3D;True):</span><br><span class="line">        for param in self.parameters():</span><br><span class="line">            param.requires_grad &#x3D; train</span><br><span class="line"></span><br><span class="line">    def forward(self, inp: torch.Tensor):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        @param inp : adjacent: (batch, graph_num, graph_num) cat node_feature: (batch, graph_num, in_feature_num) -&gt; (batch, graph_num, graph_num + in_feature_num)</span><br><span class="line">        @return:</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        b, c, n &#x3D; inp.shape</span><br><span class="line">        adjacent, node_feature &#x3D; inp[:, 0:n, :], inp[:, n:, :]</span><br><span class="line">        x &#x3D; torch.matmul(self.weight, node_feature)</span><br><span class="line">        x &#x3D; torch.matmul(x, adjacent)</span><br><span class="line">        if self.add_bias:</span><br><span class="line">            x &#x3D; x + self.bias</span><br><span class="line">        if self.batch_normal:</span><br><span class="line">            x &#x3D; self.norm(x)</span><br><span class="line"></span><br><span class="line">        return torch.cat((adjacent, x), dim&#x3D;1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch import nn</span><br><span class="line">class GraphConvolution(nn.Module):</span><br><span class="line"></span><br><span class="line">    def __init__(self, node_num, input_feature_num, output_feature_num, add_bias=True, dtype=torch.float,</span><br><span class="line">                 batch_normal=True):</span><br><span class="line">        super().__init__()</span><br><span class="line">        # shapes</span><br><span class="line">        self.graph_num = node_num</span><br><span class="line">        self.input_feature_num = input_feature_num</span><br><span class="line">        self.output_feature_num = output_feature_num</span><br><span class="line">        self.add_bias = add_bias</span><br><span class="line">        self.batch_normal = batch_normal</span><br><span class="line"></span><br><span class="line">        # params</span><br><span class="line">        self.weight = nn.Parameter(torch.empty(self.output_feature_num, input_feature_num, dtype=dtype))</span><br><span class="line">        self.bias = nn.Parameter(torch.empty(self.output_feature_num, self.graph_num, dtype=dtype))</span><br><span class="line">        if batch_normal:</span><br><span class="line">            self.norm = nn.InstanceNorm1d(node_num)</span><br><span class="line">            </span><br><span class="line">    def set_trainable(self, train=True):</span><br><span class="line">        for param in self.parameters():</span><br><span class="line">            param.requires_grad = train</span><br><span class="line"></span><br><span class="line">    def forward(self, inp: torch.Tensor):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        @param inp : adjacent: (batch, graph_num, graph_num) cat node_feature: (batch, graph_num, in_feature_num) -&gt; (batch, graph_num, graph_num + in_feature_num)</span><br><span class="line">        @return:</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        b, c, n = inp.shape</span><br><span class="line">        adjacent, node_feature = inp[:, 0:n, :], inp[:, n:, :]</span><br><span class="line">        x = torch.matmul(self.weight, node_feature)</span><br><span class="line">        x = torch.matmul(x, adjacent)</span><br><span class="line">        if self.add_bias:</span><br><span class="line">            x = x + self.bias</span><br><span class="line">        if self.batch_normal:</span><br><span class="line">            x = self.norm(x)</span><br><span class="line"></span><br><span class="line">        return torch.cat((adjacent, x), dim=1)</span><br></pre></td></tr></table></figure>
 
 <h1 id="残差GCN"><a href="#残差GCN" class="headerlink" title="残差GCN"></a>残差GCN</h1><h1 id="GCN存在的问题"><a href="#GCN存在的问题" class="headerlink" title="GCN存在的问题"></a>GCN存在的问题</h1><h1 id="训练中需要注意的"><a href="#训练中需要注意的" class="headerlink" title="训练中需要注意的"></a>训练中需要注意的</h1><ol>
 <li>在训练GCN时必须谨慎使用Norm方法, 否则很可能造成网络不收敛</li>
@@ -459,7 +459,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -469,7 +469,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -502,6 +502,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -517,11 +518,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -565,6 +625,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -589,5 +650,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

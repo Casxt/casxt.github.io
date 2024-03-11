@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,7 +51,7 @@
   <title>python import 机制 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -258,7 +258,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -281,43 +281,43 @@
 <span id="more"></span>
 
 <h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p>目录结构默认如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;root&#x2F;project</span><br><span class="line">├── &#x2F;animal</span><br><span class="line">│   ├── cat.py</span><br><span class="line">│   ├── dog.py</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── main.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/root/project</span><br><span class="line">├── /animal</span><br><span class="line">│   ├── cat.py</span><br><span class="line">│   ├── dog.py</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── main.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p><code>animal/__init__.py</code>中内容为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;animal imported&quot;)</span><br><span class="line">from .cat import Cat</span><br><span class="line">from .dog import Dog</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;animal imported&quot;)</span><br><span class="line">from .cat import Cat</span><br><span class="line">from .dog import Dog</span><br></pre></td></tr></table></figure>
 
 <p><code>animal/cat.py</code>中内容为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;Cat imported&quot;)</span><br><span class="line">class Cat(object):</span><br><span class="line">    def __init__(self) -&gt; None:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;Cat imported&quot;)</span><br><span class="line">class Cat(object):</span><br><span class="line">    def __init__(self) -&gt; None:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
 <p>其他文件同理</p>
 <h2 id="在main中进行import"><a href="#在main中进行import" class="headerlink" title="在main中进行import"></a>在main中进行import</h2><p>import时一定会执行文件夹下的<code>__init__.py</code></p>
 <p><code>main.py</code>中为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import animal</span><br><span class="line"># 或</span><br><span class="line">from animal import Cat</span><br><span class="line"># 或</span><br><span class="line">from animal.cat import Cat</span><br><span class="line"># 或</span><br><span class="line">import animal.cat</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import animal</span><br><span class="line"># 或</span><br><span class="line">from animal import Cat</span><br><span class="line"># 或</span><br><span class="line">from animal.cat import Cat</span><br><span class="line"># 或</span><br><span class="line">import animal.cat</span><br></pre></td></tr></table></figure>
 
 <p>在<code>/root/project</code>下执行<code>python main.py</code></p>
 <p>此时import执行步骤为<br><code>animal/__init__.py</code> -&gt; <code>animal/cat.py</code><br>输出为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
 
 
 <h2 id="在子目录中执行-init-py"><a href="#在子目录中执行-init-py" class="headerlink" title="在子目录中执行__init__.py"></a>在子目录中执行__init__.py</h2><p>在<code>/root/project/animal</code>下执行<code>python __init__.py</code></p>
 <p>会发生报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;__init__.py&quot;, line 3, in &lt;module&gt;</span><br><span class="line">    from .cat import Cat</span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">animal imported</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;__init__.py&quot;, line 3, in &lt;module&gt;</span><br><span class="line">    from .cat import Cat</span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
 
 
 <h2 id="在子目录中直接运行文件"><a href="#在子目录中直接运行文件" class="headerlink" title="在子目录中直接运行文件"></a>在子目录中直接运行文件</h2><p>有时需要在子目录中执行方便的脚本，但是这时就会遇到报错</p>
 <p>此时可以通过修改sys.path来自定义搜索范围</p>
 <p>首先尝试修改<code>animal/__init__.py</code>中内容为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root &#x3D; Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;animal imported, add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">from animal.cat import Cat</span><br><span class="line">from animal.dog import Dog</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root = Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;animal imported, add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">from animal.cat import Cat</span><br><span class="line">from animal.dog import Dog</span><br></pre></td></tr></table></figure>
 
 <p>在<code>/root/project/animal</code>下执行<code>python __init__.py</code></p>
 <p>此时输出为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">animal imported, add &#x2F;root&#x2F;project&#x2F;python_pkg_test to sys.path</span><br><span class="line">animal imported, add &#x2F;root&#x2F;project&#x2F;python_pkg_test to sys.path</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">animal imported, add /root/project/python_pkg_test to sys.path</span><br><span class="line">animal imported, add /root/project/python_pkg_test to sys.path</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
 
 <p>可以发现print被执行了两遍，实际上所有语句都被执行了两遍，此时打印sys.path会发现存在两个<code>/root/project</code></p>
 <p>所以不能直接这样设置, 首先恢复<code>animal/__init__.py</code></p>
 <p>新建<code>animal/__init__.py</code>, 其中内容为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root &#x3D; Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">print(len(sys.path))</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from pathlib import Path</span><br><span class="line">package_root = Path(__file__).absolute().parent.parent</span><br><span class="line">print(f&quot;add &#123;package_root&#125; to sys.path&quot;)</span><br><span class="line">sys.path.insert(0, str(package_root))</span><br><span class="line">print(len(sys.path))</span><br></pre></td></tr></table></figure>
 <p>在<code>/root/project/animal</code>下执行<code>python mian.py</code></p>
 <p>此时输出为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add &#x2F;root&#x2F;project to sys.path</span><br><span class="line">[&#39;&#x2F;root&#x2F;project&#39;, &#39;&#x2F;root&#x2F;project&#x2F;animal&#39;, ...]</span><br><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add /root/project to sys.path</span><br><span class="line">[&#x27;/root/project&#x27;, &#x27;/root/project/animal&#x27;, ...]</span><br><span class="line">animal imported</span><br><span class="line">Cat imported</span><br><span class="line">Dog imported</span><br></pre></td></tr></table></figure>
 
 
     </div>
@@ -472,7 +472,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -482,7 +482,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -515,6 +515,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -530,11 +531,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -578,6 +638,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -602,5 +663,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

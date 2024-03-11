@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -44,7 +44,7 @@
   <title>Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -334,7 +334,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -356,12 +356,12 @@
           <span id="more"></span>
 
 <h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Feature</span><br><span class="line">    &#123;</span><br><span class="line">        repeated float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    optional Feature feature &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight proto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message </span><span class="title class_">ProtoSrc</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Feature</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">repeated</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">optional</span> Feature feature = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">message </span><span class="title class_">ProtoDst</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Feature</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">repeated</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">optional</span> Feature feature = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
 
 <h1 id="复杂类型复制"><a href="#复杂类型复制" class="headerlink" title="复杂类型复制"></a>复杂类型复制</h1><p>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Result</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">message ProtoSrc</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line">message ProtoDst</span><br><span class="line">&#123;</span><br><span class="line">    message Result</span><br><span class="line">    &#123;</span><br><span class="line">        optional float data &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    repeated Result results &#x3D; 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight proto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message </span><span class="title class_">ProtoSrc</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Result</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">optional</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">repeated</span> Result results = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">message </span><span class="title class_">ProtoDst</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Result</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">optional</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">repeated</span> Result results = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
@@ -446,7 +446,7 @@
 
       
           <h1 id="文件流式处理"><a href="#文件流式处理" class="headerlink" title="文件流式处理"></a>文件流式处理</h1><p>在处理hdfs数据时，可能会遇到本地磁盘空间不足以存放数据的问题，这时我们可以使用linux的stdio对数据进行流式处理，以替换每行内容为例</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop -cat hdfs://your_path/your_file |\</span><br><span class="line">sed  <span class="string">&quot;s/some_thing/some_other/g&quot;</span> |\</span><br><span class="line">hadoop -put - hdfs://your_path/your_processed_file</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">cat</span> hdfs://your_path/your_file |\</span><br><span class="line">sed  <span class="string">&quot;s/some_thing/some_other/g&quot;</span> |\</span><br><span class="line">hadoop -put - hdfs://your_path/your_processed_file</span><br></pre></td></tr></table></figure>
 
 <p>这样利用pipe完成了对数据的处理，同时避免了数据在本地落盘。</p>
 <h1 id="遍历文件夹处理"><a href="#遍历文件夹处理" class="headerlink" title="遍历文件夹处理"></a>遍历文件夹处理</h1><p>此外还可以搭配xargs遍历整个目录</p>
@@ -457,7 +457,7 @@
 <li><code>xargs -I &#123;&#125; bash -c ...</code> 将每个文件名依次作为参数处理</li>
 <li><code>&quot;hadoop -cat  ...&quot;</code> 按照之前流式处理的方式处理每一个文件</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop -ls -h hdfs://your_path | awk -F<span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | awk -F<span class="string">&#x27;/&#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | xargs -I &#123;&#125; bash -c <span class="string">&quot;hadoop -cat hdfs://your_path/&#123;&#125; | sed &#x27;s/some_thing/some_other/g&#x27; | hadoop -put - hdfs://your_other_path/&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">ls</span> -h hdfs://your_path | awk -F<span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | awk -F<span class="string">&#x27;/&#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | xargs -I &#123;&#125; bash -c <span class="string">&quot;hadoop -cat hdfs://your_path/&#123;&#125; | sed &#x27;s/some_thing/some_other/g&#x27; | hadoop -put - hdfs://your_other_path/&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -610,7 +610,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>783</span>
+              <span>754</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -632,10 +632,10 @@
           <p>在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。</p>
 <p>以最简单的归一化操作为例</p>
 <p>归一化Module如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#39;mean&#39;, torch.tensor([0.485, 0.456, 0.406], dtype&#x3D;torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#39;std&#39;, torch.tensor([0.229, 0.224, 0.225], dtype&#x3D;torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#39;norm&#39;, torch.tensor([255.0], dtype&#x3D;torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images &#x2F; self.norm - self.mean) &#x2F; self.std</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#x27;mean&#x27;, torch.tensor([0.485, 0.456, 0.406], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;std&#x27;, torch.tensor([0.229, 0.224, 0.225], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;norm&#x27;, torch.tensor([255.0], dtype=torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images / self.norm - self.mean) / self.std</span><br></pre></td></tr></table></figure>
 
 <p>之后修改模型的inti和forward函数即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize &#x3D; Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x &#x3D; self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize = Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -968,7 +968,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.3k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1222,7 +1222,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -1232,7 +1232,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -1265,6 +1265,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -1280,11 +1281,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -1328,10 +1388,12 @@
 
 
 
+    <div id="pjax">
   
 
   
 
 
+    </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -52,7 +52,7 @@
   <title>C++重写和虚函数对比 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -326,7 +326,7 @@
 <td>子调用子方法，无法调用父<br>父调用父方法，无法调用子</td>
 </tr>
 </tbody></table>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">vexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base virtual execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">hexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base hide execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">vhexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base hide execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sub</span> :</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">vexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub virtual execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">hexecute</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub hide execute &quot;</span> &lt;&lt; a &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">vhexecute</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub hide execute &quot;</span> &lt;&lt; a &lt;&lt; std::endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#123;</span><br><span class="line">    Sub sub;</span><br><span class="line">    Base base = sub;</span><br><span class="line">    sub.<span class="built_in">execute</span>();      <span class="comment">// Sub execute</span></span><br><span class="line">    base.<span class="built_in">execute</span>();     <span class="comment">// Base execute</span></span><br><span class="line">    sub.<span class="built_in">vexecute</span>();     <span class="comment">// Sub virtual execute</span></span><br><span class="line">    base.<span class="built_in">vexecute</span>();    <span class="comment">// Base virtual execute</span></span><br><span class="line">    sub.<span class="built_in">hexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.hexecute();  no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    base.<span class="built_in">hexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.hexecute(0); no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    sub.<span class="built_in">vhexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.vhexecute();  no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    base.<span class="built_in">vhexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    &#125;&#123;</span><br><span class="line">    Sub sub;</span><br><span class="line">    Base &amp;base = sub;</span><br><span class="line">    sub.<span class="built_in">execute</span>();      <span class="comment">// Sub execute</span></span><br><span class="line">    base.<span class="built_in">execute</span>();     <span class="comment">// Base execute</span></span><br><span class="line">    sub.<span class="built_in">vexecute</span>();     <span class="comment">// Sub virtual execute</span></span><br><span class="line">    base.<span class="built_in">vexecute</span>();    <span class="comment">// Sub virtual execute</span></span><br><span class="line">    sub.<span class="built_in">hexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.hexecute();  no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    base.<span class="built_in">hexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.hexecute(0); no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    sub.<span class="built_in">vhexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.vhexecute();  no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    base.<span class="built_in">vhexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    &#125;&#123;</span><br><span class="line">    Sub *subp = <span class="keyword">new</span> <span class="built_in">Sub</span>();</span><br><span class="line">    Base *basep = subp;</span><br><span class="line">    subp-&gt;<span class="built_in">execute</span>();        <span class="comment">// Sub execute</span></span><br><span class="line">    basep-&gt;<span class="built_in">execute</span>();       <span class="comment">// Base execute</span></span><br><span class="line">    subp-&gt;<span class="built_in">vexecute</span>();       <span class="comment">// Sub virtual execute</span></span><br><span class="line">    basep-&gt;<span class="built_in">vexecute</span>();      <span class="comment">// Sub virtual execute</span></span><br><span class="line">    subp-&gt;<span class="built_in">hexecute</span>(<span class="number">0</span>);      <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// subp-&gt;hexecute();    no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    basep-&gt;<span class="built_in">hexecute</span>();      <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// basep-&gt;hexecute(0);  no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    subp-&gt;<span class="built_in">vhexecute</span>(<span class="number">0</span>);     <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// subp-&gt;vhexecute();   no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    basep-&gt;<span class="built_in">vhexecute</span>();     <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// basep-&gt;vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    <span class="keyword">delete</span> subp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span> &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">vexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base virtual execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">hexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base hide execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">vhexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Base hide execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sub</span> : <span class="keyword">public</span> Base &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">vexecute</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub virtual execute&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">hexecute</span><span class="params">(<span class="type">int</span> a)</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub hide execute &quot;</span> &lt;&lt; a &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">vhexecute</span><span class="params">(<span class="type">int</span> a)</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;Sub hide execute &quot;</span> &lt;&lt; a &lt;&lt; std::endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#123;</span><br><span class="line">    Sub sub;</span><br><span class="line">    Base base = sub;</span><br><span class="line">    sub.<span class="built_in">execute</span>();      <span class="comment">// Sub execute</span></span><br><span class="line">    base.<span class="built_in">execute</span>();     <span class="comment">// Base execute</span></span><br><span class="line">    sub.<span class="built_in">vexecute</span>();     <span class="comment">// Sub virtual execute</span></span><br><span class="line">    base.<span class="built_in">vexecute</span>();    <span class="comment">// Base virtual execute</span></span><br><span class="line">    sub.<span class="built_in">hexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.hexecute();  no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    base.<span class="built_in">hexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.hexecute(0); no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    sub.<span class="built_in">vhexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.vhexecute();  no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    base.<span class="built_in">vhexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    &#125;&#123;</span><br><span class="line">    Sub sub;</span><br><span class="line">    Base &amp;base = sub;</span><br><span class="line">    sub.<span class="built_in">execute</span>();      <span class="comment">// Sub execute</span></span><br><span class="line">    base.<span class="built_in">execute</span>();     <span class="comment">// Base execute</span></span><br><span class="line">    sub.<span class="built_in">vexecute</span>();     <span class="comment">// Sub virtual execute</span></span><br><span class="line">    base.<span class="built_in">vexecute</span>();    <span class="comment">// Sub virtual execute</span></span><br><span class="line">    sub.<span class="built_in">hexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.hexecute();  no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    base.<span class="built_in">hexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.hexecute(0); no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    sub.<span class="built_in">vhexecute</span>(<span class="number">0</span>);    <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// sub.vhexecute();  no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    base.<span class="built_in">vhexecute</span>();    <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// base.vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    &#125;&#123;</span><br><span class="line">    Sub *subp = <span class="keyword">new</span> <span class="built_in">Sub</span>();</span><br><span class="line">    Base *basep = subp;</span><br><span class="line">    subp-&gt;<span class="built_in">execute</span>();        <span class="comment">// Sub execute</span></span><br><span class="line">    basep-&gt;<span class="built_in">execute</span>();       <span class="comment">// Base execute</span></span><br><span class="line">    subp-&gt;<span class="built_in">vexecute</span>();       <span class="comment">// Sub virtual execute</span></span><br><span class="line">    basep-&gt;<span class="built_in">vexecute</span>();      <span class="comment">// Sub virtual execute</span></span><br><span class="line">    subp-&gt;<span class="built_in">hexecute</span>(<span class="number">0</span>);      <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// subp-&gt;hexecute();    no matching function for call to ‘Sub::hexecute()’</span></span><br><span class="line">    basep-&gt;<span class="built_in">hexecute</span>();      <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// basep-&gt;hexecute(0);  no matching function for call to ‘Base::hexecute(int)’</span></span><br><span class="line">    subp-&gt;<span class="built_in">vhexecute</span>(<span class="number">0</span>);     <span class="comment">// Sub hide execute 0</span></span><br><span class="line">    <span class="comment">// subp-&gt;vhexecute();   no matching function for call to ‘Sub::vhexecute()’</span></span><br><span class="line">    basep-&gt;<span class="built_in">vhexecute</span>();     <span class="comment">// Base hide execute</span></span><br><span class="line">    <span class="comment">// basep-&gt;vhexecute(0); no matching function for call to ‘Base::vhexecute(int)’</span></span><br><span class="line">    <span class="keyword">delete</span> subp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -424,7 +424,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88-Base-basep-amp-sub-%E5%92%8C%E5%BC%95%E7%94%A8-Base-amp-base-sub"><span class="nav-number">1.</span> <span class="nav-text">指针(Base *basep &#x3D; &amp;sub;)和引用(Base &amp;base &#x3D; sub;)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC-Base-base-sub"><span class="nav-number">2.</span> <span class="nav-text">直接赋值(Base base &#x3D; sub;)</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88-Base-basep-amp-sub-%E5%92%8C%E5%BC%95%E7%94%A8-Base-amp-base-sub"><span class="nav-number">1.</span> <span class="nav-text">指针(Base *basep &#x3D; &sub;)和引用(Base &amp;base &#x3D; sub;)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC-Base-base-sub"><span class="nav-number">2.</span> <span class="nav-text">直接赋值(Base base &#x3D; sub;)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -489,7 +489,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -499,7 +499,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -532,6 +532,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -547,11 +548,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -595,6 +655,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -619,5 +680,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

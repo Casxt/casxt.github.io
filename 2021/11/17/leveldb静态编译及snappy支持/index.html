@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -52,7 +52,7 @@
   <title>leveldb静态编译及snappy支持 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -259,7 +259,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.3k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -282,49 +282,49 @@
 <span id="more"></span>
 <h2 id="leveldb依赖安装"><a href="#leveldb依赖安装" class="headerlink" title="leveldb依赖安装"></a>leveldb依赖安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install cmake gcc g++</span><br></pre></td></tr></table></figure>
 <p>如果cmake无法安装到3.9以上的版本，可以从<a target="_blank" rel="noopener" href="https://cmake.org/download/">官网</a>下载，然后直接解压到项目目录下，之后直接使用绝对路径或相对路径调用cmake，gcc和g++推荐使用7.5</p>
-<h2 id="snappy编译"><a href="#snappy编译" class="headerlink" title="snappy编译"></a>snappy编译</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;google&#x2F;snappy.git</span><br><span class="line">cd snappy</span><br><span class="line">git submodule update --init</span><br><span class="line">git checkout 1.1.9</span><br><span class="line">mkdir build &amp;&amp; cd build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE&#x3D;Release ..&#x2F;</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h2 id="snappy编译"><a href="#snappy编译" class="headerlink" title="snappy编译"></a>snappy编译</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/google/snappy.git</span><br><span class="line">cd snappy</span><br><span class="line">git submodule update --init</span><br><span class="line">git checkout 1.1.9</span><br><span class="line">mkdir build &amp;&amp; cd build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE=Release ../</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
 
 <h2 id="leveldb编译"><a href="#leveldb编译" class="headerlink" title="leveldb编译"></a>leveldb编译</h2><p>使用<code>--recurse-submodules</code>下载subgit中的内容，使用<code>git tag</code>查看tag，选择最新的release，最后使用<code>git checkout</code>切换到最新的release版本上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone --recurse-submodules https:&#x2F;&#x2F;github.com&#x2F;google&#x2F;leveldb.git</span><br><span class="line">cd leveldb</span><br><span class="line">git tag</span><br><span class="line">git checkout 1.23</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/google/leveldb.git</span><br><span class="line">cd leveldb</span><br><span class="line">git tag</span><br><span class="line">git checkout 1.23</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p build &amp;&amp; cd build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE&#x3D;Release .. &amp;&amp; cmake --build .</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p build &amp;&amp; cd build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE=Release .. &amp;&amp; cmake --build .</span><br></pre></td></tr></table></figure>
 <p>执行测试检查编译是否成功</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;db_bench</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./db_bench</span><br></pre></td></tr></table></figure>
 
 <h3 id="snappy支持"><a href="#snappy支持" class="headerlink" title="snappy支持"></a>snappy支持</h3><p>修改<code>leveldb/CMakeLists.txt</code>, 在<code>check_library_exists(snappy snappy_compress &quot;&quot; HAVE_SNAPPY)</code>语句前后添加依赖</p>
 <p>其中<code>/home/someone/project/snappy</code>和<code>/home/someone/project/snappy/build</code>需要替换成自己的snappy源码目录和build目录<br>添加后形式如下：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 之前添加依赖</span></span><br><span class="line"><span class="keyword">link_directories</span>(<span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="string">&quot;/home/someone/project/snappy&quot;</span> <span class="string">&quot;/home/someone/project/snappy/build&quot;</span>)</span><br><span class="line">check_library_exists(snappy snappy_compress <span class="string">&quot;&quot;</span> HAVE_SNAPPY)</span><br><span class="line"><span class="comment"># 之后强制开启HAVE_SNAPPY</span></span><br><span class="line"><span class="keyword">set</span>(HAVE_SNAPPY <span class="keyword">ON</span>)</span><br></pre></td></tr></table></figure>
 <p>重新编译和测试</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p build &amp;&amp; <span class="built_in">cd</span> build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE=Release .. &amp;&amp; cmake --build .</span><br><span class="line">./db_bench</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p build &amp;&amp; <span class="built_in">cd</span> build</span><br><span class="line">cmake -DCMAKE_BUILD_TYPE=Release .. &amp;&amp; cmake --build .</span><br><span class="line">./db_bench</span><br></pre></td></tr></table></figure>
 
 <h3 id="静态编译leveldb"><a href="#静态编译leveldb" class="headerlink" title="静态编译leveldb"></a>静态编译leveldb</h3><p>因为服务器环境问题，需要静态编译leveldb, 尤其是静态编译libgcc和libg++</p>
 <p>在<code>check_library_exists(snappy snappy_compress &quot;&quot; HAVE_SNAPPY)</code>语句前后添加<code>link_libraries</code>标签配置所有的目标静态链接gcc和g++</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">link_libraries(-static-libgcc -static-libstdc++)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">link_libraries(-static-libgcc -static-libstdc++)</span><br></pre></td></tr></table></figure>
 <p>执行<code>ldd db_bench</code>可以看到已经不再依赖gcc和g++了</p>
 <p>执行<code>strings /lib64/libstdc++.so.6 | grep GLIBCXX</code>可以查看目前支持的版本</p>
 <h3 id="可能会遇到如下报错："><a href="#可能会遇到如下报错：" class="headerlink" title="可能会遇到如下报错："></a>可能会遇到如下报错：</h3><ol>
 <li><p>找不到成员</p>
 <p> 这种情况是由于gcc、g++版本太低导致的，需要升级版本</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">leveldb&#x2F;third_party&#x2F;googletest&#x2F;googletest&#x2F;include&#x2F;gtest&#x2F;gtest-matchers.h:414:12: error: ‘is_trivially_copy_constructible’ is not a member of ‘std’</span><br><span class="line">            std::is_trivially_copy_constructible&lt;M&gt;::value &amp;&amp;</span><br><span class="line">            ^</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">leveldb/third_party/googletest/googletest/include/gtest/gtest-matchers.h:414:12: error: ‘is_trivially_copy_constructible’ is not a member of ‘std’</span><br><span class="line">            std::is_trivially_copy_constructible&lt;M&gt;::value &amp;&amp;</span><br><span class="line">            ^</span><br></pre></td></tr></table></figure>
 <p> 使用如下命令检查版本</p>
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -v</span><br><span class="line">g++ -v</span><br></pre></td></tr></table></figure></li>
 <li><p>/bin/c++ /bin/cc缺失</p>
 <p> 这种情况是软链缺失导致的，报错如下</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at CMakeLists.txt:7 (project):</span><br><span class="line">  The CMAKE_CXX_COMPILER:</span><br><span class="line"></span><br><span class="line">    &#x2F;bin&#x2F;c++</span><br><span class="line"></span><br><span class="line">  is not a full path to an existing compiler tool.</span><br><span class="line"></span><br><span class="line">  Tell CMake where to find the compiler by setting either the environment</span><br><span class="line">  variable &quot;CXX&quot; or the CMake cache entry CMAKE_CXX_COMPILER to the full path</span><br><span class="line">  to the compiler, or to the compiler name if it is in the PATH.</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CMake Error at CMakeLists.txt:7 (project):</span><br><span class="line">  The CMAKE_CXX_COMPILER:</span><br><span class="line"></span><br><span class="line">    /bin/c++</span><br><span class="line"></span><br><span class="line">  is not a full path to an existing compiler tool.</span><br><span class="line"></span><br><span class="line">  Tell CMake where to find the compiler by setting either the environment</span><br><span class="line">  variable &quot;CXX&quot; or the CMake cache entry CMAKE_CXX_COMPILER to the full path</span><br><span class="line">  to the compiler, or to the compiler name if it is in the PATH.</span><br></pre></td></tr></table></figure>
 <p> 此时需要手动恢复软链，使用<code>which gcc</code>和<code>which g++</code>确定安装位置，然后使用ln设置软链</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/g++ /bin/c++</span><br><span class="line">ln -s gcc /bin/cc</span><br></pre></td></tr></table></figure></li>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /usr/local/bin/g++ /bin/c++</span><br><span class="line"><span class="built_in">ln</span> -s gcc /bin/cc</span><br></pre></td></tr></table></figure></li>
 <li><p>/lib64/libstdc++.so.6: version `GLIBCXX_3.4.22’ not found</p>
 </li>
 </ol>
 <p>  建议使用静态链接</p>
 <h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><p>编写一个简单的测试demo, 放在与leveldb根目录同级的目录下</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;leveldb/db.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    leveldb::DB *db;</span><br><span class="line">    leveldb::Options options;</span><br><span class="line">    options.create_if_missing = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// open</span></span><br><span class="line">    leveldb::Status status = leveldb::DB::<span class="built_in">Open</span>(options, <span class="string">&quot;testdb&quot;</span>, &amp;db);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    string key = <span class="string">&quot;name&quot;</span>;</span><br><span class="line">    string value = <span class="string">&quot;shane&quot;</span>;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;write:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="comment">// write</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Put</span>(leveldb::<span class="built_in">WriteOptions</span>(), key, value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// delete</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Delete</span>(leveldb::<span class="built_in">WriteOptions</span>(), key);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;delete:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read error: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//close</span></span><br><span class="line">    <span class="keyword">delete</span> db;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;leveldb/db.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    leveldb::DB *db;</span><br><span class="line">    leveldb::Options options;</span><br><span class="line">    options.create_if_missing = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// open</span></span><br><span class="line">    leveldb::Status status = leveldb::DB::<span class="built_in">Open</span>(options, <span class="string">&quot;testdb&quot;</span>, &amp;db);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    string key = <span class="string">&quot;name&quot;</span>;</span><br><span class="line">    string value = <span class="string">&quot;shane&quot;</span>;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;write:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="comment">// write</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Put</span>(leveldb::<span class="built_in">WriteOptions</span>(), key, value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// delete</span></span><br><span class="line">    status = db-&gt;<span class="built_in">Delete</span>(leveldb::<span class="built_in">WriteOptions</span>(), key);</span><br><span class="line">    <span class="built_in">assert</span>(status.<span class="built_in">ok</span>());</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;delete:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    status = db-&gt;<span class="built_in">Get</span>(leveldb::<span class="built_in">ReadOptions</span>(), key, &amp;value);</span><br><span class="line">    <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read error: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span>  &lt;&lt; endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;read:&quot;</span> <span class="string">&quot;(&quot;</span>&lt;&lt; key &lt;&lt; <span class="string">&quot;)&quot;</span> <span class="string">&quot;=&gt;&quot;</span> <span class="string">&quot;(&quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//close</span></span><br><span class="line">    <span class="keyword">delete</span> db;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行命令, 编译leveldb需要使用<code>-Ileveldb/include</code>引入头文件，<code>-Lleveldb/build</code>设置链库地址, <code>-lleveldb -lpthread</code> 指定要链接的库, <code>-o leveldbtest</code> 指定输出名字</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">g++ leveldbtest.cc -Ileveldb/include -Lleveldb/build -lleveldb -lpthread -o leveldbtest</span><br><span class="line">./leveldbtest </span><br></pre></td></tr></table></figure>
 
 <p>运行结果如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">write:(name)&#x3D;&gt;(shane)</span><br><span class="line">read:(name)&#x3D;&gt;(shane)</span><br><span class="line">delete:(name)OK</span><br><span class="line">read error: NotFound: (name)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">write:(name)=&gt;(shane)</span><br><span class="line">read:(name)=&gt;(shane)</span><br><span class="line">delete:(name)OK</span><br><span class="line">read error: NotFound: (name)</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -478,7 +478,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -488,7 +488,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -521,6 +521,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -536,11 +537,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -584,6 +644,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -608,5 +669,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

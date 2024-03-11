@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,7 +51,7 @@
   <title>hdfs命令行流式处理 | Maple.Link</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
-    <script>
+    <script data-pjax>
       if (CONFIG.hostname === location.hostname) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -278,7 +278,7 @@
 
       
         <h1 id="文件流式处理"><a href="#文件流式处理" class="headerlink" title="文件流式处理"></a>文件流式处理</h1><p>在处理hdfs数据时，可能会遇到本地磁盘空间不足以存放数据的问题，这时我们可以使用linux的stdio对数据进行流式处理，以替换每行内容为例</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop -cat hdfs://your_path/your_file |\</span><br><span class="line">sed  <span class="string">&quot;s/some_thing/some_other/g&quot;</span> |\</span><br><span class="line">hadoop -put - hdfs://your_path/your_processed_file</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">cat</span> hdfs://your_path/your_file |\</span><br><span class="line">sed  <span class="string">&quot;s/some_thing/some_other/g&quot;</span> |\</span><br><span class="line">hadoop -put - hdfs://your_path/your_processed_file</span><br></pre></td></tr></table></figure>
 
 <p>这样利用pipe完成了对数据的处理，同时避免了数据在本地落盘。</p>
 <h1 id="遍历文件夹处理"><a href="#遍历文件夹处理" class="headerlink" title="遍历文件夹处理"></a>遍历文件夹处理</h1><p>此外还可以搭配xargs遍历整个目录</p>
@@ -289,7 +289,7 @@
 <li><code>xargs -I &#123;&#125; bash -c ...</code> 将每个文件名依次作为参数处理</li>
 <li><code>&quot;hadoop -cat  ...&quot;</code> 按照之前流式处理的方式处理每一个文件</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop -ls -h hdfs://your_path | awk -F<span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | awk -F<span class="string">&#x27;/&#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | xargs -I &#123;&#125; bash -c <span class="string">&quot;hadoop -cat hdfs://your_path/&#123;&#125; | sed &#x27;s/some_thing/some_other/g&#x27; | hadoop -put - hdfs://your_other_path/&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">ls</span> -h hdfs://your_path | awk -F<span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | awk -F<span class="string">&#x27;/&#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | xargs -I &#123;&#125; bash -c <span class="string">&quot;hadoop -cat hdfs://your_path/&#123;&#125; | sed &#x27;s/some_thing/some_other/g&#x27; | hadoop -put - hdfs://your_other_path/&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -442,7 +442,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -452,7 +452,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -485,6 +485,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -500,11 +501,70 @@
 
 <script src="/js/bookmark.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script data-pjax>
     (function(){
       var canonicalURL, curProtocol;
       //Get the <link> tag
@@ -548,6 +608,7 @@
 
 
 
+    <div id="pjax">
   
 
   
@@ -572,5 +633,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>
