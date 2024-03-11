@@ -216,7 +216,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/03/11/dynamodb%20partiql%20%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">dynamodb partiql 语法</a>
+            <a href="/2024/03/11/dynamodb%20partiql%20%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">DynamoDB Partiql 语法</a>
         </h2>
 
         <div class="post-meta">
@@ -263,7 +263,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h2><p>在ddb中，推荐使用双引号标记表名，列名，使用单引号标记字符串</p>
+          <span id="more"></span>
+
+<h2 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h2><p>在ddb中，推荐使用双引号标记表名，列名，使用单引号标记字符串</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> &quot;TableName&quot;</span><br><span class="line"><span class="keyword">WHERE</span> primary_key <span class="operator">=</span> <span class="string">&#x27;&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>可以在语句中使用order by等语句</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> &quot;column1&quot;, &quot;column2&quot;</span><br><span class="line"><span class="keyword">FROM</span> &quot;TableName&quot;</span><br><span class="line"><span class="keyword">WHERE</span> primary_key <span class="operator">=</span> <span class="string">&#x27;key1&#x27;</span> <span class="keyword">AND</span> range_key <span class="operator">=</span> <span class="number">123</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> range_key <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
