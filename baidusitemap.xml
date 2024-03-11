@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://maple.link/2024/03/11/dynamodb%20partiql%20%E8%AF%AD%E6%B3%95/</loc>
+    <lastmod>2024-03-11</lastmod>
+  </url>
+  <url>
     <loc>https://maple.link/2022/12/30/%E5%9C%A8RedisCluster%E4%B8%ADDebug-lua-%E8%84%9A%E6%9C%AC/</loc>
     <lastmod>2022-12-30</lastmod>
   </url>
