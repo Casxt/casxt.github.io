@@ -120,6 +120,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Github Actions 复用 Workflow</title>
+    <url>/2024/04/09/Github-Actions-%E5%A4%8D%E7%94%A8workflow/</url>
+    <content><![CDATA[<p>我们都知道在编写github actions时，可以使用其他预定义好的github action，类似如下写法.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow1.yml</span><br><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      source_branch:</span><br><span class="line">        description: &#x27;source code branch&#x27;</span><br><span class="line">        required: true</span><br><span class="line">        default: &#x27;main&#x27;</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  fetch:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>那么当我们写好了这样一个workflow之后，能否进一步在多个workflow中复用这个文件呢，实际上是可以的。</p>
+<p>首先比编辑<code>.github/workflows/flow1.yml</code>，增加<code>workflow_call</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      param1:</span><br><span class="line">        required: true</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>之后在另一个workflow中就可以这样调用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow2.yml</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    steps:</span><br><span class="line">        uses: actions/checkout@v4</span><br><span class="line">        # can do smthing else</span><br><span class="line">  job2:</span><br><span class="line">    needs: [job1]</span><br><span class="line">    uses: ./.github/workflows/flow1.yml</span><br><span class="line">    # uses: &lt;user_name&gt;/&lt;repo&gt;/workflows/flow1.yml@&lt;branch/commit&gt;</span><br><span class="line">        with:</span><br><span class="line">            ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>这种用法有以下几点需要注意：</p>
+<ol>
+<li><code>./.github/workflows/flow1.yml</code> 只能作为一个job使用，而不能作为step使用，否则会得倒类似 <code>Can&#39;t find &#39;action.yml&#39; or &#39;Dockerfile&#39; under xxxx Did you forget to run actions/checkout before running your local action</code></li>
+<li><code>uses</code>字段必须紧接着<code>job2</code>声明，否则会报错<code>The workflow is not valid</code></li>
+<li>执行job2之前，必须先执行job1，将项目代码clone到当前目录，并设置job2和job1的依赖关系，否则找不到目标文件</li>
+<li>调用本地文件时<code>uses</code>的值必须为<code>./.github/...</code>，而不能是<code>.github/...</code></li>
+</ol>
+]]></content>
+      <categories>
+        <category>github</category>
+      </categories>
+      <tags>
+        <tag>github</tag>
+        <tag>actions</tag>
+        <tag>workflow</tag>
+        <tag>jobs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Golang 调用 Linux Netlink 管理路由表</title>
     <url>/2020/07/07/Golang-%E8%B0%83%E7%94%A8-Linux-Netlink-%E7%AE%A1%E7%90%86%E8%B7%AF%E7%94%B1%E8%A1%A8/</url>
     <content><![CDATA[<p>通常我们使用route命令或者ip命令来管理linux路由表(routing table), 但是如何使用linux原生的接口来进行操作呢？</p>
@@ -754,6 +787,51 @@
       </tags>
   </entry>
   <entry>
+    <title>python 删除超大目录</title>
+    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
+    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
+<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
+<span id="more"></span>
+
+<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
+<li>读取目录数据，获得全部的文件</li>
+<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+</ol>
+<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
+<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
+<p>例如：</p>
+<ul>
+<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
+<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
+</ul>
+<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>读取目录数据，获得一个文件</li>
+<li>获得文件的创建日期等信息(sata)</li>
+<li>删除满足条件的文件</li>
+<li>休眠一小段时间</li>
+<li>回到第一步</li>
+</ol>
+<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
+<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
+<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
+<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>python</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>sata</tag>
+        <tag>超大目录</tag>
+        <tag>os.listdir</tag>
+        <tag>os.walk</tag>
+        <tag>os.scandir</tag>
+        <tag>dirent</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>python import 机制</title>
     <url>/2021/08/11/python-import-%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<p>python中的各种import方式</p>
@@ -806,51 +884,6 @@
         <tag>import</tag>
         <tag>from</tag>
         <tag>sys.path</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>python 删除超大目录</title>
-    <url>/2021/08/11/python-%E5%88%A0%E9%99%A4%E8%B6%85%E5%A4%A7%E7%9B%AE%E5%BD%95/</url>
-    <content><![CDATA[<p>通常，使用shutil.rmtree就可以轻易的删除目录，但是量变产生质变，当目录中的文件数量达到数百万时，我们需要更加快速和平稳的方式</p>
-<p>优化的核心思想就是要尽可能减少一切不必要的io</p>
-<span id="more"></span>
-
-<h2 id="通常的删除过程"><a href="#通常的删除过程" class="headerlink" title="通常的删除过程"></a>通常的删除过程</h2><ol>
-<li>读取目录数据，获得全部的文件</li>
-<li>遍历文件，依次获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-</ol>
-<p>这样的流程看似没有问题，但是实际上在第一步就会由于读目录给系统造成极大的压力，百万级的目录光是统计一遍就会花费大量的时间。此外在第二部，连续的sata查询也会带来极大的压力。</p>
-<p>此外python常用的接口包含了过多不必要的io开销，这些不必要的sata查询会导致io的次数增加数倍，让本来就很慢的过程雪上加霜。</p>
-<p>例如：</p>
-<ul>
-<li>os.listdir：一次性读取，大目录下增加磁盘压力，并且会执行很久</li>
-<li>os.walk：间隙读取，但是存在额外的sata读取开销</li>
-</ul>
-<p>参考：<a href="https://pythonrepo.com/repo/benhoyt-scandir-python-files">https://pythonrepo.com/repo/benhoyt-scandir-python-files</a></p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
-<li>读取目录数据，获得一个文件</li>
-<li>获得文件的创建日期等信息(sata)</li>
-<li>删除满足条件的文件</li>
-<li>休眠一小段时间</li>
-<li>回到第一步</li>
-</ol>
-<p>这样的流程有相比之前要更加平稳，读取目录和获得sata为一个一个读取，而且可以根据自己的需要灵活的休眠，面对海量文件不会把硬盘打满，给其他程序留一些io资源。</p>
-<p>为了达成间断读取的目标，我们需要使用os.scandir这个接口，相比于os.walk，他会直接返回dirent的信息，而不会再去查询sata</p>
-<p>以下的代码，实现了对超时文件和目录的删除，但是并没有实现休眠。</p>
-<p>关于sata在不同平台上的差异，请参考：<a href="https://docs.python.org/3/library/stat.html">https://docs.python.org/3/library/stat.html</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line">logger = logging.info</span><br><span class="line"><span class="comment"># logger = print</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clean_by_ttl</span>(<span class="params">path, ttl, dry_run</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    path: 待扫描的目录</span></span><br><span class="line"><span class="string">    ttl: 文件生存时间(time to live)</span></span><br><span class="line"><span class="string">    dry_run: 是否真正进行删除操作</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    logger(<span class="string">f&quot;cleaner: path <span class="subst">&#123;path&#125;</span>, ttl: <span class="subst">&#123;ttl&#125;</span>, dry_run: <span class="subst">&#123;dry_run&#125;</span>&quot;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    now = time.time()</span><br><span class="line">    <span class="comment"># 待处理列表</span></span><br><span class="line">    process_dir = [path]</span><br><span class="line">    delete_dir = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(process_dir) &gt; <span class="number">0</span>:</span><br><span class="line">        logger(<span class="string">f&quot;cleaner: enter dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> os.scandir(process_dir[<span class="number">0</span>]) <span class="keyword">as</span> it:</span><br><span class="line">            file_num = <span class="number">0</span></span><br><span class="line">            delete_num = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> entry <span class="keyword">in</span> it:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="comment"># 统计目录下所有文件及子目录数量</span></span><br><span class="line">                file_num += <span class="number">1</span></span><br><span class="line">                life_time = now - entry.stat().st_ctime</span><br><span class="line">                <span class="keyword">if</span> life_time &lt; ttl:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) skip <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 统计目录下过期文件及过期子目录数量</span></span><br><span class="line">                    delete_num += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> entry.is_file():</span><br><span class="line">                        <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                            os.remove(entry.path)</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) mock delete file <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                    <span class="keyword">elif</span> entry.is_dir():</span><br><span class="line">                        logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) discover ttl dir <span class="subst">&#123;entry.path&#125;</span>, life_time: <span class="subst">&#123;life_time&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="comment"># 过期子目录夹放进处理列表继续处理</span></span><br><span class="line">                        process_dir.append(entry.path)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 目录过期，且其下所有文件及子目录均过期，且不是根目录，放进删除列表</span></span><br><span class="line">            <span class="keyword">if</span> process_dir[<span class="number">0</span>] != path:</span><br><span class="line">                <span class="keyword">if</span> file_num == delete_num:</span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) determin delete dir <span class="subst">&#123;process_dir[<span class="number">0</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                    delete_dir.append(process_dir[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 由于向文件里写文件时会修改文件夹的ctime，所以实际上走不到这个分支</span></span><br><span class="line">                    logger(<span class="string">f&quot;cleaner: (<span class="subst">&#123;count&#125;</span>) ttl dir <span class="subst">&#123;entry.path&#125;</span> has unttl file, file_num: <span class="subst">&#123;file_num&#125;</span>, delete_num: <span class="subst">&#123;delete_num&#125;</span>&quot;</span>)</span><br><span class="line">            process_dir = process_dir[<span class="number">1</span>:]</span><br><span class="line">    <span class="comment"># 从最内层文件夹开始删除文件夹，因为文件夹内所有项目均过期，此时应该已经成为空文件夹</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> <span class="built_in">reversed</span>(delete_dir):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> dry_run:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">                os.rmdir(<span class="built_in">dir</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logger(<span class="string">f&quot;cleaner: mock delete dir <span class="subst">&#123;<span class="built_in">dir</span>&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logger(<span class="string">f&quot;cleaner: err=<span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            logger(traceback.format_exc())</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>python</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>sata</tag>
-        <tag>超大目录</tag>
-        <tag>os.listdir</tag>
-        <tag>os.walk</tag>
-        <tag>os.scandir</tag>
-        <tag>dirent</tag>
       </tags>
   </entry>
   <entry>
@@ -1433,27 +1466,6 @@
       </tags>
   </entry>
   <entry>
-    <title>模型转换时打包归一化预处理操作</title>
-    <url>/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<p>在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。</p>
-<p>以最简单的归一化操作为例</p>
-<p>归一化Module如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#x27;mean&#x27;, torch.tensor([0.485, 0.456, 0.406], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;std&#x27;, torch.tensor([0.229, 0.224, 0.225], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;norm&#x27;, torch.tensor([255.0], dtype=torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images / self.norm - self.mean) / self.std</span><br></pre></td></tr></table></figure>
-
-<p>之后修改模型的inti和forward函数即可</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize = Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>归一化</tag>
-        <tag>预处理</tag>
-        <tag>Normalize</tag>
-        <tag>ONNX</tag>
-        <tag>Tensorrt</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>知识点扫盲</title>
     <url>/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/</url>
     <content><![CDATA[<span id="more"></span>
@@ -1489,6 +1501,27 @@
       </categories>
       <tags>
         <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>模型转换时打包归一化预处理操作</title>
+    <url>/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。</p>
+<p>以最简单的归一化操作为例</p>
+<p>归一化Module如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#x27;mean&#x27;, torch.tensor([0.485, 0.456, 0.406], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;std&#x27;, torch.tensor([0.229, 0.224, 0.225], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;norm&#x27;, torch.tensor([255.0], dtype=torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images / self.norm - self.mean) / self.std</span><br></pre></td></tr></table></figure>
+
+<p>之后修改模型的inti和forward函数即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize = Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>归一化</tag>
+        <tag>预处理</tag>
+        <tag>Normalize</tag>
+        <tag>ONNX</tag>
+        <tag>Tensorrt</tag>
       </tags>
   </entry>
   <entry>
@@ -1575,6 +1608,32 @@
         <tag>schema</tag>
         <tag>mysql</tag>
         <tag>database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通过 Github Actions 部署 Github Pages</title>
+    <url>/2022/08/05/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/</url>
+    <content><![CDATA[<p>在项目的 settings 中 github pages 可以通过根目录或docs目录部署。但是这种方式不够灵活，对于一些前段项目，需要不停的通过CI生成站点文件，提交到git中再部署，git中存储了许多构建产物，显得冗余臃肿。</p>
+<p>实际上，github也支持通过actions来部署pages，不需要将站点文件储存在git中。</p>
+<span id="more"></span>
+
+<p>要通过actions部署pages，需要如下步骤：</p>
+<ol>
+<li>在workflow中构建站点文件，并保存到一个目录中</li>
+<li>调用tar命令将构建好的站点目录打包为tar包，注意此时只打包不要做压缩</li>
+<li>调用<code>actions/upload-artifact</code>action将打包好的tar包上传到artifact，注意name参数必须为<code>github-pages</code>，path 参数为你tar包的路径</li>
+<li>调用<code>actions/deploy-pages</code>即可将tar包中的内容作为站点内容部署</li>
+</ol>
+<p>在<a href="https://github.com/Casxt/BangumiTracker">Bangumi Tracker</a>项目中就使用了这个构建方式。<br>网站链接为<a href="https://bangumi.maple.link./">https://bangumi.maple.link。</a></p>
+<p>以下workflow展示了安装npm和yarn依赖，构建站点，tar打包，上传的过程。</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Build</span> <span class="string">CI/CD</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">&quot;main&quot;</span> ]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages</span></span><br><span class="line"><span class="attr">permissions:</span></span><br><span class="line">  <span class="attr">contents:</span> <span class="string">read</span></span><br><span class="line">  <span class="attr">pages:</span> <span class="string">write</span></span><br><span class="line">  <span class="attr">id-token:</span> <span class="string">write</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.</span></span><br><span class="line"><span class="comment"># However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.</span></span><br><span class="line"><span class="attr">concurrency:</span></span><br><span class="line">  <span class="attr">group:</span> <span class="string">&quot;pages&quot;</span></span><br><span class="line">  <span class="attr">cancel-in-progress:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">pages-ci-cd:</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">github-pages</span></span><br><span class="line">      <span class="attr">url:</span> <span class="string">$&#123;&#123;</span> <span class="string">steps.deployment.outputs.page_url</span> <span class="string">&#125;&#125;</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">ref:</span> <span class="string">$&#123;&#123;</span> <span class="string">inputs.source_branch</span> <span class="string">&#125;&#125;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">Node.js</span> <span class="number">20.</span><span class="string">x</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/setup-node@v4</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">node-version:</span> <span class="number">20</span></span><br><span class="line">        <span class="attr">cache:</span> <span class="string">&#x27;npm&#x27;</span></span><br><span class="line">        <span class="attr">cache-dependency-path:</span> <span class="string">app/yarn.lock</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Run</span> <span class="string">install</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">borales/actions-yarn@v4</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">dir:</span> <span class="string">&#x27;app&#x27;</span></span><br><span class="line">        <span class="attr">cmd:</span> <span class="string">install</span> <span class="comment"># will run `yarn install` command</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Generate</span> <span class="string">Protobuf</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">./generate_proto_ts.sh</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cd app</span></span><br><span class="line"><span class="string">        yarn build</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Archive</span> <span class="string">artifact</span></span><br><span class="line">      <span class="attr">shell:</span> <span class="string">sh</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo ::group::Archive artifact</span></span><br><span class="line"><span class="string">        tar \</span></span><br><span class="line"><span class="string">          --dereference --hard-dereference \</span></span><br><span class="line"><span class="string">          --directory &quot;app/build&quot; \</span></span><br><span class="line"><span class="string">          -cvf &quot;artifact.tar&quot; \</span></span><br><span class="line"><span class="string">          --exclude=.git \</span></span><br><span class="line"><span class="string">          --exclude=.github \</span></span><br><span class="line"><span class="string">          .</span></span><br><span class="line"><span class="string">        echo ::endgroup::</span></span><br><span class="line"><span class="string">          </span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Upload</span> <span class="string">artifact</span></span><br><span class="line">      <span class="attr">id:</span> <span class="string">upload-artifact</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/upload-artifact@v4</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">github-pages</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">artifact.tar</span></span><br><span class="line">        <span class="attr">retention-days:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">if-no-files-found:</span> <span class="string">error</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">GitHub</span> <span class="string">Pages</span></span><br><span class="line">      <span class="attr">id:</span> <span class="string">deployment</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/deploy-pages@v4</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>github</category>
+      </categories>
+      <tags>
+        <tag>github</tag>
+        <tag>actions</tag>
+        <tag>pages</tag>
       </tags>
   </entry>
   <entry>
