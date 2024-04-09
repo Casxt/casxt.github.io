@@ -202,6 +202,97 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2024/04/09/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/09/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/" class="post-title-link" itemprop="url">通过 Github Actions 部署 Github Pages</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-09 16:59:09" itemprop="dateCreated datePublished" datetime="2024-04-09T16:59:09+08:00">2024-04-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/github/" itemprop="url" rel="index"><span itemprop="name">github</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在项目的 settings 中 github pages 可以通过根目录或docs目录部署。但是这种方式不够灵活，对于一些前段项目，需要不停的通过CI生成站点文件，提交到git中再部署，git中存储了许多构建产物，显得冗余臃肿。</p>
+<p>实际上，github也支持通过actions来部署pages，不需要将站点文件储存在git中。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/04/09/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://maple.link/2024/04/09/Github-Actions-%E5%A4%8D%E7%94%A8workflow/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -744,97 +835,6 @@
 <h2 id="安装密钥"><a href="#安装密钥" class="headerlink" title="安装密钥"></a>安装密钥</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acme.sh --install-cert -d your.domain.com --key-file /etc/nginx/your.domain.com.key --fullchain-file /etc/nginx/your.domain.com.pem --reloadcmd <span class="string">&quot;sudo systemctl restart nginx&quot;</span></span><br></pre></td></tr></table></figure>
 
 
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2022/08/05/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/05/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/" class="post-title-link" itemprop="url">通过 Github Actions 部署 Github Pages</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-05 08:40:43" itemprop="dateCreated datePublished" datetime="2022-08-05T08:40:43+08:00">2022-08-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/github/" itemprop="url" rel="index"><span itemprop="name">github</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在项目的 settings 中 github pages 可以通过根目录或docs目录部署。但是这种方式不够灵活，对于一些前段项目，需要不停的通过CI生成站点文件，提交到git中再部署，git中存储了许多构建产物，显得冗余臃肿。</p>
-<p>实际上，github也支持通过actions来部署pages，不需要将站点文件储存在git中。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/05/%E9%80%9A%E8%BF%87Github-Actions%E9%83%A8%E7%BD%B2Github-Pages/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
