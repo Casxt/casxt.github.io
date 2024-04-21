@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"maple.link","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线上Cache系统设计">
+<meta property="og:url" content="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg">
+<meta property="og:image" content="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg">
+<meta property="og:image" content="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg">
+<meta property="article:published_time" content="2024-04-21T06:07:40.000Z">
+<meta property="article:modified_time" content="2024-04-21T06:07:40.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="cache">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg">
+
+<link rel="canonical" href="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>线上Cache系统设计 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+    <script data-pjax>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-D6CLMRR9ZK');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Maple.Link</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线上Cache系统设计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-21 14:07:40" itemprop="dateCreated datePublished" datetime="2024-04-21T14:07:40+08:00">2024-04-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/backend/" itemprop="url" rel="index"><span itemprop="name">backend</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题</p>
+<span id="more"></span>
+
+<h1 id="缓存系统的挑战"><a href="#缓存系统的挑战" class="headerlink" title="缓存系统的挑战"></a>缓存系统的挑战</h1><ul>
+<li>缓存击穿 Cache Breakdown: 热点数据突然过期<ul>
+<li>Data sharing</li>
+<li>Async Refresh / Pre Fetch</li>
+<li>Request aggregation</li>
+</ul>
+</li>
+<li>缓存雪崩 Cache Avalanche: 所有的缓存数据同时失效</li>
+<li>缓存穿透 Cache Penetration: 查询不存在的数据<ul>
+<li>Content filter</li>
+<li>Error cacheing</li>
+</ul>
+</li>
+<li>内存管理<ul>
+<li>堆外内存 vs 堆内内存</li>
+</ul>
+</li>
+<li>淘汰策略<ul>
+<li>Memory Limit</li>
+<li>Time Limit</li>
+</ul>
+</li>
+<li>数据管理<ul>
+<li>Marshal vs Raw Object (marshal cost vs GC cost)</li>
+<li>Lock vs Bucket Lock vs Object Lock</li>
+</ul>
+</li>
+</ul>
+<h2 id="Data-sharing"><a href="#Data-sharing" class="headerlink" title="Data sharing"></a>Data sharing</h2><p>通过网络或其它中间件在不同节点间共享缓存数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟</p>
+<h2 id="Async-Refresh-Pre-Fetch"><a href="#Async-Refresh-Pre-Fetch" class="headerlink" title="Async Refresh / Pre Fetch"></a>Async Refresh / Pre Fetch</h2><p>通过给数据设置软过期时间，在真正过期之前就异步刷新数据，避免用户等待回源。</p>
+<p>同时通过提前刷新，在源服务报错时留出重试和恢复的时间</p>
+<h2 id="Request-aggregation"><a href="#Request-aggregation" class="headerlink" title="Request aggregation"></a>Request aggregation</h2><p>在多个client请求相同的需要回源的数据时，只进行一次回源，避免多次请求</p>
+<h2 id="Content-filter"><a href="#Content-filter" class="headerlink" title="Content filter"></a>Content filter</h2><p>通过布隆过滤器等手段，阻止对不存在资源的请求，避免大量回源压垮服务</p>
+<h2 id="Error-cacheing"><a href="#Error-cacheing" class="headerlink" title="Error cacheing"></a>Error cacheing</h2><p>在回源报错的情况下，适当缓存源错误并返回给用户，避免错误情况下持续回源压垮后端服务。</p>
+<p>目前开源cache组件支持error cache的很少，但实际上这是一个非常实用的服务，当缓存中数据不存在或过期的请求，如果回源报错（4XX，5XX），可以短暂缓存源报错，缓存时间可以是正常缓存时间的十分之一或更短，能够有效避免对源服务的恶意攻击。</p>
+<h2 id="堆外内存-vs-堆内内存"><a href="#堆外内存-vs-堆内内存" class="headerlink" title="堆外内存 vs 堆内内存"></a>堆外内存 vs 堆内内存</h2><p>常见的缓存服务的内存申请基本上可以分为堆内和堆外两大方向，对于有GC语言来说，堆外内存可以减少GC消耗，代价就是cache需要自己管理内存。<br>而堆内则有实现简单可靠的有点，并且可以配合对象缓存进一步避免序列化开销。</p>
+<p>堆外内存的另一个缺点是无法按需分配，往往需要提前分配几百M到几G的内存空间，并且难以缩扩容，会造成一定的资源浪费。</p>
+<h2 id="Marshal-vs-Raw-Object"><a href="#Marshal-vs-Raw-Object" class="headerlink" title="Marshal vs Raw Object"></a>Marshal vs Raw Object</h2><p>对于缓存数据的存储，同样存在两大方向，分别是序列化后存储和直接缓存数据对象。</p>
+<p>通常使用堆外缓存方案的cache需要使用序列化方案，一方面堆外内存不容易直接映射为语言呢的对象，另一方面序列化后只需要管理字节数组，内存管理的难度大幅下降。</p>
+<p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
+<h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
+<p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
+<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
+
+<p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
+<p>同步更新状态的转移有2种可能，</p>
+<ol>
+<li>同步更新中如果updatefn返回error，则cache状态会转移到异常重试冷却状态，在这个状态下，cache仍然会缓存之前updatefn返回的error response，并通过用户请求触发异步更新，更新的最小间隔是200ms（或者其他用户设定的间隔），如果更新失败，则缓存最新的error response，如果成功则迁移到正常数据的状态流中。</li>
+</ol>
+<p>此外，由于更新是通过用户请求触发的，如果在得到异常数据后很久没有没有请求，还会再次回到同步更新状态。</p>
+<ol start="2">
+<li>在得到正常数据后，cache在SoftLime时间内只返回数据而不进行更新，当缓存时间超过SoftLime而不超过HardLimt时，cache在用户请求时会触发异步更新，而如果超过了HardLimt则会进行同步更新。在缓存了正常数据的状态下，如果updatefn返回了error，cache会继续保存之前的成功的返回值而不会保存失败返回，同时也不会更新update time，在下一次用户请求时会再次触发异步更新，但是如果update持续失败，缓存时间超过了HardLim回到同步更新状态，此时更新失败会导致回到异常数据状态</li>
+</ol>
+<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
+
+<p>Shared object cache 通过redis在cache之间共享数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟，作为一个可选的中间件，引入data sharing后的更新流程比起单机版的cache会更复杂一点，</p>
+<p>为了避免引入redis导致cache data的ttl混乱，redis中除了数据外，还记录了updatetime和编码类型</p>
+<p>在真正执行用户的update function之前，会先检查reids中是否有可用数据</p>
+<p>redis中，每个cache item 的 HASHS Struct 如下:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">data</span>: &lt;data&gt;</span><br><span class="line">    <span class="attr">marshal</span>: &lt;marshalType&gt;</span><br><span class="line">    <span class="attr">update</span>: &lt;updateAtMs&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了保证缓存更新的原子性，在更新数据时通过如下lua比较尝试写入的数据是否新于已有数据，并返回最新数据的时间戳，通过返回的时间戳，调用方也可以知道自己写入是否成功</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">   <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">   <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">   <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>]))  <span class="keyword">then</span></span><br><span class="line">       <span class="keyword">return</span> expireTime</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;HSET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], ARGV[<span class="number">3</span>], ARGV[<span class="number">4</span>], ARGV[<span class="number">5</span>], ARGV[<span class="number">6</span>], ARGV[<span class="number">7</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>为了准确控制过期时间没有使用传统的TTL设置生存周期，而是使用用PEXPIREAT设置毫秒即的过期时间戳，这样即使指令的发送和执行上有一些延迟，最终的数据TTL还是严格和cache instance 一致的<br>并且在update时，会检查当前数据的过期时间戳和已经存在的数据的过期时间戳谁更大，只有最新的数据才能留存在redis中。<br>这里有一个限制，在redis7之前，设置超时时间戳可以使用PEXPIREAT，但是设置后就无法再次获取时间戳了，只能使用PTTL获取剩余的毫秒级TTL，在redis7之后新增了PEXPIRETIME指令可以获取原始的时间戳。</p>
+<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
+
+<p>出了常见的object cache，对于流数据的缓存也是比较常见的一个场景</p>
+<p>Stream cache对外的表现是一个滑动窗，在第一次缓存建立后，会主动向更新和更老的feed，尽享填满自己缓存窗口从而满足用户请求</p>
+
+    </div>
+
+    
+    
+    
+      
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cache/" rel="tag"># cache</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/04/12/Redis-HGET-Benchmark/" rel="prev" title="Redis HGET Benchmark">
+      <i class="fa fa-chevron-left"></i> Redis HGET Benchmark
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">1.</span> <span class="nav-text">缓存系统的挑战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-sharing"><span class="nav-number">1.1.</span> <span class="nav-text">Data sharing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Async-Refresh-Pre-Fetch"><span class="nav-number">1.2.</span> <span class="nav-text">Async Refresh &#x2F; Pre Fetch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Request-aggregation"><span class="nav-number">1.3.</span> <span class="nav-text">Request aggregation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Content-filter"><span class="nav-number">1.4.</span> <span class="nav-text">Content filter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-cacheing"><span class="nav-number">1.5.</span> <span class="nav-text">Error cacheing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E5%A4%96%E5%86%85%E5%AD%98-vs-%E5%A0%86%E5%86%85%E5%86%85%E5%AD%98"><span class="nav-number">1.6.</span> <span class="nav-text">堆外内存 vs 堆内内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Marshal-vs-Raw-Object"><span class="nav-number">1.7.</span> <span class="nav-text">Marshal vs Raw Object</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lock-vs-Bucket-Lock-vs-Object-Lock"><span class="nav-number">1.8.</span> <span class="nav-text">Lock vs Bucket Lock vs Object Lock</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">单节点缓存系统的工作流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE%E7%9A%84%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B-%E9%80%9A%E8%BF%87redis%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE"><span class="nav-number">3.</span> <span class="nav-text">多节点共享数据的缓存更新流程(通过redis共享数据)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Steam-Cache"><span class="nav-number">4.</span> <span class="nav-text">Steam Cache</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maple</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">73k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:07</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'db8196d5d31eff822ffb',
+      clientSecret: 'a7b6442e925817c22e7559e5f134e11ffe90fe16',
+      repo        : 'casxt.github.io',
+      owner       : 'casxt',
+      admin       : ['casxt'],
+      id          : 'c6b06fdc72946529740303adc84c3572',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -357,6 +357,57 @@
       </tags>
   </entry>
   <entry>
+    <title>Redis HGET Benchmark</title>
+    <url>/2024/04/12/Redis-HGET-Benchmark/</url>
+    <content><![CDATA[<p>使用redis-benchmark工具对redis集群进行压测</p>
+<p>redis-benchmark工具对于redis cluster支持并是不特别好，需要使用<code>&#123;tag&#125;</code>来写入指定node，相关用法在这<a href="https://github.com/redis/redis/pull/5889">pr</a>中。</p>
+<p>但是使用{tag}测试后不好删除数据，并且根据业务需要，关注的是单Hash单Node下的性能表现，所以最后测试时，直接连接了测试key所在的node，避免了事后清除数据的麻烦。 </p>
+<p>根据测试结果，可以看出，使用Pipeline的情况下Redis吞吐量能提升一倍有余</p>
+<p>在不使用pipeline的情况下猜测是网络开销占用了过多CPU，但具体是iowait还是其他因素造成仍需分析</p>
+<p>此外AWS在Redis7/7.1上支持了(增强型IO多路复用)[<a href="https://docs.aws.amazon.com/zh_cn/AmazonElastiCache/latest/red-ug/supported-engine-versions.html#redis-version-7.0]%E5%8F%AF%E4%BB%A5%E5%BE%88%E5%A4%A7%E7%A8%8B%E5%BA%A6%E4%B8%8A%E5%A2%9E%E5%BC%BA%E5%A4%9A%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%97%B6%E7%9A%84%E6%80%A7%E8%83%BD%E3%80%82">https://docs.aws.amazon.com/zh_cn/AmazonElastiCache/latest/red-ug/supported-engine-versions.html#redis-version-7.0]可以很大程度上增强多客户端连接时的性能。</a></p>
+<span id="more"></span>
+
+<h1 id="AWS-Node-Type"><a href="#AWS-Node-Type" class="headerlink" title="AWS Node Type"></a>AWS Node Type</h1><table>
+<thead>
+<tr>
+<th>缓存节点类型</th>
+<th>vCPU</th>
+<th>内存</th>
+<th>网络性能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cache.m6g.large</td>
+<td>2</td>
+<td>6.38 GiB</td>
+<td>高达 10GB</td>
+</tr>
+</tbody></table>
+<p>redis version: 6.2</p>
+<h1 id="Benchmark-Result"><a href="#Benchmark-Result" class="headerlink" title="Benchmark Result"></a>Benchmark Result</h1><h2 id="1-with-pipeline"><a href="#1-with-pipeline" class="headerlink" title="1. with pipeline"></a>1. with pipeline</h2><p>command:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">redis-benchmark -h &lt;host&gt; -p 6379 -l -q -P 16 --threads 6 hget benchmark_hash_key __rand_int__</span><br></pre></td></tr></table></figure>
+
+<p>result:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Engine CPU：57.5%</span><br><span class="line">RPM：23757040</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-without-pipeline"><a href="#1-without-pipeline" class="headerlink" title="1. without pipeline"></a>1. without pipeline</h2><p>command:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">redis-benchmark -h &lt;host&gt; -p 6379 -l -q -c 80 --threads 10 hget benchmark_hash_key __rand_int__</span><br></pre></td></tr></table></figure>
+
+<p>result:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Engine CPU：84%</span><br><span class="line">RPM：10815595</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>reids</tag>
+        <tag>benchmark</tag>
+        <tag>redis-benchmark</tag>
+        <tag>hget</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis中的时间计算</title>
     <url>/2022/12/30/Redis%E4%B8%AD%E7%9A%84%E6%97%B6%E9%97%B4%E8%AE%A1%E7%AE%97/</url>
     <content><![CDATA[<p>在使用Redis时, 通常会使用<code>EXPIRE</code>, <code>PEXPIRE</code>系列函数设置生存时间, 当需要获取超时时间时使用<code>TTL</code>, <code>PTTL</code>获取剩余的生存时间。</p>
@@ -1544,6 +1595,89 @@
       </categories>
       <tags>
         <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线上Cache系统设计</title>
+    <url>/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p>缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题</p>
+<span id="more"></span>
+
+<h1 id="缓存系统的挑战"><a href="#缓存系统的挑战" class="headerlink" title="缓存系统的挑战"></a>缓存系统的挑战</h1><ul>
+<li>缓存击穿 Cache Breakdown: 热点数据突然过期<ul>
+<li>Data sharing</li>
+<li>Async Refresh / Pre Fetch</li>
+<li>Request aggregation</li>
+</ul>
+</li>
+<li>缓存雪崩 Cache Avalanche: 所有的缓存数据同时失效</li>
+<li>缓存穿透 Cache Penetration: 查询不存在的数据<ul>
+<li>Content filter</li>
+<li>Error cacheing</li>
+</ul>
+</li>
+<li>内存管理<ul>
+<li>堆外内存 vs 堆内内存</li>
+</ul>
+</li>
+<li>淘汰策略<ul>
+<li>Memory Limit</li>
+<li>Time Limit</li>
+</ul>
+</li>
+<li>数据管理<ul>
+<li>Marshal vs Raw Object (marshal cost vs GC cost)</li>
+<li>Lock vs Bucket Lock vs Object Lock</li>
+</ul>
+</li>
+</ul>
+<h2 id="Data-sharing"><a href="#Data-sharing" class="headerlink" title="Data sharing"></a>Data sharing</h2><p>通过网络或其它中间件在不同节点间共享缓存数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟</p>
+<h2 id="Async-Refresh-Pre-Fetch"><a href="#Async-Refresh-Pre-Fetch" class="headerlink" title="Async Refresh / Pre Fetch"></a>Async Refresh / Pre Fetch</h2><p>通过给数据设置软过期时间，在真正过期之前就异步刷新数据，避免用户等待回源。</p>
+<p>同时通过提前刷新，在源服务报错时留出重试和恢复的时间</p>
+<h2 id="Request-aggregation"><a href="#Request-aggregation" class="headerlink" title="Request aggregation"></a>Request aggregation</h2><p>在多个client请求相同的需要回源的数据时，只进行一次回源，避免多次请求</p>
+<h2 id="Content-filter"><a href="#Content-filter" class="headerlink" title="Content filter"></a>Content filter</h2><p>通过布隆过滤器等手段，阻止对不存在资源的请求，避免大量回源压垮服务</p>
+<h2 id="Error-cacheing"><a href="#Error-cacheing" class="headerlink" title="Error cacheing"></a>Error cacheing</h2><p>在回源报错的情况下，适当缓存源错误并返回给用户，避免错误情况下持续回源压垮后端服务。</p>
+<p>目前开源cache组件支持error cache的很少，但实际上这是一个非常实用的服务，当缓存中数据不存在或过期的请求，如果回源报错（4XX，5XX），可以短暂缓存源报错，缓存时间可以是正常缓存时间的十分之一或更短，能够有效避免对源服务的恶意攻击。</p>
+<h2 id="堆外内存-vs-堆内内存"><a href="#堆外内存-vs-堆内内存" class="headerlink" title="堆外内存 vs 堆内内存"></a>堆外内存 vs 堆内内存</h2><p>常见的缓存服务的内存申请基本上可以分为堆内和堆外两大方向，对于有GC语言来说，堆外内存可以减少GC消耗，代价就是cache需要自己管理内存。<br>而堆内则有实现简单可靠的有点，并且可以配合对象缓存进一步避免序列化开销。</p>
+<p>堆外内存的另一个缺点是无法按需分配，往往需要提前分配几百M到几G的内存空间，并且难以缩扩容，会造成一定的资源浪费。</p>
+<h2 id="Marshal-vs-Raw-Object"><a href="#Marshal-vs-Raw-Object" class="headerlink" title="Marshal vs Raw Object"></a>Marshal vs Raw Object</h2><p>对于缓存数据的存储，同样存在两大方向，分别是序列化后存储和直接缓存数据对象。</p>
+<p>通常使用堆外缓存方案的cache需要使用序列化方案，一方面堆外内存不容易直接映射为语言呢的对象，另一方面序列化后只需要管理字节数组，内存管理的难度大幅下降。</p>
+<p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
+<h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
+<p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
+<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
+
+<p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
+<p>同步更新状态的转移有2种可能，</p>
+<ol>
+<li>同步更新中如果updatefn返回error，则cache状态会转移到异常重试冷却状态，在这个状态下，cache仍然会缓存之前updatefn返回的error response，并通过用户请求触发异步更新，更新的最小间隔是200ms（或者其他用户设定的间隔），如果更新失败，则缓存最新的error response，如果成功则迁移到正常数据的状态流中。</li>
+</ol>
+<p>此外，由于更新是通过用户请求触发的，如果在得到异常数据后很久没有没有请求，还会再次回到同步更新状态。</p>
+<ol start="2">
+<li>在得到正常数据后，cache在SoftLime时间内只返回数据而不进行更新，当缓存时间超过SoftLime而不超过HardLimt时，cache在用户请求时会触发异步更新，而如果超过了HardLimt则会进行同步更新。在缓存了正常数据的状态下，如果updatefn返回了error，cache会继续保存之前的成功的返回值而不会保存失败返回，同时也不会更新update time，在下一次用户请求时会再次触发异步更新，但是如果update持续失败，缓存时间超过了HardLim回到同步更新状态，此时更新失败会导致回到异常数据状态</li>
+</ol>
+<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
+
+<p>Shared object cache 通过redis在cache之间共享数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟，作为一个可选的中间件，引入data sharing后的更新流程比起单机版的cache会更复杂一点，</p>
+<p>为了避免引入redis导致cache data的ttl混乱，redis中除了数据外，还记录了updatetime和编码类型</p>
+<p>在真正执行用户的update function之前，会先检查reids中是否有可用数据</p>
+<p>redis中，每个cache item 的 HASHS Struct 如下:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">data</span>: &lt;data&gt;</span><br><span class="line">    <span class="attr">marshal</span>: &lt;marshalType&gt;</span><br><span class="line">    <span class="attr">update</span>: &lt;updateAtMs&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了保证缓存更新的原子性，在更新数据时通过如下lua比较尝试写入的数据是否新于已有数据，并返回最新数据的时间戳，通过返回的时间戳，调用方也可以知道自己写入是否成功</p>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">   <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">   <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">   <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>]))  <span class="keyword">then</span></span><br><span class="line">       <span class="keyword">return</span> expireTime</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;HSET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], ARGV[<span class="number">3</span>], ARGV[<span class="number">4</span>], ARGV[<span class="number">5</span>], ARGV[<span class="number">6</span>], ARGV[<span class="number">7</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>为了准确控制过期时间没有使用传统的TTL设置生存周期，而是使用用PEXPIREAT设置毫秒即的过期时间戳，这样即使指令的发送和执行上有一些延迟，最终的数据TTL还是严格和cache instance 一致的<br>并且在update时，会检查当前数据的过期时间戳和已经存在的数据的过期时间戳谁更大，只有最新的数据才能留存在redis中。<br>这里有一个限制，在redis7之前，设置超时时间戳可以使用PEXPIREAT，但是设置后就无法再次获取时间戳了，只能使用PTTL获取剩余的毫秒级TTL，在redis7之后新增了PEXPIRETIME指令可以获取原始的时间戳。</p>
+<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
+
+<p>出了常见的object cache，对于流数据的缓存也是比较常见的一个场景</p>
+<p>Stream cache对外的表现是一个滑动窗，在第一次缓存建立后，会主动向更新和更老的feed，尽享填满自己缓存窗口从而满足用户请求</p>
+]]></content>
+      <categories>
+        <category>backend</category>
+      </categories>
+      <tags>
+        <tag>cache</tag>
       </tags>
   </entry>
   <entry>
