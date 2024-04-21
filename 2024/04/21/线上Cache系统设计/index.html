@@ -324,7 +324,7 @@
 <p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
 <h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
 <p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
-<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
+<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:100%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
 
 <p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
 <p>同步更新状态的转移有2种可能，</p>
