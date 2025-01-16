@@ -21,23 +21,6 @@
       </tags>
   </entry>
   <entry>
-    <title>C++异常捕获</title>
-    <url>/2021/12/02/C++%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7/</url>
-    <content><![CDATA[<p>有时我们无法确定一段代码会抛出何种异常，但是又希望能捕获这些异常</p>
-<span id="more"></span>
-
-<p>在不能确定异常类型时，首先应该尝试捕获std::exception, 通过what()方法可以得到一个较为详细的报错信息。</p>
-<p>但有时，也可能会遇到一些不按套路出牌的代码，这时就需要使用<code>catch(...)</code>来进行捕获，通过<code>__cxa_exception_type</code>可以大致确定报错的类型，之后再修改代码进行进一步的处理</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">// some thing</span></span><br><span class="line">&#125; <span class="built_in">catch</span> (<span class="type">const</span> std::exception &amp;e) &#123;</span><br><span class="line">  <span class="type">const</span> <span class="type">char</span>* describe = e.<span class="built_in">what</span>();</span><br><span class="line">  <span class="comment">// some print describe</span></span><br><span class="line">&#125; <span class="built_in">catch</span>(...) &#123;</span><br><span class="line">  std::exception_ptr p = std::<span class="built_in">current_exception</span>();</span><br><span class="line">  std::string type_name = (p ? p.__cxa_exception_type()-&gt;<span class="built_in">name</span>() : <span class="string">&quot;null&quot;</span>);</span><br><span class="line">  <span class="comment">// some print type_name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>编程技巧</category>
-      </categories>
-      <tags>
-        <tag>c++/cpp</tag>
-        <tag>exception</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++重写和虚函数对比</title>
     <url>/2021/09/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
@@ -97,6 +80,23 @@
         <tag>overwrite</tag>
         <tag>overriding</tag>
         <tag>virtual function</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C++异常捕获</title>
+    <url>/2021/12/02/C++%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7/</url>
+    <content><![CDATA[<p>有时我们无法确定一段代码会抛出何种异常，但是又希望能捕获这些异常</p>
+<span id="more"></span>
+
+<p>在不能确定异常类型时，首先应该尝试捕获std::exception, 通过what()方法可以得到一个较为详细的报错信息。</p>
+<p>但有时，也可能会遇到一些不按套路出牌的代码，这时就需要使用<code>catch(...)</code>来进行捕获，通过<code>__cxa_exception_type</code>可以大致确定报错的类型，之后再修改代码进行进一步的处理</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">// some thing</span></span><br><span class="line">&#125; <span class="built_in">catch</span> (<span class="type">const</span> std::exception &amp;e) &#123;</span><br><span class="line">  <span class="type">const</span> <span class="type">char</span>* describe = e.<span class="built_in">what</span>();</span><br><span class="line">  <span class="comment">// some print describe</span></span><br><span class="line">&#125; <span class="built_in">catch</span>(...) &#123;</span><br><span class="line">  std::exception_ptr p = std::<span class="built_in">current_exception</span>();</span><br><span class="line">  std::string type_name = (p ? p.__cxa_exception_type()-&gt;<span class="built_in">name</span>() : <span class="string">&quot;null&quot;</span>);</span><br><span class="line">  <span class="comment">// some print type_name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>编程技巧</category>
+      </categories>
+      <tags>
+        <tag>c++/cpp</tag>
+        <tag>exception</tag>
       </tags>
   </entry>
   <entry>
@@ -213,7 +213,7 @@
       </tags>
   </entry>
   <entry>
-    <title>MacOS配置Nordic蓝牙开发环境</title>
+    <title>MacOS配置Nordic蓝牙BLE的Vscode开发环境</title>
     <url>/2025/01/15/MacOS%E9%85%8D%E7%BD%AENordic%E8%93%9D%E7%89%99%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<p>本文将介绍如何在MacOS下配置Nordic蓝牙开发环境, 器材为nRF52832(开发板NRF52-DK, PCA10040)。</p>
 <p>通常来说人们会在windows上进行蓝牙开发, 但实际上MacOS也同样可以, 并且配合vscode可比Keil舒服多了。</p>
@@ -267,7 +267,7 @@
 <p>在和蓝牙设备互动之后便可以看到类似如下的输出</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SEGGER J-Link V8.12 - Real time terminal output</span><br><span class="line">SEGGER J-Link (unknown) V1.0, SN=682454502</span><br><span class="line">Process: JLinkExe</span><br><span class="line">&lt;info&gt; app_timer: RTC: initialized.</span><br><span class="line">&lt;info&gt; app: Blinky example started.</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Received LED ON!</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Received LED ON!</span><br></pre></td></tr></table></figure>
 
-<h3 id="通过UI配置sdk-config"><a href="#通过UI配置sdk-config" class="headerlink" title="通过UI配置sdk_config"></a>通过UI配置sdk_config</h3><p>有些人可能习惯于使用UI配置sdk_config, 此时需要安装Java工具</p>
+<h3 id="通过UI配置sdk-config"><a href="#通过UI配置sdk-config" class="headerlink" title="通过UI配置sdk_config"></a>通过UI配置sdk_config</h3><p>有些人可能习惯于使用UI配置sdk_config, 此时需要安装Java工具, 要求Java版本为8</p>
 <p>为了防止和系统自带的Java冲突, 此处我使用了conda安装Java, conda的使用方法此处不过多介绍</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda install openjdk=8</span><br></pre></td></tr></table></figure>
 
@@ -275,6 +275,22 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make sdk_config</span><br></pre></td></tr></table></figure>
 
 <p>即可启动UI配置工具</p>
+<div style="width:50%;margin:auto">  </div>
+
+
+<h2 id="Vscode-代码索引"><a href="#Vscode-代码索引" class="headerlink" title="Vscode 代码索引"></a>Vscode 代码索引</h2><p>完成上述配置后，我们可以进一步配置vscode使其可以正常索引代码</p>
+<div style="width:50%;margin:auto">  </div>
+
+<p>在vscode中安装<a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">C/C++插件</a>, 并配置c_cpp_properties.json文件</p>
+<p>在项目目录下创建<code>.vscode</code>文件夹, 并在其中创建或编辑<code>c_cpp_properties.json</code>文件为以下内容</p>
+<p>注意<code>includePath</code>中最后一行<code>$&#123;workspaceFolder&#125;/.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_central/ble_app_blinky_c</code>是为了让vscode能够索引到demo的代码, 对于自己的项目需要替换为对应的项目目录</p>
+<p>如果你用到了<code>.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/external</code>或<code>.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/integration</code>中的库, 则同样需要将这些目录添加到include Path中</p>
+<p>此外</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;/Applications/ArmGNUToolchain/14.2.rel1/arm-none-eabi/arm-none-eabi/include/**&quot;,</span><br><span class="line">&quot;/Applications/ArmGNUToolchain/14.2.rel1/arm-none-eabi/lib/gcc/arm-none-eabi/14.2.1/include/**&quot;,</span><br></pre></td></tr></table></figure>
+
+<p>这些路径是Homebrew安装的GCC的安装路径, 如果你使用的是其他版本的GCC, 则需要修改为对应的路径。</p>
+<p>完整的c_cpp_properties.json文件如下</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Mac&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;includePath&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;$&#123;workspaceFolder&#125;/.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/components/**&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;$&#123;workspaceFolder&#125;/.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/components/**&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_central/ble_app_blinky_c/pca10040/**&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;/Applications/ArmGNUToolchain/14.2.rel1/arm-none-eabi/arm-none-eabi/include/**&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;/Applications/ArmGNUToolchain/14.2.rel1/arm-none-eabi/lib/gcc/arm-none-eabi/14.2.1/include/**&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;$&#123;workspaceFolder&#125;/.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_central/ble_app_blinky_c&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;defines&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;NRF52840_XXAA&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;__GNUC__&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;macFrameworkPath&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;compilerPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/opt/homebrew/bin/arm-none-eabi-gcc&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;cStandard&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c99&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;cppStandard&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c++98&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;intelliSenseMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;macos-gcc-arm&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="number">4</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>macos</category>
@@ -306,6 +322,43 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># coding=utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH = 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    parser = argparse.ArgumentParser(description=&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default=&quot;&quot;, dest=&quot;onnx_path&quot;, help=&quot;path to onnx file&quot;, type=str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default=&quot;&quot;, dest=&quot;trt_path&quot;, help=&quot;path to trt file&quot;, type=str)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    onnx_file_path = args.onnx_path</span><br><span class="line">    engine_file_path = args.trt_path</span><br><span class="line">    print(&#x27;get start&#x27;)</span><br><span class="line">    TRT_LOGGER = trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config = builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size =( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size =( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size = 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode = True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#x27;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#x27;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#x27;Loading ONNX file from path &#123;&#125;...&#x27;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#x27;rb&#x27;) as model:</span><br><span class="line">            print(&#x27;Beginning ONNX file parsing&#x27;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#x27;ERROR: Failed to parse the ONNX file.&#x27;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape = [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile = builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#x27;Completed parsing of ONNX file&#x27;)</span><br><span class="line">        print(&#x27;Building an engine from file &#123;&#125;; this may take a while...&#x27;.format(onnx_file_path))</span><br><span class="line">        engine = builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --<span class="built_in">rm</span> -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\&#x27;data\&#x27;:1x3x32x32 --optShapes=\&#x27;data\&#x27;:128x3x32x320 --maxShapes=\&#x27;data\&#x27;:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -373,43 +426,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># coding=utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH = 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    parser = argparse.ArgumentParser(description=&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default=&quot;&quot;, dest=&quot;onnx_path&quot;, help=&quot;path to onnx file&quot;, type=str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default=&quot;&quot;, dest=&quot;trt_path&quot;, help=&quot;path to trt file&quot;, type=str)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    onnx_file_path = args.onnx_path</span><br><span class="line">    engine_file_path = args.trt_path</span><br><span class="line">    print(&#x27;get start&#x27;)</span><br><span class="line">    TRT_LOGGER = trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config = builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size =( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size =( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size = 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode = True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#x27;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#x27;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#x27;Loading ONNX file from path &#123;&#125;...&#x27;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#x27;rb&#x27;) as model:</span><br><span class="line">            print(&#x27;Beginning ONNX file parsing&#x27;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#x27;ERROR: Failed to parse the ONNX file.&#x27;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape = [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile = builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#x27;Completed parsing of ONNX file&#x27;)</span><br><span class="line">        print(&#x27;Building an engine from file &#123;&#125;; this may take a while...&#x27;.format(onnx_file_path))</span><br><span class="line">        engine = builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --<span class="built_in">rm</span> -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\&#x27;data\&#x27;:1x3x32x32 --optShapes=\&#x27;data\&#x27;:128x3x32x320 --maxShapes=\&#x27;data\&#x27;:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
