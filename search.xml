@@ -213,6 +213,81 @@
       </tags>
   </entry>
   <entry>
+    <title>MacOS配置Nordic蓝牙开发环境</title>
+    <url>/2025/01/15/MacOS%E9%85%8D%E7%BD%AENordic%E8%93%9D%E7%89%99%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>本文将介绍如何在MacOS下配置Nordic蓝牙开发环境, 器材为nRF52832(开发板NRF52-DK, PCA10040)。</p>
+<p>通常来说人们会在windows上进行蓝牙开发, 但实际上MacOS也同样可以, 并且配合vscode可比Keil舒服多了。</p>
+<p>如果你对Makefile等工具较为熟悉, 甚至可以获得比IDE更便捷的开发体验。</p>
+<span id="more"></span>
+
+<h1 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h1><p>在所有步骤开始之前，首先创建一个文件夹作为你的项目目录</p>
+<h2 id="通过Homebrew安装-ARM-交叉编译工具链-和-nordic-工具链-包含了JLINK"><a href="#通过Homebrew安装-ARM-交叉编译工具链-和-nordic-工具链-包含了JLINK" class="headerlink" title="通过Homebrew安装 ARM 交叉编译工具链 和 nordic 工具链(包含了JLINK)"></a>通过Homebrew安装 ARM 交叉编译工具链 和 nordic 工具链(包含了JLINK)</h2><p>我也尝试了使用conda配置GCC编译工具链, 但是目前conda上没有合适的arm gcc包, 因此还是使用Homebrew安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">brew install --cask gcc-arm-embedded nordic-nrf-command-line-tools </span><br></pre></td></tr></table></figure>
+
+<p>安装过程中需要输入密码获取权限, 输入密码后等待安装完成</p>
+<h2 id="安装-nordic-sdk"><a href="#安装-nordic-sdk" class="headerlink" title="安装 nordic sdk"></a>安装 nordic sdk</h2><p>目前nordic主要在推Mesh协议栈，但是作为一个例子，我们还是使用传统的nRF5 SDK。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir .nRF5_SDK &amp;&amp; cd .nRF5_SDK</span><br><span class="line">curl https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v17.x.x/nRF5_SDK_17.1.0_ddde560.zip -O</span><br><span class="line">unzip nRF5_SDK_17.1.0_ddde560.zip</span><br><span class="line">rm nRF5_SDK_17.1.0_ddde560.zip</span><br></pre></td></tr></table></figure>
+
+<h2 id="在Nordic-SDK中配置GCC"><a href="#在Nordic-SDK中配置GCC" class="headerlink" title="在Nordic SDK中配置GCC"></a>在Nordic SDK中配置GCC</h2><p>默认的配置文件位于 <code>.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/components/toolchain/gcc/Makefile.posix</code></p>
+<p>执行 <code>arm-none-eabi-gcc --version</code> 和 <code>which arm-none-eabi-gcc</code> 检查gcc版本和安装目录</p>
+<p>之后替换原本文件中的内容，GNU_INSTALL_ROOT和GNU_VERSION需要根据实际情况修改，GNU_PREFIX通常不需要修改</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GNU_INSTALL_ROOT := /opt/homebrew/bin/</span><br><span class="line">GNU_VERSION := 14.2.1</span><br><span class="line">GNU_PREFIX := arm-none-eabi</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译demo"><a href="#编译demo" class="headerlink" title="编译demo"></a>编译demo</h2><p>选择一个复杂度适中的demo进行编译</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd .nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_peripheral/ble_app_blinky/pca10040/s132/armgcc</span><br><span class="line"># 编译</span><br><span class="line">make</span><br><span class="line"># 烧录协议栈</span><br><span class="line">make flash_softdevice</span><br><span class="line"># 烧录程序</span><br><span class="line">make flash</span><br></pre></td></tr></table></figure>
+
+<h3 id="报错处理"><a href="#报错处理" class="headerlink" title="报错处理"></a>报错处理</h3><p>当使用新版GCC编译时，可能会出现以下错误</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">../../../../../../components/libraries/log/src/nrf_log_frontend.c: In function &#x27;nrf_log_module_name_get&#x27;:</span><br><span class="line">../../../../../../components/libraries/log/src/nrf_log_frontend.c:219:29: error: array subscript &#x27;nrf_log_module_const_data_t[0]&#x27; is partly outside array bounds of &#x27;nrf_log_module_const_data_t[0]&#x27; [-Werror=array-bounds=]</span><br><span class="line">  219 |         return p_module_data-&gt;p_module_name;</span><br><span class="line">      |                             ^~</span><br></pre></td></tr></table></figure>
+<p>传统的解决办法可以将gcc版本降级, 但是想使用新版GCC, 则需要修改Makefile文件将 <code>-Werror=array-bounds</code> 添加到 <code>CFLAGS</code> 中</p>
+<p>对于我们的demo，修改<code>.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_peripheral/ble_app_blinky/pca10040/s132/armgcc/Makefile</code>, 将</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CFLAGS += -Wall -Werror</span><br></pre></td></tr></table></figure>
+
+<p>修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CFLAGS += -Wall -Werror -Wno-array-bounds</span><br></pre></td></tr></table></figure>
+
+<p>修改后便可以正常编译了</p>
+<h2 id="调试工具"><a href="#调试工具" class="headerlink" title="调试工具"></a>调试工具</h2><p>uart工具较为常见, 本文不进行介绍, 主要介绍JLINK相关的工具</p>
+<p>这些工具在homebrew安装nordic-nrf-command-line-tools时作为依赖已经添加到了系统中, 因此可以直接使用</p>
+<h3 id="RTT-LOG"><a href="#RTT-LOG" class="headerlink" title="RTT LOG"></a>RTT LOG</h3><p>开启RTT Log需要修改sdk_config.h文件，将 <code>#define NRF_LOG_ENABLED 1</code> 修改为 <code>#define NRF_LOG_ENABLED 1</code></p>
+<p>对于这个demo, 文件位置在<code>.nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_peripheral/ble_app_blinky/pca10040/s132/config/sdk_config.h</code></p>
+<p>将</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#define NRF_LOG_BACKEND_RTT_ENABLED 0</span><br></pre></td></tr></table></figure>
+
+<p>修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#define NRF_LOG_BACKEND_RTT_ENABLED 1</span><br></pre></td></tr></table></figure>
+
+<p>之后重新编译烧录编译即可开启RTT Log</p>
+<p>查看RTT log时需要同时运行两个终端</p>
+<p>在第一个终端中执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">JLinkExe -device nRF52840_xxAA -if SWD -speed 4000 -autoconnect 1</span><br></pre></td></tr></table></figure>
+
+<p>在第二个终端中执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">JLinkRTTClient</span><br></pre></td></tr></table></figure>
+
+<p>在和蓝牙设备互动之后便可以看到类似如下的输出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SEGGER J-Link V8.12 - Real time terminal output</span><br><span class="line">SEGGER J-Link (unknown) V1.0, SN=682454502</span><br><span class="line">Process: JLinkExe</span><br><span class="line">&lt;info&gt; app_timer: RTC: initialized.</span><br><span class="line">&lt;info&gt; app: Blinky example started.</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Received LED ON!</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Disconnected</span><br><span class="line">&lt;info&gt; app: Connected</span><br><span class="line">&lt;info&gt; app: Received LED ON!</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过UI配置sdk-config"><a href="#通过UI配置sdk-config" class="headerlink" title="通过UI配置sdk_config"></a>通过UI配置sdk_config</h3><p>有些人可能习惯于使用UI配置sdk_config, 此时需要安装Java工具</p>
+<p>为了防止和系统自带的Java冲突, 此处我使用了conda安装Java, conda的使用方法此处不过多介绍</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda install openjdk=8</span><br></pre></td></tr></table></figure>
+
+<p>安装后执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make sdk_config</span><br></pre></td></tr></table></figure>
+
+<p>即可启动UI配置工具</p>
+]]></content>
+      <categories>
+        <category>macos</category>
+        <category>ble</category>
+      </categories>
+      <tags>
+        <tag>nordic</tag>
+        <tag>ble</tag>
+        <tag>nrf52840</tag>
+        <tag>nrf52832</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
