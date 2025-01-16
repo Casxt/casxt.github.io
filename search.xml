@@ -301,6 +301,10 @@
         <tag>ble</tag>
         <tag>nrf52840</tag>
         <tag>nrf52832</tag>
+        <tag>vscode</tag>
+        <tag>arm-gcc</tag>
+        <tag>jlink</tag>
+        <tag>macos</tag>
       </tags>
   </entry>
   <entry>
@@ -1629,28 +1633,6 @@
       </tags>
   </entry>
   <entry>
-    <title>矩阵相关题目</title>
-    <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
-    <content><![CDATA[<p>矩阵类相关题目</p>
-<span id="more"></span>
-
-<h1 id="螺旋矩阵-回形打印二维数组"><a href="#螺旋矩阵-回形打印二维数组" class="headerlink" title="螺旋矩阵 回形打印二维数组"></a>螺旋矩阵 回形打印二维数组</h1><p><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/">https://leetcode-cn.com/problems/spiral-matrix/solution/</a></p>
-<p>使用四个循环依次打印四条边即可，使用计数器记录已经访问过的元素数目。</p>
-<p>在打印上边和右边之后以及打印四条边之后判断计数器即可。</p>
-<p>如果记不住，每条边打印前都判断一次也可</p>
-<h1 id="旋转图像"><a href="#旋转图像" class="headerlink" title="旋转图像"></a>旋转图像</h1><p><a href="https://leetcode-cn.com/problems/rotate-image/">https://leetcode-cn.com/problems/rotate-image/</a></p>
-<p>从左上角开始沿一条边逐个访问元素，</p>
-<p>每个元素和其他四条边中相对起始位置相同的元素交换</p>
-<p>他四条边中相对起始位置相同的元素坐标可以推算出来</p>
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>矩阵</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>知识点扫盲</title>
     <url>/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/</url>
     <content><![CDATA[<span id="more"></span>
@@ -1686,6 +1668,28 @@
       </categories>
       <tags>
         <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>矩阵相关题目</title>
+    <url>/2021/05/03/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE/</url>
+    <content><![CDATA[<p>矩阵类相关题目</p>
+<span id="more"></span>
+
+<h1 id="螺旋矩阵-回形打印二维数组"><a href="#螺旋矩阵-回形打印二维数组" class="headerlink" title="螺旋矩阵 回形打印二维数组"></a>螺旋矩阵 回形打印二维数组</h1><p><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/">https://leetcode-cn.com/problems/spiral-matrix/solution/</a></p>
+<p>使用四个循环依次打印四条边即可，使用计数器记录已经访问过的元素数目。</p>
+<p>在打印上边和右边之后以及打印四条边之后判断计数器即可。</p>
+<p>如果记不住，每条边打印前都判断一次也可</p>
+<h1 id="旋转图像"><a href="#旋转图像" class="headerlink" title="旋转图像"></a>旋转图像</h1><p><a href="https://leetcode-cn.com/problems/rotate-image/">https://leetcode-cn.com/problems/rotate-image/</a></p>
+<p>从左上角开始沿一条边逐个访问元素，</p>
+<p>每个元素和其他四条边中相对起始位置相同的元素交换</p>
+<p>他四条边中相对起始位置相同的元素坐标可以推算出来</p>
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>矩阵</tag>
       </tags>
   </entry>
   <entry>

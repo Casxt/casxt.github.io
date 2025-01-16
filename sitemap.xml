@@ -696,6 +696,34 @@
   </url>
   
   <url>
+    <loc>https://maple.link/tags/vscode/</loc>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/arm-gcc/</loc>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/jlink/</loc>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/macos/</loc>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://maple.link/tags/nfs/</loc>
     <lastmod>2025-01-16</lastmod>
     <changefreq>weekly</changefreq>
@@ -1396,14 +1424,14 @@
   </url>
   
   <url>
-    <loc>https://maple.link/tags/%E7%9F%A9%E9%98%B5/</loc>
+    <loc>https://maple.link/tags/%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://maple.link/tags/%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://maple.link/tags/%E7%9F%A9%E9%98%B5/</loc>
     <lastmod>2025-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1608,14 +1636,14 @@
   </url>
   
   <url>
-    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/</loc>
+    <loc>https://maple.link/categories/%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://maple.link/categories/%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2025-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
