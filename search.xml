@@ -234,6 +234,7 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GNU_INSTALL_ROOT := /opt/homebrew/bin/</span><br><span class="line">GNU_VERSION := 14.2.1</span><br><span class="line">GNU_PREFIX := arm-none-eabi</span><br></pre></td></tr></table></figure>
 
 <h2 id="编译demo"><a href="#编译demo" class="headerlink" title="编译demo"></a>编译demo</h2><p>选择一个复杂度适中的demo进行编译</p>
+<p>使用扩展坞连接你的开发版，然后执行如下命令</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd .nRF5_SDK/nRF5_SDK_17.1.0_ddde560/examples/ble_peripheral/ble_app_blinky/pca10040/s132/armgcc</span><br><span class="line"># 编译</span><br><span class="line">make</span><br><span class="line"># 烧录协议栈</span><br><span class="line">make flash_softdevice</span><br><span class="line"># 烧录程序</span><br><span class="line">make flash</span><br></pre></td></tr></table></figure>
 
 <h3 id="报错处理"><a href="#报错处理" class="headerlink" title="报错处理"></a>报错处理</h3><p>当使用新版GCC编译时，可能会出现以下错误</p>
