@@ -38,6 +38,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Github Actions 复用 Workflow</title>
+    <url>/2024/04/09/Github-Actions-%E5%A4%8D%E7%94%A8workflow/</url>
+    <content><![CDATA[<p>我们都知道在编写github actions时，可以使用其他预定义好的github action，类似如下写法.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow1.yml</span><br><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      source_branch:</span><br><span class="line">        description: &#x27;source code branch&#x27;</span><br><span class="line">        required: true</span><br><span class="line">        default: &#x27;main&#x27;</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  fetch:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>那么当我们写好了这样一个workflow之后，能否进一步在多个workflow中复用这个文件呢，实际上是可以的。</p>
+<p>首先比编辑<code>.github/workflows/flow1.yml</code>，增加<code>workflow_call</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      param1:</span><br><span class="line">        required: true</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>之后在另一个workflow中就可以这样调用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow2.yml</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    steps:</span><br><span class="line">        uses: actions/checkout@v4</span><br><span class="line">        # can do smthing else</span><br><span class="line">  job2:</span><br><span class="line">    needs: [job1]</span><br><span class="line">    uses: ./.github/workflows/flow1.yml</span><br><span class="line">    # uses: &lt;user_name&gt;/&lt;repo&gt;/workflows/flow1.yml@&lt;branch/commit&gt;</span><br><span class="line">        with:</span><br><span class="line">            ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
+
+<p>这种用法有以下几点需要注意：</p>
+<ol>
+<li><code>./.github/workflows/flow1.yml</code> 只能作为一个job使用，而不能作为step使用，否则会得倒类似 <code>Can&#39;t find &#39;action.yml&#39; or &#39;Dockerfile&#39; under xxxx Did you forget to run actions/checkout before running your local action</code></li>
+<li><code>uses</code>字段必须紧接着<code>job2</code>声明，否则会报错<code>The workflow is not valid</code></li>
+<li>执行job2之前，必须先执行job1，将项目代码clone到当前目录，并设置job2和job1的依赖关系，否则找不到目标文件</li>
+<li>调用本地文件时<code>uses</code>的值必须为<code>./.github/...</code>，而不能是<code>.github/...</code></li>
+</ol>
+]]></content>
+      <categories>
+        <category>github</category>
+      </categories>
+      <tags>
+        <tag>github</tag>
+        <tag>actions</tag>
+        <tag>workflow</tag>
+        <tag>jobs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++重写和虚函数对比</title>
     <url>/2021/09/22/C++%E9%87%8D%E5%86%99%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E6%AF%94/</url>
     <content><![CDATA[<p>在子类中，可以声明一个和父类相同的函数，此时父类函数是否标记为virtual将会影响这一行为</p>
@@ -97,59 +130,6 @@
         <tag>overwrite</tag>
         <tag>overriding</tag>
         <tag>virtual function</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Actions 复用 Workflow</title>
-    <url>/2024/04/09/Github-Actions-%E5%A4%8D%E7%94%A8workflow/</url>
-    <content><![CDATA[<p>我们都知道在编写github actions时，可以使用其他预定义好的github action，类似如下写法.</p>
-<span id="more"></span>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow1.yml</span><br><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      source_branch:</span><br><span class="line">        description: &#x27;source code branch&#x27;</span><br><span class="line">        required: true</span><br><span class="line">        default: &#x27;main&#x27;</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  fetch:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
-
-<p>那么当我们写好了这样一个workflow之后，能否进一步在多个workflow中复用这个文件呢，实际上是可以的。</p>
-<p>首先比编辑<code>.github/workflows/flow1.yml</code>，增加<code>workflow_call</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">on:</span><br><span class="line">  workflow_call:</span><br><span class="line">    inputs:</span><br><span class="line">      param1:</span><br><span class="line">        required: true</span><br><span class="line">        type: string</span><br><span class="line">  push:</span><br><span class="line">    branches: [ &quot;main&quot; ]</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">    - uses: actions/checkout@v4</span><br><span class="line">      with:</span><br><span class="line">        ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
-
-<p>之后在另一个workflow中就可以这样调用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># .github/workflows/flow2.yml</span><br><span class="line"># ...</span><br><span class="line">jobs:</span><br><span class="line">  job1:</span><br><span class="line">    steps:</span><br><span class="line">        uses: actions/checkout@v4</span><br><span class="line">        # can do smthing else</span><br><span class="line">  job2:</span><br><span class="line">    needs: [job1]</span><br><span class="line">    uses: ./.github/workflows/flow1.yml</span><br><span class="line">    # uses: &lt;user_name&gt;/&lt;repo&gt;/workflows/flow1.yml@&lt;branch/commit&gt;</span><br><span class="line">        with:</span><br><span class="line">            ref: $&#123;&#123; github.ref &#125;&#125;</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
-
-<p>这种用法有以下几点需要注意：</p>
-<ol>
-<li><code>./.github/workflows/flow1.yml</code> 只能作为一个job使用，而不能作为step使用，否则会得倒类似 <code>Can&#39;t find &#39;action.yml&#39; or &#39;Dockerfile&#39; under xxxx Did you forget to run actions/checkout before running your local action</code></li>
-<li><code>uses</code>字段必须紧接着<code>job2</code>声明，否则会报错<code>The workflow is not valid</code></li>
-<li>执行job2之前，必须先执行job1，将项目代码clone到当前目录，并设置job2和job1的依赖关系，否则找不到目标文件</li>
-<li>调用本地文件时<code>uses</code>的值必须为<code>./.github/...</code>，而不能是<code>.github/...</code></li>
-</ol>
-]]></content>
-      <categories>
-        <category>github</category>
-      </categories>
-      <tags>
-        <tag>github</tag>
-        <tag>actions</tag>
-        <tag>workflow</tag>
-        <tag>jobs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang 输入输出 stdio</title>
-    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
-    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
-<span id="more"></span>
-
-<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="type">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="type">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>刷题笔记</category>
-      </categories>
-      <tags>
-        <tag>stdio</tag>
       </tags>
   </entry>
   <entry>
@@ -309,6 +289,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang 输入输出 stdio</title>
+    <url>/2021/06/14/Golang%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20stdio/</url>
+    <content><![CDATA[<p>Golang 的标准输入输出常见用法</p>
+<span id="more"></span>
+
+<h1 id="按行读取"><a href="#按行读取" class="headerlink" title="按行读取"></a>按行读取</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// Scanln 实际上需要知道一行中有多少被空格分隔的输入才能使用，直接读取一行作为字符串需要用到scanner或者reader</span></span><br><span class="line">	<span class="comment">// var str1, str2 string</span></span><br><span class="line">	<span class="comment">// fmt.Scanln(str1, str2) </span></span><br><span class="line">	<span class="comment">// fmt.Println(str1, str2);</span></span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(os.Stdin)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 方式二：</span></span><br><span class="line">  reader := bufio.NewReader(os.Stdin)</span><br><span class="line">  text, _ := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">  fmt.Println(text)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="空格分割"><a href="#空格分割" class="headerlink" title="空格分割"></a>空格分割</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;bufio&quot;</span></span><br><span class="line">  <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// 方式一：</span></span><br><span class="line">  scanner := bufio.NewScanner(bufio.NewReader(os.Stdin))</span><br><span class="line">  scanner.Split(bufio.ScanWords)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">      fmt.Println(scanner.Text())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="字符串模板"><a href="#字符串模板" class="headerlink" title="字符串模板"></a>字符串模板</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="type">string</span> = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> f <span class="type">float64</span> = <span class="number">100.12</span></span><br><span class="line">  <span class="comment">// 保留一位小数</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%.1f\n&quot;</span>, str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>刷题笔记</category>
+      </categories>
+      <tags>
+        <tag>stdio</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>NFS挂载失效处理</title>
     <url>/2020/07/07/NFS%E6%8C%82%E8%BD%BD%E5%A4%B1%E6%95%88%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>在使用NFS的过程中，我们往往会遇到网络问题导致NFS断开，不幸的是，当NFS断开的时候，NFS会继续尝试重连而不会报错，此时如果有软件尝试读取NFS中的内容，就会卡在read函数中无法kill掉。由于文件系统的read不超时，所以它就会永远的卡在里面。同样的现象也会发生在我们尝试执行df命令或者ls NFS目录的时候。此时必须先解挂NFS目录，使程序退出read。</p>
@@ -327,6 +327,43 @@
       <tags>
         <tag>linux</tag>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ONNX 模型 转 TRT engine</title>
+    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
+    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
+<span id="more"></span>
+
+<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
+<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># coding=utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH = 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    parser = argparse.ArgumentParser(description=&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default=&quot;&quot;, dest=&quot;onnx_path&quot;, help=&quot;path to onnx file&quot;, type=str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default=&quot;&quot;, dest=&quot;trt_path&quot;, help=&quot;path to trt file&quot;, type=str)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    onnx_file_path = args.onnx_path</span><br><span class="line">    engine_file_path = args.trt_path</span><br><span class="line">    print(&#x27;get start&#x27;)</span><br><span class="line">    TRT_LOGGER = trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config = builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size =( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size =( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size = 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode = True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#x27;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#x27;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#x27;Loading ONNX file from path &#123;&#125;...&#x27;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#x27;rb&#x27;) as model:</span><br><span class="line">            print(&#x27;Beginning ONNX file parsing&#x27;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#x27;ERROR: Failed to parse the ONNX file.&#x27;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape = [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile = builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#x27;Completed parsing of ONNX file&#x27;)</span><br><span class="line">        print(&#x27;Building an engine from file &#123;&#125;; this may take a while...&#x27;.format(onnx_file_path))</span><br><span class="line">        engine = builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
+<ul>
+<li><p>–workspace=4096 单位为MB</p>
+</li>
+<li><p>–explicitBatch 开启动态batch</p>
+</li>
+<li><p>–minShapes 最小输入 </p>
+<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
+<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
+</li>
+<li><p>–optShapes 平均输入</p>
+</li>
+<li><p>–maxShapes 最大输入</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --<span class="built_in">rm</span> -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\&#x27;data\&#x27;:1x3x32x32 --optShapes=\&#x27;data\&#x27;:128x3x32x320 --maxShapes=\&#x27;data\&#x27;:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+        <tag>onnx</tag>
+        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -394,43 +431,6 @@
         <tag>docker</tag>
         <tag>nvidia</tag>
         <tag>triton</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ONNX 模型 转 TRT engine</title>
-    <url>/2021/06/10/ONNX%E6%A8%A1%E5%9E%8B%E8%BD%ACTRT%20engine/</url>
-    <content><![CDATA[<p>本文将介绍如何将ONNX文件转换为TRT engine文件</p>
-<span id="more"></span>
-
-<h2 id="准备转换环境"><a href="#准备转换环境" class="headerlink" title="准备转换环境"></a>准备转换环境</h2><p>强烈不推荐自己搭建，可以直接使用nvidia官方的trt环境（如nvcr.io/nvidia/tritonserver:21.05-py3），之后运行也可以直接在容器中运行。</p>
-<h2 id="python方案"><a href="#python方案" class="headerlink" title="python方案"></a>python方案</h2><p>在进入容器后，可以使用如下的python脚本进行转换</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># coding=utf-8</span><br><span class="line"></span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">import os</span><br><span class="line">import argparse</span><br><span class="line">import tensorrt as trt</span><br><span class="line"></span><br><span class="line">EXPLICIT_BATCH = 1 &lt;&lt; (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    parser = argparse.ArgumentParser(description=&quot;PyTorch Object Detection Inference&quot;)</span><br><span class="line">    parser.add_argument(&quot;--onnx_path&quot;, default=&quot;&quot;, dest=&quot;onnx_path&quot;, help=&quot;path to onnx file&quot;, type=str)</span><br><span class="line">    parser.add_argument(&quot;--trt_path&quot;, default=&quot;&quot;, dest=&quot;trt_path&quot;, help=&quot;path to trt file&quot;, type=str)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    onnx_file_path = args.onnx_path</span><br><span class="line">    engine_file_path = args.trt_path</span><br><span class="line">    print(&#x27;get start&#x27;)</span><br><span class="line">    TRT_LOGGER = trt.Logger()</span><br><span class="line">    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:</span><br><span class="line">        config = builder.create_builder_config()</span><br><span class="line">        #builder.max_workspace_size =( 1 &lt;&lt; 30 ) * 2</span><br><span class="line">        config.max_workspace_size =( 1 &lt;&lt; 20 ) * 3 * 1024 # 3GB，可以根据需求改的更大</span><br><span class="line">        builder.max_batch_size = 128</span><br><span class="line">        config.set_flag(trt.BuilderFlag.FP16)</span><br><span class="line">        #builder.fp16_mode = True</span><br><span class="line">        # Parse model file</span><br><span class="line">        if not os.path.exists(onnx_file_path):</span><br><span class="line">            print(&#x27;ONNX file &#123;&#125; not found, please run yolov3_to_onnx.py first to generate it.&#x27;.format(onnx_file_path))</span><br><span class="line">            exit(0)</span><br><span class="line">        print(&#x27;Loading ONNX file from path &#123;&#125;...&#x27;.format(onnx_file_path))</span><br><span class="line">        with open(onnx_file_path, &#x27;rb&#x27;) as model:</span><br><span class="line">            print(&#x27;Beginning ONNX file parsing&#x27;)</span><br><span class="line">            if not parser.parse(model.read()):</span><br><span class="line">                print (&#x27;ERROR: Failed to parse the ONNX file.&#x27;)</span><br><span class="line">                for error in range(parser.num_errors):</span><br><span class="line">                    print (parser.get_error(error))</span><br><span class="line">        print(f&quot;raw shape of &#123;network.get_input(0).name&#125; is: &quot;, network.get_input(0).shape)</span><br><span class="line">        # network.get_input(0).shape = [-1, 3, 32, -1] #dynamic model example</span><br><span class="line">        for i in range(1):</span><br><span class="line">            profile = builder.create_optimization_profile()</span><br><span class="line">            # 最小值 常规值 最大值</span><br><span class="line">            profile.set_shape(network.get_input(0).name, (1, 3, 32, 32), (16, 3, 32, 320), (128, 3, 32, 960))</span><br><span class="line">            config.add_optimization_profile(profile)</span><br><span class="line">        print(&#x27;Completed parsing of ONNX file&#x27;)</span><br><span class="line">        print(&#x27;Building an engine from file &#123;&#125;; this may take a while...&#x27;.format(onnx_file_path))</span><br><span class="line">        engine = builder.build_engine(network,config)</span><br><span class="line">        print(&quot;Completed creating Engine&quot;)</span><br><span class="line">        with open(engine_file_path, &quot;wb&quot;) as f:</span><br><span class="line">            f.write(engine.serialize())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="官方工具转换"><a href="#官方工具转换" class="headerlink" title="官方工具转换"></a>官方工具转换</h2><p>推荐使用官方工具，简单快捷</p>
-<ul>
-<li><p>–workspace=4096 单位为MB</p>
-</li>
-<li><p>–explicitBatch 开启动态batch</p>
-</li>
-<li><p>–minShapes 最小输入 </p>
-<p>格式为 节点名:<code>&lt;b&gt;x&lt;d1&gt;x&lt;d2&gt;x...x&lt;dn&gt;</code> </p>
-<p>注意节点名的引号需要使用反斜杠转译，如网络输入节点是’data’，那么需要写成<code>\&#39;data\&#39;:1x2x3x4</code>这样的格式。</p>
-</li>
-<li><p>–optShapes 平均输入</p>
-</li>
-<li><p>–maxShapes 最大输入</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo docker run --gpus all --<span class="built_in">rm</span> -v /models:/models nvcr.io/nvidia/tensorrt:21.04-py3 \</span><br><span class="line">/usr/src/tensorrt/bin/trtexec --explicitBatch --workspace=4096 \</span><br><span class="line">--minShapes=\&#x27;data\&#x27;:1x3x32x32 --optShapes=\&#x27;data\&#x27;:128x3x32x320 --maxShapes=\&#x27;data\&#x27;:256x3x32x960 --fp16 \</span><br><span class="line">--onnx=/models/model.onnx --saveEngine=/models/model.plan</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>GPU</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
-        <tag>onnx</tag>
-        <tag>trtexec</tag>
       </tags>
   </entry>
   <entry>
@@ -504,6 +504,25 @@
       </tags>
   </entry>
   <entry>
+    <title>Tensorrt Engine 输出模型输入输出信息</title>
+    <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
+    <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
+<span id="more"></span>
+
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import tensorrt as trt</span><br><span class="line">import sys</span><br><span class="line">import numpy as np</span><br><span class="line">trt_logger = trt.Logger(trt.Logger.INFO)</span><br><span class="line">runtime = trt.Runtime(trt_logger)</span><br><span class="line">with open(sys.argv[1], &quot;rb&quot;) as f:</span><br><span class="line">    engine = runtime.deserialize_cuda_engine(f.read())</span><br><span class="line">print(&quot;Engine Info:&quot;)</span><br><span class="line">for i, binding in enumerate(engine):</span><br><span class="line">    shape = [engine.max_batch_size, *engine.get_binding_shape(binding)]</span><br><span class="line">    dtype = trt.nptype(engine.get_binding_dtype(binding))</span><br><span class="line">    volume = abs(trt.volume(engine.get_binding_shape(binding)))</span><br><span class="line">    if engine.binding_is_input(binding):</span><br><span class="line">        desc = &quot;input&quot; </span><br><span class="line">    else:</span><br><span class="line">        desc = &quot;output&quot;</span><br><span class="line">    print(f&quot;&#123;i&#125; type:    &#123;desc&#125;\n  binding: &#123;binding&#125; \n  data:    &#123;np.dtype(dtype).name&#125;\n  shape:   &#123;shape&#125; =&gt; &#123;volume&#125; \n&quot;)</span><br></pre></td></tr></table></figure>
+<p>输入形式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[TensorRT] INFO: [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 341, GPU 999 (MiB)</span><br><span class="line">[TensorRT] INFO: Loaded engine size: 4 MB</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine begin: CPU 346 MiB, GPU 999 MiB</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +491, GPU +210, now: CPU 842, GPU 1211 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuDNN: CPU +287, GPU +200, now: CPU 1129, GPU 1411 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +0, now: CPU 1129, GPU 1393 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine end: CPU 1129 MiB, GPU 1393 MiB</span><br><span class="line">Engine Info:</span><br><span class="line">0 type:    input</span><br><span class="line">  binding: data </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 1, 3, 256, 256] =&gt; 36864 </span><br><span class="line"></span><br><span class="line">1 type:    output</span><br><span class="line">  binding: result </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 8, 8] =&gt; 8 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --gpus all \</span><br><span class="line">  --<span class="built_in">rm</span> -v /home/user/trtdebug.py:/models/trtdebug.py \</span><br><span class="line">  --<span class="built_in">rm</span> -v /home/user/model.plan:/models/model.plan \</span><br><span class="line">  geminihub.oa.com:80/karizhang/nvcr.io/nvidia/tensorrt:21.08-py3 python /models/trtdebug.py /models/model.plan</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>GPU</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>nvidia</tag>
+        <tag>tensorrt</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis中的时间计算</title>
     <url>/2022/12/30/Redis%E4%B8%AD%E7%9A%84%E6%97%B6%E9%97%B4%E8%AE%A1%E7%AE%97/</url>
     <content><![CDATA[<p>在使用Redis时, 通常会使用<code>EXPIRE</code>, <code>PEXPIRE</code>系列函数设置生存时间, 当需要获取超时时间时使用<code>TTL</code>, <code>PTTL</code>获取剩余的生存时间。</p>
@@ -537,22 +556,30 @@
       </tags>
   </entry>
   <entry>
-    <title>Tensorrt Engine 输出模型输入输出信息</title>
-    <url>/2021/09/08/Tensorrt%20Engine%20%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%BF%A1%E6%81%AF/</url>
-    <content><![CDATA[<p>调试plan文件的时候经常需要输出相关信息，在这里分享一个方便的程序脚本，可以输出每个输入输出节点的相关信息</p>
+    <title>Yolo发展整理</title>
+    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
 <span id="more"></span>
 
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import tensorrt as trt</span><br><span class="line">import sys</span><br><span class="line">import numpy as np</span><br><span class="line">trt_logger = trt.Logger(trt.Logger.INFO)</span><br><span class="line">runtime = trt.Runtime(trt_logger)</span><br><span class="line">with open(sys.argv[1], &quot;rb&quot;) as f:</span><br><span class="line">    engine = runtime.deserialize_cuda_engine(f.read())</span><br><span class="line">print(&quot;Engine Info:&quot;)</span><br><span class="line">for i, binding in enumerate(engine):</span><br><span class="line">    shape = [engine.max_batch_size, *engine.get_binding_shape(binding)]</span><br><span class="line">    dtype = trt.nptype(engine.get_binding_dtype(binding))</span><br><span class="line">    volume = abs(trt.volume(engine.get_binding_shape(binding)))</span><br><span class="line">    if engine.binding_is_input(binding):</span><br><span class="line">        desc = &quot;input&quot; </span><br><span class="line">    else:</span><br><span class="line">        desc = &quot;output&quot;</span><br><span class="line">    print(f&quot;&#123;i&#125; type:    &#123;desc&#125;\n  binding: &#123;binding&#125; \n  data:    &#123;np.dtype(dtype).name&#125;\n  shape:   &#123;shape&#125; =&gt; &#123;volume&#125; \n&quot;)</span><br></pre></td></tr></table></figure>
-<p>输入形式如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[TensorRT] INFO: [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 341, GPU 999 (MiB)</span><br><span class="line">[TensorRT] INFO: Loaded engine size: 4 MB</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine begin: CPU 346 MiB, GPU 999 MiB</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +491, GPU +210, now: CPU 842, GPU 1211 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuDNN: CPU +287, GPU +200, now: CPU 1129, GPU 1411 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +0, now: CPU 1129, GPU 1393 (MiB)</span><br><span class="line">[TensorRT] INFO: [MemUsageSnapshot] deserializeCudaEngine end: CPU 1129 MiB, GPU 1393 MiB</span><br><span class="line">Engine Info:</span><br><span class="line">0 type:    input</span><br><span class="line">  binding: data </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 1, 3, 256, 256] =&gt; 36864 </span><br><span class="line"></span><br><span class="line">1 type:    output</span><br><span class="line">  binding: result </span><br><span class="line">  data:    float32</span><br><span class="line">  shape:   [1, 8, 8] =&gt; 8 </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --gpus all \</span><br><span class="line">  --<span class="built_in">rm</span> -v /home/user/trtdebug.py:/models/trtdebug.py \</span><br><span class="line">  --<span class="built_in">rm</span> -v /home/user/model.plan:/models/model.plan \</span><br><span class="line">  geminihub.oa.com:80/karizhang/nvcr.io/nvidia/tensorrt:21.08-py3 python /models/trtdebug.py /models/model.plan</span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
+<p>输入尺寸固定</p>
+<p>小目标检测不好</p>
+<p>一个单元格只能预测两个框和一个类别</p>
+<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
+<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
+<p>darknet-19</p>
+<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
+<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
+<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
+<p>darknet-53</p>
+<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
+<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
+]]></content>
       <categories>
-        <category>GPU</category>
+        <category>草稿</category>
       </categories>
       <tags>
-        <tag>docker</tag>
-        <tag>nvidia</tag>
-        <tag>tensorrt</tag>
+        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -594,33 +621,6 @@
         <tag>nvidia</tag>
         <tag>tensorrt</tag>
         <tag>shared memory</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Yolo发展整理</title>
-    <url>/2021/05/03/Yolo%E5%8F%91%E5%B1%95%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<p>因为算法面试，整理了一些yolo相关的点</p>
-<span id="more"></span>
-
-<h2 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h2><p>region proposals 而不是滑动窗口</p>
-<p>输入尺寸固定</p>
-<p>小目标检测不好</p>
-<p>一个单元格只能预测两个框和一个类别</p>
-<h2 id="yolo9000"><a href="#yolo9000" class="headerlink" title="yolo9000"></a>yolo9000</h2><p>替换全连接为卷积，没有了输入尺寸的限制</p>
-<p>引入anchor box, 使用kmeans聚类，5 anchor</p>
-<p>darknet-19</p>
-<p>13 * 13 detection， 2种尺度13 * 13， 26 * 26</p>
-<p>训练过程中遇到带标签的检测图像，就基于 YOLOv2 整个损失函数进行反向传播，遇到分类图像，只反向传播网络的分类损失。</p>
-<h2 id="v3"><a href="#v3" class="headerlink" title="v3"></a>v3</h2><p>9 anchor</p>
-<p>darknet-53</p>
-<p>13 * 13， 26 * 26， 52*52， 3个detection</p>
-<p>YOLOv3 为每个边界框都预测了一个分数 objectness score，打分依据是预测框与物体的重叠度。如果某个框的重叠度比其他框都高，它的分数就是 1</p>
-]]></content>
-      <categories>
-        <category>草稿</category>
-      </categories>
-      <tags>
-        <tag>Yolo发展整理</tag>
       </tags>
   </entry>
   <entry>
@@ -696,6 +696,31 @@
       </tags>
   </entry>
   <entry>
+    <title>hive中操作json以及对list的处理</title>
+    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
+<span id="more"></span>
+
+
+<p>假设json数据为</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;text1&quot;</span><span class="punctuation">,</span> <span class="string">&quot;text1&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
+<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>get_json_object</tag>
+        <tag>hive</tag>
+        <tag>spark</tag>
+        <tag>presto</tag>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo博客配合Github Action完成自动CI/CD</title>
     <url>/2021/05/04/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E5%90%88Github-Action%E5%AE%8C%E6%88%90%E8%87%AA%E5%8A%A8CI-CD/</url>
     <content><![CDATA[<p>每次部署博客时都需要在本地完成编译和上传，维护工具链成为一件很繁琐的事情，有什么办法能够将这一步自动化，为将来随时随地写博客打下基础呢？</p>
@@ -731,31 +756,6 @@
         <tag>CI/CD</tag>
         <tag>Github Action</tag>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>hive中操作json以及对list的处理</title>
-    <url>/2021/12/09/hive%E4%B8%AD%E6%93%8D%E4%BD%9Cjson%E4%BB%A5%E5%8F%8A%E5%AF%B9list%E7%9A%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>在处理数据时，时常会遇到需要处理json数据的情况, 可以使用<code>get_json_object</code>, <code>regexp_replace</code>, <code>split</code>来组合对json数组进行处理</p>
-<span id="more"></span>
-
-
-<p>假设json数据为</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;text1&quot;</span><span class="punctuation">,</span> <span class="string">&quot;text1&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>我们需要将data提取后转换为字符串形式”text1,text2”, 可以使用如下写法实现</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  concat_ws(<span class="string">&#x27;;&#x27;</span>, </span><br><span class="line">    split(</span><br><span class="line">      regexp_replace(</span><br><span class="line">        get_json_object(</span><br><span class="line">            <span class="string">&#x27;&#123;&quot;data&quot;: [&quot;text1&quot;, &quot;text2&quot;]&#125;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;$.data&#x27;</span></span><br><span class="line">        ), </span><br><span class="line">        <span class="string">&#x27;[\\[\\]&quot;\\s]&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line">      ), </span><br><span class="line">      <span class="string">&#x27;,&#x27;</span></span><br><span class="line">    )</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
-<p>首先使用<code>get_json_object</code>将json中需要的字段提取出来, 然后使用<code>regexp_replace</code>对输出的字符串进行处理, 正则<code>[\\[\\]&quot;\\s]</code>会将<code>[</code>, <code>]</code>, <code>&quot;</code>以及<code>空白符号删除</code>, 最后输出<code>text1,text2</code>, <code>split</code>函数会使用<code>,</code>作为分割符, 将字符串转换为array, 最后<code>concat_ws</code>通过<code>;</code>将array中的所有字符串拼接。</p>
-<p>写正则表达式时，不同的系统可能会有不同的转义规则，需要特别注意<code>\</code>的数量。</p>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>get_json_object</tag>
-        <tag>hive</tag>
-        <tag>spark</tag>
-        <tag>presto</tag>
-        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
@@ -1122,6 +1122,42 @@
       </tags>
   </entry>
   <entry>
+    <title>word文档参考文献按引用顺序自动调整编号</title>
+    <url>/2022/05/09/word%E6%96%87%E6%A1%A3%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%E6%8C%89%E5%BC%95%E7%94%A8%E9%A1%BA%E5%BA%8F%E8%87%AA%E5%8A%A8%E8%B0%83%E6%95%B4%E7%BC%96%E5%8F%B7/</url>
+    <content><![CDATA[<p>最近在写毕业论文，因为不断的修改添加了大量了引用，导致编号非常混乱，显得非常不美观，</p>
+<p>又恰逢女朋友学校强制要求引用目录按照引用顺序排序，因此不得已开发了一个程序来对引用进行自动编号，</p>
+<p>开发过程一波三折，难度也比一开始的设想大了很多，</p>
+<p>因为需要处理书签引用和纯手写的引用，本来是想使用PyDocX的，测试后发现PyDocX读取书签引用有问题，</p>
+<p>最后只能手写个简单的代码解析docx，虽然很麻烦但是总算是搞定了。</p>
+<p>项目地址：<a href="https://github.com/Casxt/SortReference">https://github.com/Casxt/SortReference</a></p>
+<span id="more"></span>
+
+<h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img src="https://raw.githubusercontent.com/Casxt/SortReference/main/img/demo.jpg" alt="demo" title="demo"></p>
+<h2 id="支持的场景"><a href="#支持的场景" class="headerlink" title="支持的场景"></a>支持的场景</h2><p>请确保文件中中有且只有<code>[n]</code>这一种引用格式，<code>[1-3]</code>或 <code>[1,2,3]</code>等形式需要统一改写成<code>[1][2][3]</code>。</p>
+<p>请确保word中所有形如<code>[n]</code>的字符串均代表引用。</p>
+<p>否则这些字符也会被计入引用而被错误的改写，如果有的话可以先把不代表引用的字符替换为其他格式比如<code>&lt;n&gt;</code>等到程序处理完后再改写回来。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>首先确保已经安装python3.6或更高版本。</p>
+<ol>
+<li><p>使用 pip 安装依赖</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -m pip install sort_reference</span><br></pre></td></tr></table></figure></li>
+<li><p>指定输入输出文件</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -m sort_reference [input] [output] </span><br></pre></td></tr></table></figure>
+<p> 如：<code>python -m sort_reference testcase/paper.docx testcase/processed_paper.docx</code></p>
+</li>
+<li><p>手动处理引用目录顺序</p>
+<p> 最后的引用目录重新编号后会如效果图的右图所示，因为word文档结构太复杂了，没法自动对引用目录排序，所以执行完后需要手动调整一下目录顺序。</p>
+</li>
+</ol>
+<p><strong>如果有报错请看github主页里的报错处理方案，大部分时候简单修改一下文档就能解决掉</strong></p>
+]]></content>
+      <categories>
+        <category>word</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Wireguard 配置部署及技术讲解</title>
     <url>/2020/03/02/wireguard%E9%83%A8%E7%BD%B2%E5%8F%8A%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p><a href="https://www.wireguard.com/">wiregurad</a>目前已经正式合入linux kernal, 日后的应用范围也一定会越来越广, 本文将会介绍如何使用wireguard创建自己的虚拟局域网, 并完成网关设置</p>
@@ -1186,39 +1222,25 @@
       </tags>
   </entry>
   <entry>
-    <title>word文档参考文献按引用顺序自动调整编号</title>
-    <url>/2022/05/09/word%E6%96%87%E6%A1%A3%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%E6%8C%89%E5%BC%95%E7%94%A8%E9%A1%BA%E5%BA%8F%E8%87%AA%E5%8A%A8%E8%B0%83%E6%95%B4%E7%BC%96%E5%8F%B7/</url>
-    <content><![CDATA[<p>最近在写毕业论文，因为不断的修改添加了大量了引用，导致编号非常混乱，显得非常不美观，</p>
-<p>又恰逢女朋友学校强制要求引用目录按照引用顺序排序，因此不得已开发了一个程序来对引用进行自动编号，</p>
-<p>开发过程一波三折，难度也比一开始的设想大了很多，</p>
-<p>因为需要处理书签引用和纯手写的引用，本来是想使用PyDocX的，测试后发现PyDocX读取书签引用有问题，</p>
-<p>最后只能手写个简单的代码解析docx，虽然很麻烦但是总算是搞定了。</p>
-<p>项目地址：<a href="https://github.com/Casxt/SortReference">https://github.com/Casxt/SortReference</a></p>
+    <title>一次线上数据库结构修改</title>
+    <url>/2022/08/02/%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9/</url>
+    <content><![CDATA[<p>由于早期数据库设计不合理，需要修改线上数据库表结构，比较麻烦的是新设计将原来的一个表拆成了两个表，并且允许了表之间存在一对多关系。</p>
 <span id="more"></span>
 
-<h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img src="https://raw.githubusercontent.com/Casxt/SortReference/main/img/demo.jpg" alt="demo" title="demo"></p>
-<h2 id="支持的场景"><a href="#支持的场景" class="headerlink" title="支持的场景"></a>支持的场景</h2><p>请确保文件中中有且只有<code>[n]</code>这一种引用格式，<code>[1-3]</code>或 <code>[1,2,3]</code>等形式需要统一改写成<code>[1][2][3]</code>。</p>
-<p>请确保word中所有形如<code>[n]</code>的字符串均代表引用。</p>
-<p>否则这些字符也会被计入引用而被错误的改写，如果有的话可以先把不代表引用的字符替换为其他格式比如<code>&lt;n&gt;</code>等到程序处理完后再改写回来。</p>
-<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>首先确保已经安装python3.6或更高版本。</p>
-<ol>
-<li><p>使用 pip 安装依赖</p>
- <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -m pip install sort_reference</span><br></pre></td></tr></table></figure></li>
-<li><p>指定输入输出文件</p>
- <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -m sort_reference [input] [output] </span><br></pre></td></tr></table></figure>
-<p> 如：<code>python -m sort_reference testcase/paper.docx testcase/processed_paper.docx</code></p>
-</li>
-<li><p>手动处理引用目录顺序</p>
-<p> 最后的引用目录重新编号后会如效果图的右图所示，因为word文档结构太复杂了，没法自动对引用目录排序，所以执行完后需要手动调整一下目录顺序。</p>
-</li>
-</ol>
-<p><strong>如果有报错请看github主页里的报错处理方案，大部分时候简单修改一下文档就能解决掉</strong></p>
+<p>为了保证安全的线上变更，设计了如下变更步骤</p>
+<h2 id="引入新表"><a href="#引入新表" class="headerlink" title="引入新表"></a>引入新表</h2><p>第一步也是最简单的一步，创建新表结构，此时不会产生任何影响。</p>
+<h2 id="并行逻辑执行"><a href="#并行逻辑执行" class="headerlink" title="并行逻辑执行"></a>并行逻辑执行</h2><p>按照新表执行逻辑，将所有涉及旧表的逻辑重写，注意此时并不删除或修改旧逻辑，新老逻辑同时执行，但是忽略新逻辑的报错和结果，只返回旧逻辑结果</p>
+<h2 id="数据库双写"><a href="#数据库双写" class="headerlink" title="数据库双写"></a>数据库双写</h2><p>所有数据的读写操作，尤其是写入操作，同时写入新库和旧库</p>
+<h2 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h2><p>历史数据通过离线系统，逐渐迁移到新表</p>
+<h2 id="并行逻辑切换校验"><a href="#并行逻辑切换校验" class="headerlink" title="并行逻辑切换校验"></a>并行逻辑切换校验</h2><p>返回新逻辑结果，检查是否正确，通过测试后可以删除旧逻辑</p>
 ]]></content>
       <categories>
-        <category>word</category>
+        <category>backend</category>
       </categories>
       <tags>
-        <tag>python</tag>
+        <tag>schema</tag>
+        <tag>mysql</tag>
+        <tag>database</tag>
       </tags>
   </entry>
   <entry>
@@ -1272,28 +1294,6 @@
         <tag>php</tag>
         <tag>yc</tag>
         <tag>浏览器</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一次线上数据库结构修改</title>
-    <url>/2022/08/02/%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9/</url>
-    <content><![CDATA[<p>由于早期数据库设计不合理，需要修改线上数据库表结构，比较麻烦的是新设计将原来的一个表拆成了两个表，并且允许了表之间存在一对多关系。</p>
-<span id="more"></span>
-
-<p>为了保证安全的线上变更，设计了如下变更步骤</p>
-<h2 id="引入新表"><a href="#引入新表" class="headerlink" title="引入新表"></a>引入新表</h2><p>第一步也是最简单的一步，创建新表结构，此时不会产生任何影响。</p>
-<h2 id="并行逻辑执行"><a href="#并行逻辑执行" class="headerlink" title="并行逻辑执行"></a>并行逻辑执行</h2><p>按照新表执行逻辑，将所有涉及旧表的逻辑重写，注意此时并不删除或修改旧逻辑，新老逻辑同时执行，但是忽略新逻辑的报错和结果，只返回旧逻辑结果</p>
-<h2 id="数据库双写"><a href="#数据库双写" class="headerlink" title="数据库双写"></a>数据库双写</h2><p>所有数据的读写操作，尤其是写入操作，同时写入新库和旧库</p>
-<h2 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h2><p>历史数据通过离线系统，逐渐迁移到新表</p>
-<h2 id="并行逻辑切换校验"><a href="#并行逻辑切换校验" class="headerlink" title="并行逻辑切换校验"></a>并行逻辑切换校验</h2><p>返回新逻辑结果，检查是否正确，通过测试后可以删除旧逻辑</p>
-]]></content>
-      <categories>
-        <category>backend</category>
-      </categories>
-      <tags>
-        <tag>schema</tag>
-        <tag>mysql</tag>
-        <tag>database</tag>
       </tags>
   </entry>
   <entry>
@@ -1663,6 +1663,30 @@
 <h2 id="2-在-fetch-请求中禁用缓存"><a href="#2-在-fetch-请求中禁用缓存" class="headerlink" title="2. 在 fetch 请求中禁用缓存"></a>2. 在 fetch 请求中禁用缓存</h2>  <figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> imgResponse = <span class="keyword">await</span> <span class="title function_">fetch</span>(selectedImageUrl, &#123;</span><br><span class="line">  <span class="attr">cache</span>: <span class="string">&#x27;no-cache&#x27;</span> <span class="comment">// 或 &#x27;reload&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <p>因为只是POC, 最后选用方案2解决</p>
+<h2 id="no-cache-vs-reload"><a href="#no-cache-vs-reload" class="headerlink" title="no-cache vs reload"></a>no-cache vs reload</h2><p>no-cache: 若服务器返回 304 Not Modified（资源未变化），则使用缓存。</p>
+<p>reload: 浏览器完全跳过缓存检查，直接向服务器请求最新资源</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式</th>
+<th align="center">是否验证缓存</th>
+<th align="center">是否可能复用缓存</th>
+<th align="center">网络请求次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">no-cache</td>
+<td align="center">✓</td>
+<td align="center">✓ (304 响应时)</td>
+<td align="center">至少 1 次</td>
+</tr>
+<tr>
+<td align="center">reload</td>
+<td align="center">✗</td>
+<td align="center">✗</td>
+<td align="center">强制 1 次</td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
         <category>前端</category>
@@ -1731,89 +1755,6 @@
       </categories>
       <tags>
         <tag>矩阵</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>线上Cache系统设计</title>
-    <url>/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</url>
-    <content><![CDATA[<p>缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题</p>
-<span id="more"></span>
-
-<h1 id="缓存系统的挑战"><a href="#缓存系统的挑战" class="headerlink" title="缓存系统的挑战"></a>缓存系统的挑战</h1><ul>
-<li>缓存击穿 Cache Breakdown: 热点数据突然过期<ul>
-<li>Data sharing</li>
-<li>Async Refresh / Pre Fetch</li>
-<li>Request aggregation</li>
-</ul>
-</li>
-<li>缓存雪崩 Cache Avalanche: 所有的缓存数据同时失效</li>
-<li>缓存穿透 Cache Penetration: 查询不存在的数据<ul>
-<li>Content filter</li>
-<li>Error cacheing</li>
-</ul>
-</li>
-<li>内存管理<ul>
-<li>堆外内存 vs 堆内内存</li>
-</ul>
-</li>
-<li>淘汰策略<ul>
-<li>Memory Limit</li>
-<li>Time Limit</li>
-</ul>
-</li>
-<li>数据管理<ul>
-<li>Marshal vs Raw Object (marshal cost vs GC cost)</li>
-<li>Lock vs Bucket Lock vs Object Lock</li>
-</ul>
-</li>
-</ul>
-<h2 id="Data-sharing"><a href="#Data-sharing" class="headerlink" title="Data sharing"></a>Data sharing</h2><p>通过网络或其它中间件在不同节点间共享缓存数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟</p>
-<h2 id="Async-Refresh-Pre-Fetch"><a href="#Async-Refresh-Pre-Fetch" class="headerlink" title="Async Refresh / Pre Fetch"></a>Async Refresh / Pre Fetch</h2><p>通过给数据设置软过期时间，在真正过期之前就异步刷新数据，避免用户等待回源。</p>
-<p>同时通过提前刷新，在源服务报错时留出重试和恢复的时间</p>
-<h2 id="Request-aggregation"><a href="#Request-aggregation" class="headerlink" title="Request aggregation"></a>Request aggregation</h2><p>在多个client请求相同的需要回源的数据时，只进行一次回源，避免多次请求</p>
-<h2 id="Content-filter"><a href="#Content-filter" class="headerlink" title="Content filter"></a>Content filter</h2><p>通过布隆过滤器等手段，阻止对不存在资源的请求，避免大量回源压垮服务</p>
-<h2 id="Error-cacheing"><a href="#Error-cacheing" class="headerlink" title="Error cacheing"></a>Error cacheing</h2><p>在回源报错的情况下，适当缓存源错误并返回给用户，避免错误情况下持续回源压垮后端服务。</p>
-<p>目前开源cache组件支持error cache的很少，但实际上这是一个非常实用的服务，当缓存中数据不存在或过期的请求，如果回源报错（4XX，5XX），可以短暂缓存源报错，缓存时间可以是正常缓存时间的十分之一或更短，能够有效避免对源服务的恶意攻击。</p>
-<h2 id="堆外内存-vs-堆内内存"><a href="#堆外内存-vs-堆内内存" class="headerlink" title="堆外内存 vs 堆内内存"></a>堆外内存 vs 堆内内存</h2><p>常见的缓存服务的内存申请基本上可以分为堆内和堆外两大方向，对于有GC语言来说，堆外内存可以减少GC消耗，代价就是cache需要自己管理内存。<br>而堆内则有实现简单可靠的有点，并且可以配合对象缓存进一步避免序列化开销。</p>
-<p>堆外内存的另一个缺点是无法按需分配，往往需要提前分配几百M到几G的内存空间，并且难以缩扩容，会造成一定的资源浪费。</p>
-<h2 id="Marshal-vs-Raw-Object"><a href="#Marshal-vs-Raw-Object" class="headerlink" title="Marshal vs Raw Object"></a>Marshal vs Raw Object</h2><p>对于缓存数据的存储，同样存在两大方向，分别是序列化后存储和直接缓存数据对象。</p>
-<p>通常使用堆外缓存方案的cache需要使用序列化方案，一方面堆外内存不容易直接映射为语言呢的对象，另一方面序列化后只需要管理字节数组，内存管理的难度大幅下降。</p>
-<p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
-<h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
-<p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
-<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:100%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
-
-<p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
-<p>同步更新状态的转移有2种可能，</p>
-<ol>
-<li>同步更新中如果updatefn返回error，则cache状态会转移到异常重试冷却状态，在这个状态下，cache仍然会缓存之前updatefn返回的error response，并通过用户请求触发异步更新，更新的最小间隔是200ms（或者其他用户设定的间隔），如果更新失败，则缓存最新的error response，如果成功则迁移到正常数据的状态流中。</li>
-</ol>
-<p>此外，由于更新是通过用户请求触发的，如果在得到异常数据后很久没有没有请求，还会再次回到同步更新状态。</p>
-<ol start="2">
-<li>在得到正常数据后，cache在SoftLime时间内只返回数据而不进行更新，当缓存时间超过SoftLime而不超过HardLimt时，cache在用户请求时会触发异步更新，而如果超过了HardLimt则会进行同步更新。在缓存了正常数据的状态下，如果updatefn返回了error，cache会继续保存之前的成功的返回值而不会保存失败返回，同时也不会更新update time，在下一次用户请求时会再次触发异步更新，但是如果update持续失败，缓存时间超过了HardLim回到同步更新状态，此时更新失败会导致回到异常数据状态</li>
-</ol>
-<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
-
-<p>Shared object cache 通过redis在cache之间共享数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟，作为一个可选的中间件，引入data sharing后的更新流程比起单机版的cache会更复杂一点，</p>
-<p>为了避免引入redis导致cache data的ttl混乱，redis中除了数据外，还记录了updatetime和编码类型</p>
-<p>在真正执行用户的update function之前，会先检查reids中是否有可用数据</p>
-<p>redis中，每个cache item 的 HASHS Struct 如下:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">data</span>: &lt;data&gt;</span><br><span class="line">    <span class="attr">marshal</span>: &lt;marshalType&gt;</span><br><span class="line">    <span class="attr">update</span>: &lt;updateAtMs&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>为了保证缓存更新的原子性，在更新数据时通过如下lua比较尝试写入的数据是否新于已有数据，并返回最新数据的时间戳，通过返回的时间戳，调用方也可以知道自己写入是否成功</p>
-<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">   <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">   <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">   <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>]))  <span class="keyword">then</span></span><br><span class="line">       <span class="keyword">return</span> expireTime</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;HSET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], ARGV[<span class="number">3</span>], ARGV[<span class="number">4</span>], ARGV[<span class="number">5</span>], ARGV[<span class="number">6</span>], ARGV[<span class="number">7</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-
-<p>为了准确控制过期时间没有使用传统的TTL设置生存周期，而是使用用PEXPIREAT设置毫秒即的过期时间戳，这样即使指令的发送和执行上有一些延迟，最终的数据TTL还是严格和cache instance 一致的<br>并且在update时，会检查当前数据的过期时间戳和已经存在的数据的过期时间戳谁更大，只有最新的数据才能留存在redis中。<br>这里有一个限制，在redis7之前，设置超时时间戳可以使用PEXPIREAT，但是设置后就无法再次获取时间戳了，只能使用PTTL获取剩余的毫秒级TTL，在redis7之后新增了PEXPIRETIME指令可以获取原始的时间戳。</p>
-<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
-
-<p>出了常见的object cache，对于流数据的缓存也是比较常见的一个场景</p>
-<p>Stream cache对外的表现是一个滑动窗，在第一次缓存建立后，会主动向更新和更老的feed，尽享填满自己缓存窗口从而满足用户请求</p>
-]]></content>
-      <categories>
-        <category>backend</category>
-      </categories>
-      <tags>
-        <tag>cache</tag>
       </tags>
   </entry>
   <entry>
@@ -1904,6 +1845,89 @@
         <tag>github</tag>
         <tag>actions</tag>
         <tag>pages</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线上Cache系统设计</title>
+    <url>/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p>缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题</p>
+<span id="more"></span>
+
+<h1 id="缓存系统的挑战"><a href="#缓存系统的挑战" class="headerlink" title="缓存系统的挑战"></a>缓存系统的挑战</h1><ul>
+<li>缓存击穿 Cache Breakdown: 热点数据突然过期<ul>
+<li>Data sharing</li>
+<li>Async Refresh / Pre Fetch</li>
+<li>Request aggregation</li>
+</ul>
+</li>
+<li>缓存雪崩 Cache Avalanche: 所有的缓存数据同时失效</li>
+<li>缓存穿透 Cache Penetration: 查询不存在的数据<ul>
+<li>Content filter</li>
+<li>Error cacheing</li>
+</ul>
+</li>
+<li>内存管理<ul>
+<li>堆外内存 vs 堆内内存</li>
+</ul>
+</li>
+<li>淘汰策略<ul>
+<li>Memory Limit</li>
+<li>Time Limit</li>
+</ul>
+</li>
+<li>数据管理<ul>
+<li>Marshal vs Raw Object (marshal cost vs GC cost)</li>
+<li>Lock vs Bucket Lock vs Object Lock</li>
+</ul>
+</li>
+</ul>
+<h2 id="Data-sharing"><a href="#Data-sharing" class="headerlink" title="Data sharing"></a>Data sharing</h2><p>通过网络或其它中间件在不同节点间共享缓存数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟</p>
+<h2 id="Async-Refresh-Pre-Fetch"><a href="#Async-Refresh-Pre-Fetch" class="headerlink" title="Async Refresh / Pre Fetch"></a>Async Refresh / Pre Fetch</h2><p>通过给数据设置软过期时间，在真正过期之前就异步刷新数据，避免用户等待回源。</p>
+<p>同时通过提前刷新，在源服务报错时留出重试和恢复的时间</p>
+<h2 id="Request-aggregation"><a href="#Request-aggregation" class="headerlink" title="Request aggregation"></a>Request aggregation</h2><p>在多个client请求相同的需要回源的数据时，只进行一次回源，避免多次请求</p>
+<h2 id="Content-filter"><a href="#Content-filter" class="headerlink" title="Content filter"></a>Content filter</h2><p>通过布隆过滤器等手段，阻止对不存在资源的请求，避免大量回源压垮服务</p>
+<h2 id="Error-cacheing"><a href="#Error-cacheing" class="headerlink" title="Error cacheing"></a>Error cacheing</h2><p>在回源报错的情况下，适当缓存源错误并返回给用户，避免错误情况下持续回源压垮后端服务。</p>
+<p>目前开源cache组件支持error cache的很少，但实际上这是一个非常实用的服务，当缓存中数据不存在或过期的请求，如果回源报错（4XX，5XX），可以短暂缓存源报错，缓存时间可以是正常缓存时间的十分之一或更短，能够有效避免对源服务的恶意攻击。</p>
+<h2 id="堆外内存-vs-堆内内存"><a href="#堆外内存-vs-堆内内存" class="headerlink" title="堆外内存 vs 堆内内存"></a>堆外内存 vs 堆内内存</h2><p>常见的缓存服务的内存申请基本上可以分为堆内和堆外两大方向，对于有GC语言来说，堆外内存可以减少GC消耗，代价就是cache需要自己管理内存。<br>而堆内则有实现简单可靠的有点，并且可以配合对象缓存进一步避免序列化开销。</p>
+<p>堆外内存的另一个缺点是无法按需分配，往往需要提前分配几百M到几G的内存空间，并且难以缩扩容，会造成一定的资源浪费。</p>
+<h2 id="Marshal-vs-Raw-Object"><a href="#Marshal-vs-Raw-Object" class="headerlink" title="Marshal vs Raw Object"></a>Marshal vs Raw Object</h2><p>对于缓存数据的存储，同样存在两大方向，分别是序列化后存储和直接缓存数据对象。</p>
+<p>通常使用堆外缓存方案的cache需要使用序列化方案，一方面堆外内存不容易直接映射为语言呢的对象，另一方面序列化后只需要管理字节数组，内存管理的难度大幅下降。</p>
+<p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
+<h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
+<p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
+<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:100%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
+
+<p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
+<p>同步更新状态的转移有2种可能，</p>
+<ol>
+<li>同步更新中如果updatefn返回error，则cache状态会转移到异常重试冷却状态，在这个状态下，cache仍然会缓存之前updatefn返回的error response，并通过用户请求触发异步更新，更新的最小间隔是200ms（或者其他用户设定的间隔），如果更新失败，则缓存最新的error response，如果成功则迁移到正常数据的状态流中。</li>
+</ol>
+<p>此外，由于更新是通过用户请求触发的，如果在得到异常数据后很久没有没有请求，还会再次回到同步更新状态。</p>
+<ol start="2">
+<li>在得到正常数据后，cache在SoftLime时间内只返回数据而不进行更新，当缓存时间超过SoftLime而不超过HardLimt时，cache在用户请求时会触发异步更新，而如果超过了HardLimt则会进行同步更新。在缓存了正常数据的状态下，如果updatefn返回了error，cache会继续保存之前的成功的返回值而不会保存失败返回，同时也不会更新update time，在下一次用户请求时会再次触发异步更新，但是如果update持续失败，缓存时间超过了HardLim回到同步更新状态，此时更新失败会导致回到异常数据状态</li>
+</ol>
+<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
+
+<p>Shared object cache 通过redis在cache之间共享数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟，作为一个可选的中间件，引入data sharing后的更新流程比起单机版的cache会更复杂一点，</p>
+<p>为了避免引入redis导致cache data的ttl混乱，redis中除了数据外，还记录了updatetime和编码类型</p>
+<p>在真正执行用户的update function之前，会先检查reids中是否有可用数据</p>
+<p>redis中，每个cache item 的 HASHS Struct 如下:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">data</span>: &lt;data&gt;</span><br><span class="line">    <span class="attr">marshal</span>: &lt;marshalType&gt;</span><br><span class="line">    <span class="attr">update</span>: &lt;updateAtMs&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了保证缓存更新的原子性，在更新数据时通过如下lua比较尝试写入的数据是否新于已有数据，并返回最新数据的时间戳，通过返回的时间戳，调用方也可以知道自己写入是否成功</p>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">   <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">   <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">   <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>]))  <span class="keyword">then</span></span><br><span class="line">       <span class="keyword">return</span> expireTime</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;HSET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], ARGV[<span class="number">3</span>], ARGV[<span class="number">4</span>], ARGV[<span class="number">5</span>], ARGV[<span class="number">6</span>], ARGV[<span class="number">7</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>为了准确控制过期时间没有使用传统的TTL设置生存周期，而是使用用PEXPIREAT设置毫秒即的过期时间戳，这样即使指令的发送和执行上有一些延迟，最终的数据TTL还是严格和cache instance 一致的<br>并且在update时，会检查当前数据的过期时间戳和已经存在的数据的过期时间戳谁更大，只有最新的数据才能留存在redis中。<br>这里有一个限制，在redis7之前，设置超时时间戳可以使用PEXPIREAT，但是设置后就无法再次获取时间戳了，只能使用PTTL获取剩余的毫秒级TTL，在redis7之后新增了PEXPIRETIME指令可以获取原始的时间戳。</p>
+<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
+
+<p>出了常见的object cache，对于流数据的缓存也是比较常见的一个场景</p>
+<p>Stream cache对外的表现是一个滑动窗，在第一次缓存建立后，会主动向更新和更老的feed，尽享填满自己缓存窗口从而满足用户请求</p>
+]]></content>
+      <categories>
+        <category>backend</category>
+      </categories>
+      <tags>
+        <tag>cache</tag>
       </tags>
   </entry>
   <entry>

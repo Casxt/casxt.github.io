@@ -258,7 +258,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -304,6 +304,30 @@
 <h2 id="2-在-fetch-请求中禁用缓存"><a href="#2-在-fetch-请求中禁用缓存" class="headerlink" title="2. 在 fetch 请求中禁用缓存"></a>2. 在 fetch 请求中禁用缓存</h2>  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> imgResponse = <span class="keyword">await</span> <span class="title function_">fetch</span>(selectedImageUrl, &#123;</span><br><span class="line">  <span class="attr">cache</span>: <span class="string">&#x27;no-cache&#x27;</span> <span class="comment">// 或 &#x27;reload&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <p>因为只是POC, 最后选用方案2解决</p>
+<h2 id="no-cache-vs-reload"><a href="#no-cache-vs-reload" class="headerlink" title="no-cache vs reload"></a>no-cache vs reload</h2><p>no-cache: 若服务器返回 304 Not Modified（资源未变化），则使用缓存。</p>
+<p>reload: 浏览器完全跳过缓存检查，直接向服务器请求最新资源</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式</th>
+<th align="center">是否验证缓存</th>
+<th align="center">是否可能复用缓存</th>
+<th align="center">网络请求次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">no-cache</td>
+<td align="center">✓</td>
+<td align="center">✓ (304 响应时)</td>
+<td align="center">至少 1 次</td>
+</tr>
+<tr>
+<td align="center">reload</td>
+<td align="center">✗</td>
+<td align="center">✗</td>
+<td align="center">强制 1 次</td>
+</tr>
+</tbody></table>
 
     </div>
 
@@ -389,7 +413,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%A4%8D%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">问题复现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">后端配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E6%8A%A5%E9%94%99%E9%80%BB%E8%BE%91"><span class="nav-number">3.</span> <span class="nav-text">前端报错逻辑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">4.</span> <span class="nav-text">调查思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="nav-number">5.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">6.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA-%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0-crossOrigin-%E5%B1%9E%E6%80%A7"><span class="nav-number">6.1.</span> <span class="nav-text">1. 为  标签添加 crossOrigin 属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9C%A8-fetch-%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%A6%81%E7%94%A8%E7%BC%93%E5%AD%98"><span class="nav-number">6.2.</span> <span class="nav-text">2. 在 fetch 请求中禁用缓存</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%A4%8D%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">问题复现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">后端配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E6%8A%A5%E9%94%99%E9%80%BB%E8%BE%91"><span class="nav-number">3.</span> <span class="nav-text">前端报错逻辑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">4.</span> <span class="nav-text">调查思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="nav-number">5.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">6.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA-%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0-crossOrigin-%E5%B1%9E%E6%80%A7"><span class="nav-number">6.1.</span> <span class="nav-text">1. 为  标签添加 crossOrigin 属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9C%A8-fetch-%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%A6%81%E7%94%A8%E7%BC%93%E5%AD%98"><span class="nav-number">6.2.</span> <span class="nav-text">2. 在 fetch 请求中禁用缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#no-cache-vs-reload"><span class="nav-number">6.3.</span> <span class="nav-text">no-cache vs reload</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
