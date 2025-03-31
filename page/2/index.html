@@ -202,6 +202,95 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2022/08/05/acme%E4%BD%BF%E7%94%A8AliyunDNS%E9%AA%8C%E8%AF%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/05/acme%E4%BD%BF%E7%94%A8AliyunDNS%E9%AA%8C%E8%AF%81/" class="post-title-link" itemprop="url">acme使用AliyunDNS验证</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-05 08:40:43" itemprop="dateCreated datePublished" datetime="2022-08-05T08:40:43+08:00">2022-08-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>450</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="安装acme"><a href="#安装acme" class="headerlink" title="安装acme"></a>安装acme</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://get.acme.sh | sh -s email=your@email.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用阿里云dns认证方式"><a href="#使用阿里云dns认证方式" class="headerlink" title="使用阿里云dns认证方式"></a>使用阿里云dns认证方式</h2><p>文档: <a target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi">https://github.com/acmesh-official/acme.sh/wiki/dnsapi</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> Ali_Key=<span class="string">&quot;xxxxxxxxxxxxxxxx&quot;</span></span><br><span class="line"><span class="built_in">export</span> Ali_Secret=<span class="string">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span></span><br><span class="line">acme.sh --issue --dns dns_ali -d your.domain.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装密钥"><a href="#安装密钥" class="headerlink" title="安装密钥"></a>安装密钥</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acme.sh --install-cert -d your.domain.com --key-file /etc/nginx/your.domain.com.key --fullchain-file /etc/nginx/your.domain.com.pem --reloadcmd <span class="string">&quot;sudo systemctl restart nginx&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://maple.link/2022/08/03/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8CREATE-SELECT%E8%AF%AD%E5%8F%A5%E5%A4%8D%E5%88%B6%E8%A1%A8%E6%95%B0%E6%8D%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1020,94 +1109,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">模型转换时打包归一化预处理操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-09 20:23:00" itemprop="dateCreated datePublished" datetime="2021-12-09T20:23:00+08:00">2021-12-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>754</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。</p>
-<p>以最简单的归一化操作为例</p>
-<p>归一化Module如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#x27;mean&#x27;, torch.tensor([0.485, 0.456, 0.406], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;std&#x27;, torch.tensor([0.229, 0.224, 0.225], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;norm&#x27;, torch.tensor([255.0], dtype=torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images / self.norm - self.mean) / self.std</span><br></pre></td></tr></table></figure>
-
-<p>之后修改模型的inti和forward函数即可</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize = Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1177,20 +1178,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">134</span>
+        <span class="site-state-item-count">137</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1228,12 +1229,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">78k</span>
+    <span title="站点总字数">79k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:11</span>
+    <span title="站点阅读时长">1:12</span>
 </div>
 
         
