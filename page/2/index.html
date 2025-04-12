@@ -202,6 +202,110 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2022/09/08/terraform%E4%BD%BF%E7%94%A8jsonencod%E8%BE%93%E5%87%BAjson%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/08/terraform%E4%BD%BF%E7%94%A8jsonencod%E8%BE%93%E5%87%BAjson%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="post-title-link" itemprop="url">terraform使用jsonencod输出json字符串</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-08 17:21:53" itemprop="dateCreated datePublished" datetime="2022-09-08T17:21:53+08:00">2022-09-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/backend/" itemprop="url" rel="index"><span itemprop="name">backend</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在terraform中，常见的输出json字符串或创建json文件的手段是使用流式标记, 如下代码所示:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;user&quot;</span> <span class="string">&quot;admin&quot;</span> &#123;</span><br><span class="line">  name = <span class="string">&quot;admin&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = &lt;&lt;<span class="variable constant_">DATA</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="string">&quot;user&quot;</span>: <span class="string">&quot;$&#123;user.admin.name&#125;&quot;</span></span><br><span class="line">    <span class="string">&quot;permission&quot;</span>: <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable constant_">DATA</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是这样的写法不仅繁琐，也容易出错，由于字符串中夹杂大量的变量引用，<code>DATA</code>标记中间的内容很难提供语法检查<br>常见的错误包括：</p>
+<ul>
+<li>最后一个元素不能带逗号</li>
+<li>引号及括号没有闭合</li>
+<li>夹杂中文字符</li>
+</ul>
+<p>并且这些错误属于json语法问题，在<code>terraform plan</code>甚至<code>apply</code>期间是无法发现的，等到resource部署之后才被发现，可能会造成无法挽回的结果。</p>
+<blockquote>
+<p>上述代码的json中便缺失一个逗号，读者是否有看出来呢？</p>
+</blockquote>
+<p>为了解决这些问题，建议大家使用<code>jsonencode</code>函数代替直接编写字符串，得益于tf在语法上的良好兼容，从json迁移到<code>jsonencode</code>并不需要多少工作。</p>
+<p>例如上述代码使用jsonencode可以简单的写成如下形式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;user&quot;</span> <span class="string">&quot;admin&quot;</span> &#123;</span><br><span class="line">  name = <span class="string">&quot;admin&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = <span class="title function_">jsonencode</span>(&#123;</span><br><span class="line">    <span class="string">&quot;user&quot;</span>: <span class="string">&quot;$&#123;user.admin.name&#125;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;permission&quot;</span>: <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到几乎就是简单的使用jsonencode讲原来的内容包了起来。</p>
+<p>更进一步的，可以整理成如下形式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = <span class="title function_">jsonencode</span>(&#123;</span><br><span class="line">    <span class="attr">user</span>: user.<span class="property">admin</span>.<span class="property">name</span>,</span><br><span class="line">    <span class="attr">permission</span>: <span class="string">&quot;*&quot;</span>,</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;service&quot;</span> <span class="string">&quot;portal&quot;</span> &#123;</span><br><span class="line">  permission = <span class="title function_">jsonencode</span>(&#123;</span><br><span class="line">    user = user.<span class="property">admin</span>.<span class="property">name</span></span><br><span class="line">    permission = <span class="string">&quot;*&quot;</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于tf语法对逗号非常宽容，因此不论写不写逗号都不会影响输出的json，同时就算有语法错误，在plan阶段也可以轻易发现，还能少写很多引号。</p>
+<p>因此推荐大家在输出json时都使用这种方法。</p>
+
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://maple.link/2022/08/05/acme%E4%BD%BF%E7%94%A8AliyunDNS%E9%AA%8C%E8%AF%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1019,96 +1123,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2021/12/19/%E8%AE%B0%E4%B8%80%E6%AC%A1libc%E6%8D%9F%E5%9D%8F%E7%9A%84%E6%83%8A%E9%99%A9%E7%BB%8F%E5%8E%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/19/%E8%AE%B0%E4%B8%80%E6%AC%A1libc%E6%8D%9F%E5%9D%8F%E7%9A%84%E6%83%8A%E9%99%A9%E7%BB%8F%E5%8E%86/" class="post-title-link" itemprop="url">记一次libc损坏的惊险经历</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-19 23:17:43" itemprop="dateCreated datePublished" datetime="2021-12-19T23:17:43+08:00">2021-12-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>816</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近看到知乎上，关于最让自己印象深刻的一次bug的经历，的讨论，不禁让我回想起了研一时，那一次libc依赖损坏的事故。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/19/%E8%AE%B0%E4%B8%80%E6%AC%A1libc%E6%8D%9F%E5%9D%8F%E7%9A%84%E6%83%8A%E9%99%A9%E7%BB%8F%E5%8E%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1178,20 +1192,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">137</span>
+        <span class="site-state-item-count">140</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1229,12 +1243,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">79k</span>
+    <span title="站点总字数">80k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:12</span>
+    <span title="站点阅读时长">1:13</span>
 </div>
 
         
