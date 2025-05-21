@@ -259,7 +259,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -303,7 +303,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:8000/mcp&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;mcp-session-id: 008aad264bd34776bb48e26b20d65eb4&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <ol start="4">
-<li>开始后续的请求，如tool-list等，tool-call中涉及的sse event都会通过第三步中建立的sse连接发送到client</li>
+<li>开始后续的请求，如tool-list等，tool-call中涉及的sse notification 如log或progress都会通过第三步中建立的sse连接发送到client, 最终结果则会返回到本次请求的response中</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8000/mcp?transportType=streamable-http&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;content-type: application/json&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;mcp-session-id: 008aad264bd34776bb48e26b20d65eb4&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:&#123;&quot;name&quot;:&quot;text_to_image&quot;,&quot;arguments&quot;:&#123;&quot;prompt&quot;:&quot;asd&quot;,&quot;negitive_prompt&quot;:&quot;asd&quot;,&quot;height&quot;:1024,&quot;width&quot;:1024&#125;,&quot;_meta&quot;:&#123;&quot;progressToken&quot;:2&#125;&#125;,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:2&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
     </div>
