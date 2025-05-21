@@ -213,6 +213,47 @@
       </tags>
   </entry>
   <entry>
+    <title>MCP streamable-http 通信过程</title>
+    <url>/2025/05/22/MCP-streamable-http-%E5%8D%8F%E8%AE%AE%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/</url>
+    <content><![CDATA[<p>最近因为工作需要研究了一下MCP的streamable-http的通信流程, 具体来说整个连接过程涉及了两次POST和一次GET</p>
+<span id="more"></span>
+
+<ol>
+<li>建立mcp session，这步主要作用是从response的header中获得session-id</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8000/mcp&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;content-type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;method&quot;: &quot;initialize&quot;,</span></span><br><span class="line"><span class="string">  &quot;params&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;protocolVersion&quot;: &quot;2025-03-26&quot;,</span></span><br><span class="line"><span class="string">    &quot;capabilities&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;sampling&quot;: &#123;&#125;,</span></span><br><span class="line"><span class="string">      &quot;roots&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;listChanged&quot;: true</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;,</span></span><br><span class="line"><span class="string">    &quot;clientInfo&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;name&quot;: &quot;mcp-inspector&quot;,</span></span><br><span class="line"><span class="string">      &quot;version&quot;: &quot;0.12.0&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</span></span><br><span class="line"><span class="string">  &quot;id&quot;: 0</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>response body 是sse格式的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">event: message</span><br><span class="line">data: &#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:0,&quot;result&quot;:&#123;&quot;protocolVersion&quot;:&quot;2025-03-26&quot;,&quot;capabilities&quot;:&#123;&quot;experimental&quot;:&#123;&#125;,&quot;prompts&quot;:&#123;&quot;listChanged&quot;:false&#125;,&quot;resources&quot;:&#123;&quot;subscribe&quot;:false,&quot;listChanged&quot;:false&#125;,&quot;tools&quot;:&#123;&quot;listChanged&quot;:false&#125;&#125;,&quot;serverInfo&quot;:&#123;&quot;name&quot;:&quot;Creative Hub MCP Server&quot;,&quot;version&quot;:&quot;1.9.0&quot;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>response header 中 mcp-session-id 是重点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; date: Wed, 21 May 2025 16:58:40 GMT</span><br><span class="line">&lt; server: uvicorn</span><br><span class="line">&lt; cache-control: no-cache, no-transform</span><br><span class="line">&lt; connection: keep-alive</span><br><span class="line">&lt; content-type: text/event-stream</span><br><span class="line">&lt; mcp-session-id: 008aad264bd34776bb48e26b20d65eb4</span><br><span class="line">&lt; x-accel-buffering: no</span><br><span class="line">&lt; transfer-encoding: chunked</span><br><span class="line">&lt; </span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用session初始化sse, 这一步会立刻返回</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8000/mcp?transportType=streamable-http&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;mcp-session-id: 008aad264bd34776bb48e26b20d65eb4&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;method&quot;: &quot;notifications/initialized&quot;,</span></span><br><span class="line"><span class="string">  &quot;jsonrpc&quot;: &quot;2.0&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>建立sse连接监听notification, 这里是一个GET请求，会变成SSE连接一直保持</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --location --request GET <span class="string">&#x27;http://localhost:8000/mcp&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;mcp-session-id: 008aad264bd34776bb48e26b20d65eb4&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>开始后续的请求，如tool-list等，tool-call中涉及的sse event都会通过第三步中建立的sse连接发送到client</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8000/mcp?transportType=streamable-http&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;accept: application/json, text/event-stream&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;content-type: application/json&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;mcp-session-id: 008aad264bd34776bb48e26b20d65eb4&#x27;</span> \</span><br><span class="line">--data-raw <span class="string">&#x27;&#123;&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:&#123;&quot;name&quot;:&quot;text_to_image&quot;,&quot;arguments&quot;:&#123;&quot;prompt&quot;:&quot;asd&quot;,&quot;negitive_prompt&quot;:&quot;asd&quot;,&quot;height&quot;:1024,&quot;width&quot;:1024&#125;,&quot;_meta&quot;:&#123;&quot;progressToken&quot;:2&#125;&#125;,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:2&#125;&#x27;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>mcp</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+        <tag>mcp</tag>
+        <tag>sse</tag>
+        <tag>streamable-http</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MacOS配置Nordic蓝牙BLE的Vscode开发环境</title>
     <url>/2025/01/15/MacOS%E9%85%8D%E7%BD%AENordic%E8%93%9D%E7%89%99BLE%E7%9A%84Vscode%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<p>本文将介绍如何在MacOS下配置Nordic蓝牙开发环境, 器材为nRF52832(开发板NRF52-DK, PCA10040)。</p>
