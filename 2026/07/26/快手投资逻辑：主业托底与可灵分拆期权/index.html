@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="截至 2026 年 7 月 24 日，快手收盘价为 42.10 港元，对应约 1500 亿—1600 亿元人民币市值。这个价格已经反映主业长期收缩，以及可灵 AI 的部分期权价值。 按偏悲观的假设：成熟主业利润在未来十年从约 200 亿元降至 100 亿元，给予 10 倍 PE，价值 1000 亿元；可灵按本轮 180 亿美元投后估值、快手最终有效权益 50% 计算，价值约 603 亿元。两者合计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快手投资逻辑：主业托底与可灵分拆期权">
+<meta property="og:url" content="https://maple.link/2026/07/26/%E5%BF%AB%E6%89%8B%E6%8A%95%E8%B5%84%E9%80%BB%E8%BE%91%EF%BC%9A%E4%B8%BB%E4%B8%9A%E6%89%98%E5%BA%95%E4%B8%8E%E5%8F%AF%E7%81%B5%E5%88%86%E6%8B%86%E6%9C%9F%E6%9D%83/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="截至 2026 年 7 月 24 日，快手收盘价为 42.10 港元，对应约 1500 亿—1600 亿元人民币市值。这个价格已经反映主业长期收缩，以及可灵 AI 的部分期权价值。 按偏悲观的假设：成熟主业利润在未来十年从约 200 亿元降至 100 亿元，给予 10 倍 PE，价值 1000 亿元；可灵按本轮 180 亿美元投后估值、快手最终有效权益 50% 计算，价值约 603 亿元。两者合计">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-26T14:32:27.000Z">
+<meta property="article:modified_time" content="2026-07-26T14:32:27.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="AIGC">
+<meta property="article:tag" content="AI视频生成">
+<meta property="article:tag" content="SOTP">
+<meta property="article:tag" content="可灵AI">
+<meta property="article:tag" content="快手">
+<meta property="article:tag" content="快手-W">
+<meta property="article:tag" content="投资分析">
+<meta property="article:tag" content="港股">
+<meta property="article:tag" content="科技股">
+<meta property="article:tag" content="股票估值">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/07/26/%E5%BF%AB%E6%89%8B%E6%8A%95%E8%B5%84%E9%80%BB%E8%BE%91%EF%BC%9A%E4%B8%BB%E4%B8%9A%E6%89%98%E5%BA%95%E4%B8%8E%E5%8F%AF%E7%81%B5%E5%88%86%E6%8B%86%E6%9C%9F%E6%9D%83/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/07/26/%E5%BF%AB%E6%89%8B%E6%8A%95%E8%B5%84%E9%80%BB%E8%BE%91%EF%BC%9A%E4%B8%BB%E4%B8%9A%E6%89%98%E5%BA%95%E4%B8%8E%E5%8F%AF%E7%81%B5%E5%88%86%E6%8B%86%E6%9C%9F%E6%9D%83/","path":"2026/07/26/快手投资逻辑：主业托底与可灵分拆期权/","title":"快手投资逻辑：主业托底与可灵分拆期权"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>快手投资逻辑：主业托底与可灵分拆期权 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%B8%9A%E5%89%8D%E6%99%AF%E4%B8%8D%E4%BD%B3%EF%BC%8C%E5%8F%AF%E8%83%BD%E9%9D%A2%E4%B8%B4%E8%B4%9F%E5%A2%9E%E9%95%BF"><span class="nav-number">1.</span> <span class="nav-text">主业前景不佳，可能面临负增长</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AIGC-%E5%95%86%E4%B8%9A%E6%A8%A1%E5%BC%8F%E6%9B%B4%E6%B8%85%E6%99%B0%EF%BC%8C%E5%8F%AF%E7%81%B5%E5%BA%94%E6%9C%89%E9%A2%9D%E5%A4%96%E6%BA%A2%E4%BB%B7"><span class="nav-number">2.</span> <span class="nav-text">AIGC 商业模式更清晰，可灵应有额外溢价</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9E%8D%E8%B5%84%E9%99%8D%E4%BD%8E%E5%BD%92%E6%AF%8D%E4%BA%8F%E6%8D%9F%EF%BC%8C%E9%87%8A%E6%94%BE%E5%88%86%E7%BA%A2%E8%83%BD%E5%8A%9B"><span class="nav-number">3.</span> <span class="nav-text">融资降低归母亏损，释放分红能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E6%95%88%E6%9D%83%E7%9B%8A%E6%8C%89-50-%E8%AE%A1%E7%AE%97"><span class="nav-number">4.</span> <span class="nav-text">为什么有效权益按 50% 计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%83%85%E6%99%AF%E4%B8%8B%E7%9A%84%E5%90%88%E7%90%86%E5%B8%82%E5%80%BC"><span class="nav-number">5.</span> <span class="nav-text">不同情景下的合理市值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%B7%9F%E8%B8%AA%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">6.</span> <span class="nav-text">需要跟踪的风险</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%B0%E5%80%BC%E5%85%91%E7%8E%B0%E8%B7%AF%E5%BE%84"><span class="nav-number">7.</span> <span class="nav-text">估值兑现路径</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">153</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/07/26/%E5%BF%AB%E6%89%8B%E6%8A%95%E8%B5%84%E9%80%BB%E8%BE%91%EF%BC%9A%E4%B8%BB%E4%B8%9A%E6%89%98%E5%BA%95%E4%B8%8E%E5%8F%AF%E7%81%B5%E5%88%86%E6%8B%86%E6%9C%9F%E6%9D%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="快手投资逻辑：主业托底与可灵分拆期权 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          快手投资逻辑：主业托底与可灵分拆期权
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-07-26 22:32:27" itemprop="dateCreated datePublished" datetime="2026-07-26T22:32:27+08:00">2026-07-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>截至 2026 年 7 月 24 日，快手收盘价为 42.10 港元，对应约 1500 亿—1600 亿元人民币市值。这个价格已经反映主业长期收缩，以及可灵 AI 的部分期权价值。</p>
+<p>按偏悲观的假设：成熟主业利润在未来十年从约 200 亿元降至 100 亿元，给予 10 倍 PE，价值 1000 亿元；可灵按本轮 180 亿美元投后估值、快手最终有效权益 50% 计算，价值约 603 亿元。两者合计仍约 1600 亿元。</p>
+<p>当前价格因此更接近压力情景。主要上涨空间来自可灵在上市前继续增长，并获得 300 亿美元以上估值。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>数据截至 2026 年 7 月 26 日。市值区间仅为情景推演，不构成投资建议。</p>
+</blockquote>
+<h2 id="主业前景不佳，可能面临负增长"><a href="#主业前景不佳，可能面临负增长" class="headerlink" title="主业前景不佳，可能面临负增长"></a>主业前景不佳，可能面临负增长</h2><p>2025 年快手收入 1428 亿元，经调整净利润 206 亿元。2026 年一季度收入同比增长 3.4% 至 337 亿元，经调整净利润降至 34 亿元。</p>
+<p>同期直播收入下降 13.5%，线上营销收入增长 9.3%，广告和电商相关业务仍在增长。问题在于快手已经进入成熟期：直播可能长期收缩，广告电商增速也很难维持过去水平，AI 投入还会压低利润率。</p>
+<p>估值模型因此不假设主业恢复增长，而是假设正常化利润最终降至 100 亿元，给予 10 倍 PE，对应 1000 亿元。这已经包含直播下滑、广告电商放缓和 AI 成本上升。</p>
+<p>集团净利润与可灵模拟亏损的成本分摊口径不同，不能将 206 亿元与 19 亿元机械相加，直接得出成熟主业利润。</p>
+<p>数据来源：<a target="_blank" rel="noopener" href="https://ir.kuaishou.com/zh-hans/news-releases/news-release-details/kuaishoukejifabu2025niandisijidujiquanniancaiwuyeji">快手 2025 年业绩</a>、<a target="_blank" rel="noopener" href="https://ir.kuaishou.com/news-releases/news-release-details/kuaishou-technology-announces-first-quarter-2026-unaudited">快手 2026 年一季度业绩</a>。</p>
+<h2 id="AIGC-商业模式更清晰，可灵应有额外溢价"><a href="#AIGC-商业模式更清晰，可灵应有额外溢价" class="headerlink" title="AIGC 商业模式更清晰，可灵应有额外溢价"></a>AIGC 商业模式更清晰，可灵应有额外溢价</h2><p>AIGC 视频是目前付费路径较成熟的 AI 应用之一，可以直接替代广告素材、分镜、特效、短剧和部分影视制作成本。</p>
+<p>可灵已经形成收入规模：</p>
+<ul>
+<li>2025 年收入约 11 亿元，模拟净亏损约 19 亿元；</li>
+<li>2026 年一季度收入超过 6.5 亿元，同比增长超过 300%；</li>
+<li>2026 年 3 月 ARR（按当月收入年化）约 5 亿美元。</li>
+</ul>
+<p>作为参照，智谱 2025 年收入约 7.24 亿元，净亏损约 47.18 亿元。同期可灵收入更高、亏损更低，早期商业化效率更好。两家公司业务和会计口径不同，不能直接横向估值；智谱 2026 年的模型和商业化规模预计也会远超 2025 年。这里仅将 2025 年数据作为历史参照。</p>
+<p>可灵与 Seedance 之间没有难以跨越的技术鸿沟。知识蒸馏、算力投入、工程优化和人才流动都能缩小差距。可灵不必长期排名第一，只要留在第一梯队，就能获得收入和稀缺性溢价。</p>
+<p>模型采用的假设是：可灵的模型能力下限约为 Seedance 的 90%。这不代表收入或估值也能达到 90%；推理成本、生成速度、失败率、工作流和渠道仍会影响商业价值。</p>
+<p>2026 年 7 月，可灵已签约融资约 27.95 亿美元，上限 30 亿美元，对应约 150 亿美元投前、180 亿美元投后估值。已签约不等于全部到账，仍需观察实际交割。</p>
+<p>按 5 亿美元 ARR 计算，180 亿美元相当于 36 倍 ARR。若上市前 ARR 增至 10 亿—15 亿美元，300 亿美元估值对应 20—30 倍 ARR，可以作为 IPO 基准情景；450 亿美元以上则需要更强的增长和市场情绪。</p>
+<p>数据来源：<a target="_blank" rel="noopener" href="https://ir.kuaishou.com/news-releases/news-release-details/kuaishou-technology-announces-first-quarter-2026-unaudited">快手 2026 年一季度业绩</a>、<a target="_blank" rel="noopener" href="https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0702/2026070204065.pdf">可灵增资公告</a>、<a target="_blank" rel="noopener" href="https://www.hkexnews.hk/listedco/listconews/sehk/2026/0331/2026033101550_c.pdf">智谱 2025 年业绩</a>。</p>
+<h2 id="融资降低归母亏损，释放分红能力"><a href="#融资降低归母亏损，释放分红能力" class="headerlink" title="融资降低归母亏损，释放分红能力"></a>融资降低归母亏损，释放分红能力</h2><p>融资不会冲减可灵的经营亏损。快手继续控制可灵后，可灵 100% 的收入和成本仍会纳入合并报表。</p>
+<p>变化发生在利润归属。融资和员工持股计划全部使用后，快手对可灵的经济权益预计降至 68.33%。若可灵亏损 20 亿元，合并报表仍记录 20 亿元亏损，但约 13.7 亿元归属于快手股东，另外 6.3 亿元归属于非控股股东和员工股东。</p>
+<p>更重要的是，可灵最多可取得约 204.47 亿元资金。相对于 2025 年约 19 亿元模拟净亏损，这会显著降低快手母公司的输血压力，使更多经营现金可以用于回购和分红。融资不保证提高分红，但减少了 AI 业务对母公司资金的占用。</p>
+<h2 id="为什么有效权益按-50-计算"><a href="#为什么有效权益按-50-计算" class="headerlink" title="为什么有效权益按 50% 计算"></a>为什么有效权益按 50% 计算</h2><p>快手预计持有可灵 68.33% 的经济权益，但上市还会带来新股稀释和母公司折价。假设 IPO 发行 15% 新股，再给予 15% 控股公司折价：</p>
+<blockquote>
+<p>68.33% × 85% × 85% &#x3D; 49.37%</p>
+</blockquote>
+<p>因此，按 50% 计算最终有效权益，已经为后续稀释和价值传导折价留出空间。</p>
+<h2 id="不同情景下的合理市值"><a href="#不同情景下的合理市值" class="headerlink" title="不同情景下的合理市值"></a>不同情景下的合理市值</h2><p>模型使用人民币兑美元 6.7 的简化汇率。2026 年 7 月 24 日快手收盘价为 42.10 港元，市值约 1500 亿—1600 亿元人民币。<a target="_blank" rel="noopener" href="https://ir.kuaishou.com/stock-information/historical-price-lookup/">股价来源</a>。</p>
+<table>
+<thead>
+<tr>
+<th>情景</th>
+<th align="right">成熟主业</th>
+<th align="right">可灵权益</th>
+<th align="right">合理市值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>极端压力</td>
+<td align="right">80 亿元 × 8 倍 &#x3D; 640 亿元</td>
+<td align="right">80 亿美元 × 40% &#x3D; 214 亿元</td>
+<td align="right">854 亿元</td>
+</tr>
+<tr>
+<td>当前保守</td>
+<td align="right">100 亿元 × 10 倍 &#x3D; 1000 亿元</td>
+<td align="right">180 亿美元 × 50% &#x3D; 603 亿元</td>
+<td align="right">1603 亿元</td>
+</tr>
+<tr>
+<td>IPO 基准</td>
+<td align="right">100 亿元 × 10 倍 &#x3D; 1000 亿元</td>
+<td align="right">300 亿美元 × 50% &#x3D; 1005 亿元</td>
+<td align="right">2005 亿元</td>
+</tr>
+<tr>
+<td>乐观</td>
+<td align="right">150 亿元 × 12 倍 &#x3D; 1800 亿元</td>
+<td align="right">450 亿美元 × 55% &#x3D; 1658 亿元</td>
+<td align="right">3458 亿元</td>
+</tr>
+</tbody></table>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:360px" role="img" aria-label="快手投资逻辑：主业托底与可灵分拆期权中的数据图表"></div><script class="hexo-echarts__option" type="application/json">{"dataset":{"dimensions":["scenario","mature","kling","total"],"source":[{"scenario":"极端压力","mature":640,"kling":214,"total":854},{"scenario":"当前保守","mature":1000,"kling":603,"total":1603},{"scenario":"IPO基准","mature":1000,"kling":1005,"total":2005},{"scenario":"乐观","mature":1800,"kling":1658,"total":3458}]},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":0,"data":["成熟主业","可灵权益"]},"grid":{"left":16,"right":76,"top":42,"bottom":28,"containLabel":true},"xAxis":{"type":"value","name":"亿元人民币","nameLocation":"middle","nameGap":26,"splitLine":{"lineStyle":{"type":"dashed"}}},"yAxis":{"type":"category","inverse":true},"series":[{"name":"成熟主业","type":"bar","stack":"total","barMaxWidth":34,"encode":{"x":"mature","y":"scenario"},"itemStyle":{"color":"#5470c6"}},{"name":"可灵权益","type":"bar","stack":"total","barMaxWidth":34,"encode":{"x":"kling","y":"scenario"},"itemStyle":{"color":"#91cc75"}},{"name":"总市值","type":"scatter","symbolSize":0,"encode":{"x":"total","y":"scenario"},"label":{"show":true,"position":"right","formatter":"{@total}亿元","color":"#333333","fontWeight":"bold"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>当前价格接近“主业利润降至 100 亿元、可灵维持 180 亿美元估值”的保守结果。可灵以 300 亿美元上市时，快手约值 2000 亿元；可灵达到 450 亿美元且主业好于预期时，整体价值可超过 3400 亿元。</p>
+<h2 id="需要跟踪的风险"><a href="#需要跟踪的风险" class="headerlink" title="需要跟踪的风险"></a>需要跟踪的风险</h2><ul>
+<li>可灵私募投资者拥有回购权，180 亿美元不能完全等同于公开市场普通股估值；</li>
+<li>模型能力达到 Seedance 的 90%，不代表收入和估值也达到 90%；</li>
+<li>可灵上市后，投资者可能直接购买子公司，母公司折价未必收窄；</li>
+<li>主业利润若长期跌破 100 亿元，当前估值需要下调。</li>
+</ul>
+<p>后续重点跟踪可灵融资交割、ARR、推理成本、IPO 稀释比例，以及快手成熟主业能否守住 100 亿元利润。任一关键假设失效，都需要重新计算估值。</p>
+<h2 id="估值兑现路径"><a href="#估值兑现路径" class="headerlink" title="估值兑现路径"></a>估值兑现路径</h2><p>主业不需要恢复增长，只要利润守住 100 亿元，可灵就能决定快手的主要上涨空间。等待融资交割、收入增长和独立上市逐步兑现；当可灵估值与母公司折价被充分交易后，再根据业务兑现程度判断退出位置。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BF%AB%E6%89%8B/" rel="tag"># 快手</a>
+              <a href="/tags/%E5%BF%AB%E6%89%8B-W/" rel="tag"># 快手-W</a>
+              <a href="/tags/%E5%8F%AF%E7%81%B5AI/" rel="tag"># 可灵AI</a>
+              <a href="/tags/AIGC/" rel="tag"># AIGC</a>
+              <a href="/tags/AI%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" rel="tag"># AI视频生成</a>
+              <a href="/tags/SOTP/" rel="tag"># SOTP</a>
+              <a href="/tags/%E6%B8%AF%E8%82%A1/" rel="tag"># 港股</a>
+              <a href="/tags/%E7%A7%91%E6%8A%80%E8%82%A1/" rel="tag"># 科技股</a>
+              <a href="/tags/%E8%82%A1%E7%A5%A8%E4%BC%B0%E5%80%BC/" rel="tag"># 股票估值</a>
+              <a href="/tags/%E6%8A%95%E8%B5%84%E5%88%86%E6%9E%90/" rel="tag"># 投资分析</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/22/MCP-streamable-http-%E5%8D%8F%E8%AE%AE%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="prev" title="MCP streamable-http 通信过程">
+                  <i class="fa fa-angle-left"></i> MCP streamable-http 通信过程
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">29k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:47</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"casxt","repo":"casxt.github.io","client_id":"db8196d5d31eff822ffb","client_secret":"a7b6442e925817c22e7559e5f134e11ffe90fe16","admin_user":"casxt","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"body":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"8a3e81599568052939e4327356cc0ee5"}</script>
+<script src="/js/third-party/comments/gitalk.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>
