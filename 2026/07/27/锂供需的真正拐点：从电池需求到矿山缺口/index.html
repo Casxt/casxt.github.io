@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="锂供需大概率在 2030 年前后由宽松转向脆弱平衡。2025 年风险调整后的矿山供应比原生锂需求高约 25 万吨 LCE；到 2030 年，名义项目仍能覆盖需求，但考虑延期、爬坡和复产风险后，缺口约 9.5 万吨；到 2035 年，即使名义项目全部兑现也略有缺口，风险调整后的缺口扩大至约 71.5 万吨。 需求端的重心也在变化。2025—2035 年全球锂毛需求增加约 269 万吨 LCE，其中海">
+<meta property="og:type" content="article">
+<meta property="og:title" content="锂供需的真正拐点：从电池需求到矿山缺口">
+<meta property="og:url" content="https://maple.link/2026/07/27/%E9%94%82%E4%BE%9B%E9%9C%80%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%8B%90%E7%82%B9%EF%BC%9A%E4%BB%8E%E7%94%B5%E6%B1%A0%E9%9C%80%E6%B1%82%E5%88%B0%E7%9F%BF%E5%B1%B1%E7%BC%BA%E5%8F%A3/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="锂供需大概率在 2030 年前后由宽松转向脆弱平衡。2025 年风险调整后的矿山供应比原生锂需求高约 25 万吨 LCE；到 2030 年，名义项目仍能覆盖需求，但考虑延期、爬坡和复产风险后，缺口约 9.5 万吨；到 2035 年，即使名义项目全部兑现也略有缺口，风险调整后的缺口扩大至约 71.5 万吨。 需求端的重心也在变化。2025—2035 年全球锂毛需求增加约 269 万吨 LCE，其中海">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-27T03:30:00.000Z">
+<meta property="article:modified_time" content="2026-07-27T03:30:00.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="供需分析">
+<meta property="article:tag" content="储能">
+<meta property="article:tag" content="新能源汽车">
+<meta property="article:tag" content="电池回收">
+<meta property="article:tag" content="碳酸锂">
+<meta property="article:tag" content="锂">
+<meta property="article:tag" content="锂矿">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/07/27/%E9%94%82%E4%BE%9B%E9%9C%80%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%8B%90%E7%82%B9%EF%BC%9A%E4%BB%8E%E7%94%B5%E6%B1%A0%E9%9C%80%E6%B1%82%E5%88%B0%E7%9F%BF%E5%B1%B1%E7%BC%BA%E5%8F%A3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/07/27/%E9%94%82%E4%BE%9B%E9%9C%80%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%8B%90%E7%82%B9%EF%BC%9A%E4%BB%8E%E7%94%B5%E6%B1%A0%E9%9C%80%E6%B1%82%E5%88%B0%E7%9F%BF%E5%B1%B1%E7%BC%BA%E5%8F%A3/","path":"2026/07/27/锂供需的真正拐点：从电池需求到矿山缺口/","title":"锂供需的真正拐点：从电池需求到矿山缺口"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>锂供需的真正拐点：从电池需求到矿山缺口 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E4%BE%9B%E9%9C%80%E5%B9%B3%E8%A1%A1"><span class="nav-number">1.</span> <span class="nav-text">先看供需平衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%82%E9%9C%80%E6%B1%82%E6%A8%A1%E5%9E%8B%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">锂需求模型如何构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%A2%9E%E9%95%BF%E4%B8%BB%E8%A6%81%E6%9D%A5%E8%87%AA%E6%B5%B7%E5%A4%96"><span class="nav-number">3.</span> <span class="nav-text">需求增长主要来自海外</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E7%82%B9%E9%A2%84%E6%B5%8B%E6%B2%A1%E6%9C%89%E6%84%8F%E4%B9%89"><span class="nav-number">4.</span> <span class="nav-text">单点预测没有意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%94%B6%E5%8F%AA%E8%83%BD%E7%BC%93%E5%86%B2%EF%BC%8C%E4%B8%8D%E8%83%BD%E5%A1%AB%E5%B9%B3%E7%BC%BA%E5%8F%A3"><span class="nav-number">5.</span> <span class="nav-text">回收只能缓冲，不能填平缺口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9B%E5%BA%94%E5%A2%9E%E9%87%8F%E9%9B%86%E4%B8%AD%EF%BC%8C%E4%BD%86%E7%A1%AE%E5%AE%9A%E6%80%A7%E4%B8%8B%E9%99%8D"><span class="nav-number">6.</span> <span class="nav-text">供应增量集中，但确定性下降</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E4%BB%B7%E6%A0%BC%E4%B8%8B%E8%83%BD%E7%BB%B4%E6%8C%81%E5%A4%9A%E5%B0%91%E4%BE%9B%E5%BA%94"><span class="nav-number">7.</span> <span class="nav-text">不同价格下能维持多少供应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">8.</span> <span class="nav-text">结论</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">160</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/07/27/%E9%94%82%E4%BE%9B%E9%9C%80%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%8B%90%E7%82%B9%EF%BC%9A%E4%BB%8E%E7%94%B5%E6%B1%A0%E9%9C%80%E6%B1%82%E5%88%B0%E7%9F%BF%E5%B1%B1%E7%BC%BA%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="锂供需的真正拐点：从电池需求到矿山缺口 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          锂供需的真正拐点：从电池需求到矿山缺口
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-07-27 11:30:00" itemprop="dateCreated datePublished" datetime="2026-07-27T11:30:00+08:00">2026-07-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">行业研究</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>锂供需大概率在 2030 年前后由宽松转向脆弱平衡。2025 年风险调整后的矿山供应比原生锂需求高约 25 万吨 LCE；到 2030 年，名义项目仍能覆盖需求，但考虑延期、爬坡和复产风险后，缺口约 9.5 万吨；到 2035 年，即使名义项目全部兑现也略有缺口，风险调整后的缺口扩大至约 71.5 万吨。</p>
+<p>需求端的重心也在变化。2025—2035 年全球锂毛需求增加约 269 万吨 LCE，其中海外新能源汽车贡献 60%，海外储能贡献 14%。回收供应增长很快，但 2035 年仍只能覆盖约 10% 的毛需求，暂时无法替代新增矿山。</p>
+<p>因此，中期风险是项目能否按时达产，长期风险则是可融资、可许可、可建设的项目储备不足。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>数据截至 2026 年 7 月 27 日。本文只整理行业供需模型，不涉及企业和标的分析。除注明来源的历史数据外，2026—2035 年均为情景测算，不构成投资建议。</p>
+</blockquote>
+<h2 id="先看供需平衡"><a href="#先看供需平衡" class="headerlink" title="先看供需平衡"></a>先看供需平衡</h2><p>本文统一使用碳酸锂当量（LCE）。1 吨锂金属约等于 5.323 吨 LCE。</p>
+<p><a target="_blank" rel="noopener" href="https://pubs.usgs.gov/publication/mcs2026">USGS《Mineral Commodity Summaries 2026》</a>估计，2025 年全球锂消费量为 26.3 万吨锂金属，折合约 140 万吨 LCE；除美国未披露产量外，全球矿产量约 29 万吨锂金属，折合约 154 万吨 LCE。以此为基准，报告向后推演毛需求、回收供应和矿山供应。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:440px" role="img" aria-label="全球锂需求与供应路径"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"全球锂需求与供应路径","subtext":"单位：万吨LCE；远期为报告情景测算"},"tooltip":{"trigger":"axis"},"legend":{"top":46,"data":["毛需求","原生需求","名义供应","风险调整供应"]},"grid":{"left":24,"right":24,"top":92,"bottom":36,"containLabel":true},"xAxis":{"type":"category","data":["2025","2030","2035"]},"yAxis":{"type":"value","name":"万吨LCE","min":0,"splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"毛需求","type":"line","symbolSize":8,"data":[140,276.1,409.2],"itemStyle":{"color":"#ee6666"}},{"name":"原生需求","type":"line","symbolSize":8,"data":[129.1,256.6,368.8],"itemStyle":{"color":"#fac858"}},{"name":"名义供应","type":"line","symbolSize":8,"lineStyle":{"type":"dashed"},"data":[154.4,280.9,364],"itemStyle":{"color":"#5470c6"}},{"name":"风险调整供应","type":"line","symbolSize":8,"data":[154.4,247.1,297.3],"itemStyle":{"color":"#91cc75"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>毛需求不能直接与矿山供应比较。生产废料和退役电池回收会形成二次锂，扣除这部分后才是原生锂需求：</p>
+<blockquote>
+<p>原生锂需求 &#x3D; 锂化工品毛需求 − 二次锂供应</p>
+</blockquote>
+<p>2025 年矿山供应明显高于原生需求。2030 年名义供应为 280.9 万吨 LCE，高于 256.6 万吨的原生需求；风险调整后供应只有 247.1 万吨，市场是否短缺取决于项目执行。2035 年名义供应也比原生需求低约 4.8 万吨，问题开始由执行风险转为项目储备不足。</p>
+<p>报告对成熟在产项目通常给予 95%—100% 的兑现率，在建及已作出最终投资决定的项目给予 85%—95%，尚未作出最终投资决定的高级项目仅给予 30%—55%，并逐年考虑爬坡。</p>
+<h2 id="锂需求模型如何构建"><a href="#锂需求模型如何构建" class="headerlink" title="锂需求模型如何构建"></a>锂需求模型如何构建</h2><p>需求模型只保留新能源汽车、储能、其他高增长用途和传统用途四类。汽车和储能单独测算电池容量，其他用途按增速外推，最后校准至 2025 年全球 140 万吨 LCE 的总需求。</p>
+<blockquote>
+<p>当年新能源汽车销量 &#x3D; 年末保有量 − 上年末保有量 + 当年报废量</p>
+</blockquote>
+<blockquote>
+<p>当年动力电池需求 &#x3D; 当年销量 × 新车等效平均带电量 + 存量车辆换电池需求</p>
+</blockquote>
+<p>汽车中性情景采用以下锚点：</p>
+<table>
+<thead>
+<tr>
+<th>地区</th>
+<th>参数</th>
+<th align="right">2025 年</th>
+<th align="right">2030 年</th>
+<th align="right">2035 年</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中国</td>
+<td>保有量</td>
+<td align="right">4400 万辆</td>
+<td align="right">1.22 亿辆</td>
+<td align="right">2.06 亿辆</td>
+</tr>
+<tr>
+<td>中国</td>
+<td>当年销量</td>
+<td align="right">1320 万辆</td>
+<td align="right">1900 万辆</td>
+<td align="right">2200 万辆</td>
+</tr>
+<tr>
+<td>中国</td>
+<td>等效带电量</td>
+<td align="right">55 kWh</td>
+<td align="right">63 kWh</td>
+<td align="right">72 kWh</td>
+</tr>
+<tr>
+<td>海外</td>
+<td>保有量</td>
+<td align="right">约 3500 万辆</td>
+<td align="right">约 1.06 亿辆</td>
+<td align="right">约 2.43 亿辆</td>
+</tr>
+<tr>
+<td>海外</td>
+<td>当年销量</td>
+<td align="right">约 750 万辆</td>
+<td align="right">2100 万辆</td>
+<td align="right">3600 万辆</td>
+</tr>
+<tr>
+<td>海外</td>
+<td>等效带电量</td>
+<td align="right">64 kWh</td>
+<td align="right">78 kWh</td>
+<td align="right">84 kWh</td>
+</tr>
+</tbody></table>
+<p>全球保有量由约 7900 万辆增至 2035 年约 4.49 亿辆，与 <a target="_blank" rel="noopener" href="https://www.iea.org/reports/global-ev-outlook-2026/outlook-for-electric-mobility-chap-9-11">IEA 当前政策情景</a>基本一致。中国在高渗透率下逐步进入销量平台，海外仍处于低渗透扩张阶段。换电需求占新车装机的比例由 2025 年不足 1% 提高至 2035 年约 3%。</p>
+<p>储能采用最终修订后的存量目标法：</p>
+<blockquote>
+<p>目标储能功率 &#x3D; 风光累计装机 × 系统储能功率比例</p>
+</blockquote>
+<blockquote>
+<p>当年储能电量需求 &#x3D; 当年新增储能功率 × 新项目平均时长 + 存量扩时增容 + 衰减及退役补充</p>
+</blockquote>
+<blockquote>
+<p>当年锂电储能需求 &#x3D; 当年全技术储能电量需求 × 锂离子技术份额</p>
+</blockquote>
+<p>年度新增功率包含新建项目配储、存量电站加装、共享及独立储能和用户侧储能，同一项目不重复计算。主要参数和结果为：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th align="right">2025 年</th>
+<th align="right">2030 年</th>
+<th align="right">2035 年</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全球年度新增储能功率</td>
+<td align="right">112 GW</td>
+<td align="right">207 GW</td>
+<td align="right">288 GW</td>
+</tr>
+<tr>
+<td>中国新项目平均时长</td>
+<td align="right">2.85 小时</td>
+<td align="right">4.0 小时</td>
+<td align="right">4.6 小时</td>
+</tr>
+<tr>
+<td>海外新项目平均时长</td>
+<td align="right">2.58 小时</td>
+<td align="right">3.4 小时</td>
+<td align="right">4.1 小时</td>
+</tr>
+<tr>
+<td>中国锂离子技术份额</td>
+<td align="right">96.1%</td>
+<td align="right">90%</td>
+<td align="right">80%</td>
+</tr>
+<tr>
+<td>海外锂离子技术份额</td>
+<td align="right">约 97%</td>
+<td align="right">94%</td>
+<td align="right">89%</td>
+</tr>
+<tr>
+<td>存量扩时、衰减补充修正</td>
+<td align="right">—</td>
+<td align="right">5%</td>
+<td align="right">10%</td>
+</tr>
+<tr>
+<td>全球锂电储能需求</td>
+<td align="right">296 GWh</td>
+<td align="right">724 GWh</td>
+<td align="right">1159 GWh</td>
+</tr>
+</tbody></table>
+<p>2025 年基期采用 <a target="_blank" rel="noopener" href="https://about.bnef.com/insights/clean-energy/energy-storage-enters-the-100-gigawatt-era-three-things-to-know/">BloombergNEF</a>的全球新增量，并用<a target="_blank" rel="noopener" href="https://www.nea.gov.cn/20260130/50f657ce87f848e1a9a1861d1fd9aa23/c.html">国家能源局</a>披露的中国累计功率、平均时长和技术结构校准。2030 年与 2035 年新增功率按公开长期路径插值，平均时长逐步提高，同时降低锂电份额，避免把液流电池、压缩空气等长时储能全部计入锂需求。</p>
+<p>最后将电池容量换算为 LCE：</p>
+<blockquote>
+<p>LCE 毛需求 &#x3D; 电池容量 × 单位电池 LCE 毛需求系数 × 锂电技术占比</p>
+</blockquote>
+<p>单位锂耗随能量密度和制造良率改善而下降。中国新能源汽车由 2025 年的 0.680 kg LCE&#x2F;kWh 降至 2035 年的 0.600，海外由 0.750 降至 0.650；中国和海外储能分别由 0.620、0.650 降至 0.550、0.570。</p>
+<h2 id="需求增长主要来自海外"><a href="#需求增长主要来自海外" class="headerlink" title="需求增长主要来自海外"></a>需求增长主要来自海外</h2><p>2025 年全球锂毛需求约 140 万吨 LCE，其中新能源汽车占 61%，储能占 13%，两者合计约四分之三。到 2035 年，新能源汽车和储能的合计占比升至 87%。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:500px" role="img" aria-label="全球锂毛需求按用途拆分"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"全球锂毛需求按用途拆分","subtext":"中性情景，单位：万吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":46,"type":"scroll"},"grid":{"left":20,"right":20,"top":92,"bottom":40,"containLabel":true},"xAxis":{"type":"category","data":["2025","2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"]},"yAxis":{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"汽车：中国","type":"bar","stack":"demand","data":[49,53.3,57.9,63,68.5,74.5,77.9,81.4,85.1,88.9,92.9],"itemStyle":{"color":"#5470c6"}},{"name":"汽车：海外","type":"bar","stack":"demand","data":[36,45.3,57.1,71.8,90.3,113.7,127.1,142,158.7,177.4,198.1],"itemStyle":{"color":"#91cc75"}},{"name":"储能：中国","type":"bar","stack":"demand","data":[11.3,12,12.8,13.7,14.6,15.5,16.3,17.2,18.1,19,20],"itemStyle":{"color":"#fac858"}},{"name":"储能：海外","type":"bar","stack":"demand","data":[7.4,9.7,12.6,16.5,21.5,28.1,30.9,34,37.4,41.2,45.3],"itemStyle":{"color":"#ee6666"}},{"name":"其他高增长","type":"bar","stack":"demand","data":[10,10.9,12,13.1,14.3,15.7,16.7,17.8,18.9,20.1,21.5],"itemStyle":{"color":"#73c0de"}},{"name":"传统低增长","type":"bar","stack":"demand","data":[26.3,26.8,27.3,27.8,28.3,28.8,29.3,29.8,30.3,30.9,31.4],"itemStyle":{"color":"#9a9a9a"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>图中分项沿用报告披露值，四舍五入后与全球合计可能相差 0.1—0.2 万吨 LCE。</p>
+<p>十年新增需求并不平均分布。海外新能源汽车贡献约 162 万吨 LCE，占全部增量的 60%；再加上海外储能，二者合计贡献 74%。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:420px" role="img" aria-label="2025—2035年锂需求增量来源"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"2025—2035年锂需求增量来源","subtext":"中性情景，单位：万吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"grid":{"left":20,"right":56,"top":68,"bottom":24,"containLabel":true},"xAxis":{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},"yAxis":{"type":"category","inverse":true,"data":["海外新能源汽车","中国新能源汽车","海外储能","其他高增长用途","中国储能","传统低增长用途"]},"series":[{"type":"bar","barMaxWidth":28,"data":[162.1,44,37.9,11.5,8.7,5.1],"label":{"show":true,"position":"right","formatter":"{c}"},"itemStyle":{"color":"#5470c6"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>中国新能源汽车仍增长，但高渗透率会使增速下降。未来更重要的变量是海外电动化、海外储能，以及商用车电动化和平均带电量提升。<a target="_blank" rel="noopener" href="https://www.iea.org/reports/global-ev-outlook-2026/electric-vehicle-batteries">IEA《Global EV Outlook 2026》</a>预计，全球新能源汽车电池装机由 2025 年约 1.2 TWh 增至 2030 年接近 3 TWh，2035 年在当前政策和既定政策情景下分别约为 4 TWh 和 5 TWh。报告的中性路径接近后者。</p>
+<h2 id="单点预测没有意义"><a href="#单点预测没有意义" class="headerlink" title="单点预测没有意义"></a>单点预测没有意义</h2><p>需求模型同时调整汽车销量、平均带电量、储能装机、储能时长、单位电池锂耗和非锂技术替代。2035 年低、高情景分别为 274.5 万吨和 571.8 万吨 LCE，相差接近 300 万吨。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:440px" role="img" aria-label="全球锂毛需求情景"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"全球锂毛需求情景","subtext":"单位：万吨LCE"},"tooltip":{"trigger":"axis"},"legend":{"top":46,"data":["低情景","中性情景","高情景"]},"grid":{"left":20,"right":20,"top":86,"bottom":36,"containLabel":true},"xAxis":{"type":"category","data":["2025","2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"]},"yAxis":{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"低情景","type":"line","showSymbol":false,"data":[140,150,161.4,174.4,189.2,206.2,217.6,230.1,243.7,258.4,274.5],"itemStyle":{"color":"#91cc75"}},{"name":"中性情景","type":"line","showSymbol":false,"data":[140,158,179.7,205.8,237.5,276.1,298.1,322.2,348.6,377.5,409.2],"itemStyle":{"color":"#5470c6"}},{"name":"高情景","type":"line","showSymbol":false,"data":[140,165.9,198.5,239.8,292.5,360.2,394.4,432.3,474.2,520.6,571.8],"itemStyle":{"color":"#ee6666"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>中性情景下，2025—2030 年毛需求复合增速约 14.6%，2030—2035 年降至约 8.2%。增速下降不等于需求见顶；十年复合增速仍约 11.3%，2035 年需求约为 2025 年的 2.9 倍。</p>
+<h2 id="回收只能缓冲，不能填平缺口"><a href="#回收只能缓冲，不能填平缺口" class="headerlink" title="回收只能缓冲，不能填平缺口"></a>回收只能缓冲，不能填平缺口</h2><p>二次锂来自生产废料和退役电池。前者随电池产量增长，但制造良率提高会压低单位废料；后者受电池寿命约束，放量时间更晚。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:480px" role="img" aria-label="二次锂供应及其毛需求占比"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"二次锂供应及其毛需求占比","subtext":"中性情景；左轴为万吨LCE，右轴为占比"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":46,"data":["生产废料回收","退役电池回收","二次供应占比"]},"grid":{"left":20,"right":24,"top":88,"bottom":38,"containLabel":true},"xAxis":{"type":"category","data":["2025","2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"]},"yAxis":[{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},{"type":"value","name":"占毛需求","min":0,"max":12,"axisLabel":{"formatter":"{value}%"}}],"series":[{"name":"生产废料回收","type":"bar","stack":"secondary","data":[6.78,7.6,8.53,9.56,10.72,12.02,12.55,13.1,13.67,14.27,14.9],"itemStyle":{"color":"#5470c6"}},{"name":"退役电池回收","type":"bar","stack":"secondary","data":[4.1,4.63,5.22,5.89,6.65,7.5,9.58,12.24,15.63,19.96,25.5],"itemStyle":{"color":"#91cc75"}},{"name":"二次供应占比","type":"line","yAxisIndex":1,"symbolSize":7,"data":[7.77,7.74,7.65,7.51,7.31,7.07,7.42,7.86,8.41,9.07,9.87],"itemStyle":{"color":"#ee6666"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>二次锂供应由 2025 年的 10.9 万吨增至 2030 年的 19.5 万吨，但同期毛需求增长更快，其覆盖率反而由 7.8% 降至 7.1%。2030 年后，早期投放的动力和储能电池进入退役期，覆盖率才重新上升。</p>
+<p><a target="_blank" rel="noopener" href="https://www.iea.org/reports/recycling-of-critical-minerals/executive-summary">IEA《Recycling of Critical Minerals》</a>也给出相同的结构变化：2030 年生产废料仍约占可回收电池原料的三分之二，2035 年起退役新能源汽车和储能电池成为主要来源。</p>
+<p>回收最大的作用是压低原生需求，而不是消除采矿。2035 年中性毛需求为 409.2 万吨 LCE，二次供应约 40.4 万吨，仍需约 368.8 万吨原生锂。低需求、高回收与高需求、低回收交叉后，2035 年原生需求区间达到 212 万—548 万吨。</p>
+<h2 id="供应增量集中，但确定性下降"><a href="#供应增量集中，但确定性下降" class="headerlink" title="供应增量集中，但确定性下降"></a>供应增量集中，但确定性下降</h2><p>风险调整后的供应由 2025 年 154.4 万吨 LCE 增至 2030 年 247.1 万吨，再增至 2035 年 297.3 万吨。澳大利亚是最大增量来源，阿根廷增速最快；中国、非洲和其他地区也提供重要增量，智利增长相对有限。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:470px" role="img" aria-label="风险调整后的锂矿与盐湖供应"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"风险调整后的锂矿与盐湖供应","subtext":"按产区，单位：万吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":46,"type":"scroll"},"grid":{"left":20,"right":20,"top":90,"bottom":32,"containLabel":true},"xAxis":{"type":"category","data":["2025","2030","2035"]},"yAxis":{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"澳大利亚","type":"bar","stack":"supply","data":[49.1,75.9,91]},{"name":"中国","type":"bar","stack":"supply","data":[33.2,50.1,64.5]},{"name":"智利","type":"bar","stack":"supply","data":[30,33.2,34.8]},{"name":"阿根廷","type":"bar","stack":"supply","data":[13.6,31.9,36.3]},{"name":"津巴布韦及马里","type":"bar","stack":"supply","data":[14.1,29,31.7]},{"name":"其他地区","type":"bar","stack":"supply","data":[14.4,27.1,39.2]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>产区分项存在四舍五入差异，全球总量仍以 154.4、247.1 和 297.3 万吨 LCE 为准。</p>
+<p>更重要的是项目成熟度。2030 年约 91% 的名义供应来自在产、已批准扩建或已承诺项目，供给不足主要来自延误、爬坡和停复产。到 2035 年，可选及高级开发项目占名义供应的 16.5%，项目储备和融资条件开始决定供给上限。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="名义供应的项目成熟度"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"名义供应的项目成熟度","subtext":"单位：万吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":46,"data":["在产及已承诺","高确定性开发","可选及高级开发"]},"grid":{"left":20,"right":20,"top":88,"bottom":28,"containLabel":true},"xAxis":{"type":"category","data":["2030","2035"]},"yAxis":{"type":"value","name":"万吨LCE","splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"在产及已承诺","type":"bar","stack":"maturity","barMaxWidth":72,"data":[255.4,291.8],"itemStyle":{"color":"#5470c6"}},{"name":"高确定性开发","type":"bar","stack":"maturity","barMaxWidth":72,"data":[3,12.2],"itemStyle":{"color":"#91cc75"}},{"name":"可选及高级开发","type":"bar","stack":"maturity","barMaxWidth":72,"data":[22.5,60],"itemStyle":{"color":"#fac858"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.iea.org/reports/global-critical-minerals-outlook-2026/executive-summary">IEA《Global Critical Minerals Outlook 2026》</a>认为，按当前项目管线，锂供应缺口可能持续至 2035 年。报告的具体缺口是独立测算，但方向一致。</p>
+<h2 id="不同价格下能维持多少供应"><a href="#不同价格下能维持多少供应" class="headerlink" title="不同价格下能维持多少供应"></a>不同价格下能维持多少供应</h2><p>报告将项目成本统一为 2025 年不变价美元&#x2F;吨 LCE，并统计各现金成本线以下的风险调整供应。它可以近似观察低锂价下哪些存量产能更可能维持运行。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:480px" role="img" aria-label="不同现金成本线以下的风险调整供应"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"不同现金成本线以下的风险调整供应","subtext":"单位：万吨LCE；成本为2025年不变价美元/吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":46,"data":["2030年供应","2035年供应","2030年原生需求","2035年原生需求"]},"grid":{"left":20,"right":20,"top":92,"bottom":42,"containLabel":true},"xAxis":{"type":"category","name":"现金成本上限","data":["5000美元","7500美元","10000美元","12500美元"]},"yAxis":{"type":"value","name":"万吨LCE","min":0,"splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"2030年供应","type":"bar","barMaxWidth":36,"data":[37.5,117.4,196.8,237.2],"itemStyle":{"color":"#5470c6"}},{"name":"2035年供应","type":"bar","barMaxWidth":36,"data":[37.5,136.6,238.5,285.4],"itemStyle":{"color":"#91cc75"}},{"name":"2030年原生需求","type":"line","symbol":"none","data":[256.6,256.6,256.6,256.6],"lineStyle":{"type":"dashed","color":"#fac858"}},{"name":"2035年原生需求","type":"line","symbol":"none","data":[368.8,368.8,368.8,368.8],"lineStyle":{"type":"dashed","color":"#ee6666"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>如果市场价格长期低于项目现金成本，高成本供应会停产或推迟复产。按这条成本曲线：</p>
+<ul>
+<li>1 万美元&#x2F;吨 LCE 的成本线以下，2030 年可覆盖约 196.8 万吨供应，较原生需求少 59.8 万吨；2035 年可覆盖约 238.5 万吨，较需求少 130.3 万吨；</li>
+<li>1.25 万美元&#x2F;吨以下，2030 年供应提高至 237.2 万吨，缺口收窄至 19.4 万吨；2035 年供应为 285.4 万吨，仍比需求少 83.4 万吨；</li>
+<li>即使计入全部风险调整供应，2030 年和 2035 年仍分别存在约 9.5 万吨和 71.5 万吨缺口。</li>
+</ul>
+<p>这说明 1 万美元附近的价格只能覆盖约 80% 的风险调整供应，难以支撑中性需求；1.25 万美元附近可以维持大部分存量项目，但仍不足以解决 2035 年的新项目缺口。</p>
+<p>但现金成本线不能直接外推成 1.5 万或 2 万美元下的供应量。报告在价格模型中进一步加入停产、复产和新增投资开关，得到的是“持续价格—有效供应”关系。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:460px" role="img" aria-label="1.5万—2万美元下，供应缓冲快速消失"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"1.5万—2万美元下，供应缓冲快速消失","subtext":"供需差额=风险调整有效供应-原生需求；单位：万吨LCE"},"tooltip":{"trigger":"axis"},"legend":{"top":46,"data":["持续1.5万美元","持续2万美元"]},"grid":{"left":20,"right":20,"top":92,"bottom":42,"containLabel":true},"xAxis":{"type":"category","data":["2027","2028","2029","2030"]},"yAxis":{"type":"value","name":"供需差额","axisLine":{"show":true},"splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"持续1.5万美元","type":"line","symbolSize":8,"data":[12.7,8.2,-2,-19.6],"lineStyle":{"width":3,"color":"#5470c6"},"itemStyle":{"color":"#5470c6"},"markLine":{"silent":true,"symbol":"none","data":[{"yAxis":0,"label":{"formatter":"供需平衡"},"lineStyle":{"color":"#666666","type":"solid"}}]}},{"name":"持续2万美元","type":"line","connectNulls":false,"symbolSize":8,"data":[null,null,3,-11],"lineStyle":{"width":3,"color":"#ee6666"},"itemStyle":{"color":"#ee6666"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>数据来源：报告价格模型；美元口径为 2025 年不变价。空缺表示报告未披露对应年度数据。</p>
+<p>价格对供应的约束在 2029 年开始显现：</p>
+<ul>
+<li>持续 1.5 万美元时，2027 年和 2028 年仍分别盈余 12.7 万和 8.2 万吨 LCE；到 2029 年转为短缺约 2 万吨；</li>
+<li>2029 年提高至 2 万美元可恢复约 3 万吨盈余，但只占需求约 1.5%，仍接近紧平衡；</li>
+<li>2030 年在 1.5 万和 2 万美元下，有效供应分别为 237.0 万和 245.7 万吨，面对 256.6 万吨原生需求，仍短缺 19.6 万和 11.0 万吨。</li>
+</ul>
+<p>也就是说，1.5 万—2 万美元在 2029 年附近开始成为边际价格；但到了 2030 年，即使 2 万美元也不足以完全平衡市场，价格还需要刺激未最终投资决策（FID）项目开工、停产矿复产或库存释放。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:480px" role="img" aria-label="合理锂价中枢不是直线上涨"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"合理锂价中枢不是直线上涨","subtext":"2025年不变价；单位：千美元/吨LCE"},"tooltip":{"trigger":"axis","axisPointer":{"type":"line"}},"legend":{"top":46,"data":["区间下限","区间上限","价格中枢"]},"grid":{"left":20,"right":20,"top":92,"bottom":42,"containLabel":true},"xAxis":{"type":"category","data":["2025","2026","2027","2028","2029","2030"]},"yAxis":{"type":"value","name":"千美元/吨","min":0,"max":32,"splitLine":{"lineStyle":{"type":"dashed"}}},"series":[{"name":"区间下限","type":"line","symbol":"none","data":[9,17,15,16,18,22],"lineStyle":{"width":2,"type":"dashed","color":"#91cc75"}},{"name":"区间上限","type":"line","symbol":"none","data":[14,24,21,22,25,30],"lineStyle":{"width":2,"type":"dashed","color":"#fac858"}},{"name":"价格中枢","type":"line","symbolSize":8,"data":[11.5,20.5,18,19,21.5,26],"lineStyle":{"width":3,"color":"#ee6666"},"itemStyle":{"color":"#ee6666"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>数据来源：报告第 6 步价格情景。对应的合理区间依次为：2025 年 0.9 万—1.4 万美元、2026 年 1.7 万—2.4 万美元、2027 年 1.5 万—2.1 万美元、2028 年 1.6 万—2.2 万美元、2029 年 1.8 万—2.5 万美元、2030 年 2.2 万—3 万美元。</p>
+<p>这条路径更像“2026 年去库存带来高波动，2027 年新增供应释放后回落，2028—2030 年随安全余量下降再度上行”，而不是单边涨价。报告给出的长期中枢为 1.8 万—2.5 万美元&#x2F;吨 LCE；2030 年中枢约 2.6 万美元，原因是新项目不仅要覆盖现金成本，还要补偿资本开支、融资、建设延期和爬坡风险。</p>
+<p>需要注意，前一张现金成本图不是精确的“价格—产量”函数。现金成本没有包含前期资本开支、融资成本、停复产费用和合理回报；新项目的投资激励价格通常显著高于投产后的现金成本。反过来，长协、汇率、联产品收入和短期库存也会让部分项目在现货价格低于现金成本时继续生产。因此，成本曲线适合判断供应收缩顺序，价格模型则用于判断供需平衡区间，两者不能混用。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>锂矿供需可压缩为三个阶段：</p>
+<ul>
+<li>2025—2028 年，前期投资形成的产能仍能覆盖中性原生需求；</li>
+<li>2030 年附近，纸面产能足够，但项目延误、爬坡不顺或高成本矿停产都可能制造短缺；</li>
+<li>2030 年以后，风险调整供应增长慢于原生需求，约束从执行风险转向可开发项目不足。</li>
+</ul>
+<p>需求侧最值得跟踪的是海外新能源汽车和海外储能，而不是只看中国乘用车销量。供给侧则要观察项目许可、融资、建设和爬坡，而不能只统计公告产能。回收会逐步降低原生锂强度，但至少到 2035 年，它仍是缓冲项，不是矿山供给的替代项。</p>
+<p>这里还有一个重要的上行供应风险：模型只纳入当前已知项目和较成熟的开发管线。如果未来出现新的大型锂矿发现，或现有资源通过勘探、技术进步和基础设施改善升级为经济可采储量，全球供应曲线可能明显右移，短缺时间也会推迟。新发现不等于立即投产，但它会改变长期项目储备和价格预期。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%94%82/" rel="tag"># 锂</a>
+              <a href="/tags/%E9%94%82%E7%9F%BF/" rel="tag"># 锂矿</a>
+              <a href="/tags/%E7%A2%B3%E9%85%B8%E9%94%82/" rel="tag"># 碳酸锂</a>
+              <a href="/tags/%E6%96%B0%E8%83%BD%E6%BA%90%E6%B1%BD%E8%BD%A6/" rel="tag"># 新能源汽车</a>
+              <a href="/tags/%E5%82%A8%E8%83%BD/" rel="tag"># 储能</a>
+              <a href="/tags/%E7%94%B5%E6%B1%A0%E5%9B%9E%E6%94%B6/" rel="tag"># 电池回收</a>
+              <a href="/tags/%E4%BE%9B%E9%9C%80%E5%88%86%E6%9E%90/" rel="tag"># 供需分析</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/07/26/%E5%BF%AB%E6%89%8B%E6%8A%95%E8%B5%84%E9%80%BB%E8%BE%91%EF%BC%9A%E4%B8%BB%E4%B8%9A%E6%89%98%E5%BA%95%E4%B8%8E%E5%8F%AF%E7%81%B5%E5%88%86%E6%8B%86%E6%9C%9F%E6%9D%83/" rel="prev" title="快手投资逻辑：主业托底与可灵分拆期权">
+                  <i class="fa fa-angle-left"></i> 快手投资逻辑：主业托底与可灵分拆期权
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">35k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"casxt","repo":"casxt.github.io","client_id":"db8196d5d31eff822ffb","client_secret":"a7b6442e925817c22e7559e5f134e11ffe90fe16","admin_user":"casxt","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"body":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"fb41a09607f5b4e6d9d466b9efece692"}</script>
+<script src="/js/third-party/comments/gitalk.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>
