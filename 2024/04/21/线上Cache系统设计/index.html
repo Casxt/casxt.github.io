@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
@@ -17,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"buttons","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="缓存一直是线上系统不可或缺的部分，本文总结了缓存系统中需要关注的一些问题">
 <meta property="og:type" content="article">
@@ -59,6 +60,8 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
 <script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
@@ -335,7 +338,7 @@
 <p>而使用堆内内存的cache系统则可以直接缓存对象，可以避免序列化开销（有时序列化开销占比会非常大），如果cache对象不需要修改，甚至可以避免拷贝开销，同时节省内存和cpu</p>
 <h2 id="Lock-vs-Bucket-Lock-vs-Object-Lock"><a href="#Lock-vs-Bucket-Lock-vs-Object-Lock" class="headerlink" title="Lock vs Bucket Lock vs Object Lock"></a>Lock vs Bucket Lock vs Object Lock</h2><p>通常的cache系统可以抽象为一个map，同map一样会面临并发读写的难题</p>
 <p>而解决方案也可以照搬map的Bucket Lock 或 Object Lock。</p>
-<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:100%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
+<h1 id="单节点缓存系统的工作流程"><a href="#单节点缓存系统的工作流程" class="headerlink" title="单节点缓存系统的工作流程"></a>单节点缓存系统的工作流程</h1><div style="width:100%;margin:auto"> <img data-src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-state-transition.jpg" class="" title="cache-state-transition 200"> </div>
 
 <p>如上图展示的，在一个缓存系统中，cache可能出现的所有状态<br>大体上，cache状态可以分为三大部分，对应超时数据，异常数据和正常数据<br>当cache刚建立时，会从init状态迁移到数据超时状态，此时数据需要在阻塞模式下同步更新，更新期间所有发来的请求都会被阻塞</p>
 <p>同步更新状态的转移有2种可能，</p>
@@ -346,7 +349,7 @@
 <ol start="2">
 <li>在得到正常数据后，cache在SoftLime时间内只返回数据而不进行更新，当缓存时间超过SoftLime而不超过HardLimt时，cache在用户请求时会触发异步更新，而如果超过了HardLimt则会进行同步更新。在缓存了正常数据的状态下，如果updatefn返回了error，cache会继续保存之前的成功的返回值而不会保存失败返回，同时也不会更新update time，在下一次用户请求时会再次触发异步更新，但是如果update持续失败，缓存时间超过了HardLim回到同步更新状态，此时更新失败会导致回到异常数据状态</li>
 </ol>
-<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
+<h1 id="多节点共享数据的缓存更新流程-通过redis共享数据"><a href="#多节点共享数据的缓存更新流程-通过redis共享数据" class="headerlink" title="多节点共享数据的缓存更新流程(通过redis共享数据)"></a>多节点共享数据的缓存更新流程(通过redis共享数据)</h1><div style="width:50%;margin:auto"> <img data-src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/cache-data-sharing.jpg" class="" title="cache-data-sharing 200"> </div>
 
 <p>Shared object cache 通过redis在cache之间共享数据，可以在单node数据过期时快速通过其他拥有更新数据的节点快速恢复，避免回源降低延迟，作为一个可选的中间件，引入data sharing后的更新流程比起单机版的cache会更复杂一点，</p>
 <p>为了避免引入redis导致cache data的ttl混乱，redis中除了数据外，还记录了updatetime和编码类型</p>
@@ -358,7 +361,7 @@
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> expirePTTL = redis.call(<span class="string">&#x27;PTTL&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> (expirePTTL &gt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">   <span class="keyword">local</span> serverTime = redis.call(<span class="string">&#x27;TIME&#x27;</span>)</span><br><span class="line">   <span class="keyword">local</span> expireTime = <span class="built_in">tonumber</span>(serverTime[<span class="number">1</span>]) * <span class="number">1000</span> + <span class="built_in">tonumber</span>(serverTime[<span class="number">2</span>] / <span class="number">1000</span>) + expirePTTL</span><br><span class="line">   <span class="keyword">if</span> (expireTime &gt; <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>]))  <span class="keyword">then</span></span><br><span class="line">       <span class="keyword">return</span> expireTime</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;HSET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], ARGV[<span class="number">3</span>], ARGV[<span class="number">4</span>], ARGV[<span class="number">5</span>], ARGV[<span class="number">6</span>], ARGV[<span class="number">7</span>])</span><br><span class="line">redis.call(<span class="string">&#x27;PEXPIREAT&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">return</span> ARGV[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
 
 <p>为了准确控制过期时间没有使用传统的TTL设置生存周期，而是使用用PEXPIREAT设置毫秒即的过期时间戳，这样即使指令的发送和执行上有一些延迟，最终的数据TTL还是严格和cache instance 一致的<br>并且在update时，会检查当前数据的过期时间戳和已经存在的数据的过期时间戳谁更大，只有最新的数据才能留存在redis中。<br>这里有一个限制，在redis7之前，设置超时时间戳可以使用PEXPIREAT，但是设置后就无法再次获取时间戳了，只能使用PTTL获取剩余的毫秒级TTL，在redis7之后新增了PEXPIRETIME指令可以获取原始的时间戳。</p>
-<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
+<h1 id="Steam-Cache"><a href="#Steam-Cache" class="headerlink" title="Steam Cache"></a>Steam Cache</h1><div style="width:50%;margin:auto"> <img data-src="/2024/04/21/%E7%BA%BF%E4%B8%8ACache%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/stream-cache.jpg" class="" title="stream-cache 200"> </div>
 
 <p>出了常见的object cache，对于流数据的缓存也是比较常见的一个场景</p>
 <p>Stream cache对外的表现是一个滑动窗，在第一次缓存建立后，会主动向更新和更老的feed，尽享填满自己缓存窗口从而满足用户请求</p>
@@ -397,7 +400,7 @@
 
 
 
-    <div class="comments gitalk-container"></div>
+    <div class="comments utterances-container"></div>
 </div>
   </main>
 
@@ -469,10 +472,8 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
-
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"casxt","repo":"casxt.github.io","client_id":"db8196d5d31eff822ffb","client_secret":"a7b6442e925817c22e7559e5f134e11ffe90fe16","admin_user":"casxt","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"body":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"c6b06fdc72946529740303adc84c3572"}</script>
-<script src="/js/third-party/comments/gitalk.js" defer></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"casxt/casxt.github.io","issue_term":"pathname","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
 
 <!-- hexo injector body_end start --><script>
 (() => {
