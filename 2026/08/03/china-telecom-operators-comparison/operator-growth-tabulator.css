@@ -1,0 +1,80 @@
+.operator-growth-table-marker {
+  display: none;
+}
+
+.post-body .operator-tabulator {
+  border: 1px solid var(--table-cell-border-bottom-color, #ddd);
+  border-radius: 6px;
+  font-size: 13px;
+  margin: 0 0 24px;
+  overflow: hidden;
+}
+
+.post-body .operator-tabulator .tabulator-header,
+.post-body .operator-tabulator .tabulator-header .tabulator-col,
+.post-body .operator-tabulator .tabulator-row .tabulator-cell {
+  border-color: var(--table-cell-border-bottom-color, #ddd);
+}
+
+.post-body .operator-tabulator .tabulator-header,
+.post-body .operator-tabulator .tabulator-header .tabulator-col,
+.post-body .operator-tabulator .tabulator-row,
+.post-body .operator-tabulator .tabulator-row.tabulator-row-even {
+  background: var(--content-bg-color, #fff);
+  color: var(--text-color, #555);
+}
+
+.post-body .operator-tabulator .tabulator-header .tabulator-col {
+  font-weight: 700;
+}
+
+.post-body .operator-tabulator .tabulator-row:hover,
+.post-body .operator-tabulator .tabulator-row.tabulator-selectable:hover {
+  background: var(--table-row-hover-bg-color, #f5f5f5);
+}
+
+.post-body .operator-tabulator .tabulator-row.operator-scenario-base {
+  box-shadow: inset 3px 0 #2f80ed;
+  font-weight: 600;
+}
+
+.post-body .operator-tabulator .tabulator-row.operator-scenario-bear {
+  box-shadow: inset 3px 0 #c65d57;
+}
+
+.post-body .operator-tabulator .tabulator-row.operator-scenario-bull {
+  box-shadow: inset 3px 0 #39956a;
+}
+
+.post-body .operator-tabulator .operator-scenario-bear .tabulator-cell[tabulator-field="情景"] {
+  color: #d7716b;
+}
+
+.post-body .operator-tabulator .operator-scenario-base .tabulator-cell[tabulator-field="情景"] {
+  color: #5b9cf0;
+}
+
+.post-body .operator-tabulator .operator-scenario-bull .tabulator-cell[tabulator-field="情景"] {
+  color: #49a978;
+}
+
+.post-body .operator-tabulator .tabulator-cell:not(:first-child) {
+  font-variant-numeric: tabular-nums;
+}
+
+.post-body .operator-tabulator .tabulator-responsive-collapse {
+  background: var(--table-row-odd-bg-color, #f9f9f9);
+  border-color: var(--table-cell-border-bottom-color, #ddd);
+}
+
+@media (max-width: 767px) {
+  .post-body .operator-tabulator {
+    font-size: 12px;
+  }
+
+  .post-body .operator-tabulator .tabulator-cell,
+  .post-body .operator-tabulator .tabulator-col-content {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
