@@ -1,0 +1,13 @@
+﻿File,Purpose,Primary Units,Audit Note
+00_valuation_summary.csv,"Headline valuation methods, profit/FCF/DPS and common-vs-unique asset split",RMB/sh; RMB bn,Values linked from workbook summary
+01_copper_market.csv,"Bear/Base/Bull copper prices, supply, demand, static balance",US$/t; Mt; RMB/t,From user-provided copper supply-demand-price model
+02_shared_julong.csv,"100% Julong production, earnings bridge, FCF, DCF and ownership allocation",kt; RMB/t; RMB bn,Julong is modeled once then allocated 30.78% / 58.16%
+03_zangge_unique_assets.csv,Qarhan KCl/LCE and Mamico forecasts and DCF,kt; RMB/t; RMB bn,Excludes Julong; Laos excluded from Base
+04_zangge_valuation.csv,"Zangge NI, EPS, FCF, DPS, DCF, PE and FCF-yield valuation",RMB bn; RMB/sh,PE is cross-check; not blended into DCF
+05_zijin_asset_model.csv,Zijin major asset/commodity groups with explicit NI/FCF bridges,kt/t; RMB bn,Julong/Kamoa/Serbia explicit; residual copper flagged
+06_zijin_valuation.csv,"Zijin NI, EPS, FCF, DPS, SOTP DCF, PE and FCF-yield valuation",RMB bn; RMB/sh,Net debt deducted from gross DCF
+07_assumptions.csv,All central analyst assumptions and terminal multiples,mixed,Blue/yellow inputs in workbook
+08_sources.csv,"Source IDs, files, URLs, dates, model use",text,Use this to trace each input
+09_copper_sensitivity.csv,Bear/Base/Bull copper sensitivity holding non-copper assets Base,RMB bn; RMB/sh,Separates copper beta of Zangge vs Zijin
+10_formula_map.csv,Workbook formula cell map,text,Allows static formula audit without opening every worksheet
+11_audit_risk_register.csv,Key uncertainties ranked by confidence and impact,text,Recommended third-party audit priorities
