@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。 以最简单的归一化操作为例 归一化Module如下： 123456789class Normalize(torch.nn.Module):    def __init__(self):        super().__init_">
+    <meta name="description" content="在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。 以最简单的归一化操作为例">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模型转换时打包归一化预处理操作">
 <meta property="og:url" content="https://maple.link/2021/12/09/%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%97%B6%E6%89%93%E5%8C%85%E5%BD%92%E4%B8%80%E5%8C%96%E9%A2%84%E5%A4%84%E7%90%86%E6%93%8D%E4%BD%9C/index.html">
 <meta property="og:site_name" content="Maple.Link">
-<meta property="og:description" content="在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。 以最简单的归一化操作为例 归一化Module如下： 123456789class Normalize(torch.nn.Module):    def __init__(self):        super().__init_">
+<meta property="og:description" content="在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。 以最简单的归一化操作为例">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-09T12:23:00.000Z">
 <meta property="article:modified_time" content="2021-12-09T12:23:00.000Z">
@@ -188,12 +188,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">214</span>
+        <span class="site-state-item-count">221</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -275,7 +275,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>180</span>
+      <span>181</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -294,11 +294,14 @@
     
     <div class="post-body" itemprop="articleBody"><p>在部署模型时，对于输入数据的预处理是一个非常耗时的操作，其实可以将预处理一同打包到模型中，在转换为ONNX或者Tensorrt模型后这些操作就可以随着模型一起被加速执行。</p>
 <p>以最简单的归一化操作为例</p>
+<span id="more"></span>
+
 <p>归一化Module如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Normalize(torch.nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.register_buffer(&#x27;mean&#x27;, torch.tensor([0.485, 0.456, 0.406], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;std&#x27;, torch.tensor([0.229, 0.224, 0.225], dtype=torch.float64).view(1, -1, 1, 1))</span><br><span class="line">        self.register_buffer(&#x27;norm&#x27;, torch.tensor([255.0], dtype=torch.float64).view(1, 1, 1, 1))</span><br><span class="line"></span><br><span class="line">    def forward(self, images):</span><br><span class="line">        return (images / self.norm - self.mean) / self.std</span><br></pre></td></tr></table></figure>
 
 <p>之后修改模型的inti和forward函数即可</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class MyModel(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(MyModel, self).__init__()</span><br><span class="line">        # ... other code</span><br><span class="line">        self.normalize = Normalize()</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.normalize(x)</span><br><span class="line">        # ... other code</span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -359,13 +362,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">114k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:15</span>
+    <span title="站点阅读时长">6:56</span>
   </span>
 </div>
 <div class="busuanzi-count">

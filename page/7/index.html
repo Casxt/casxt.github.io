@@ -179,12 +179,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">214</span>
+        <span class="site-state-item-count">221</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1180,13 +1180,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">y, x = 1, 1</span><br><span class="line">nearby_mask = torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] = 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="分片出现大于矩阵尺度的坐标会导致部分赋值"><a href="#分片出现大于矩阵尺度的坐标会导致部分赋值" class="headerlink" title="分片出现大于矩阵尺度的坐标会导致部分赋值"></a>分片出现大于矩阵尺度的坐标会导致部分赋值</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">y, x = 5, 2</span><br><span class="line">nearby_mask = torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] = 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.],</span><br><span class="line"> [1., 1., 1., 1., 0., 0.]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="建议写法"><a href="#建议写法" class="headerlink" title="建议写法"></a>建议写法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nearby_mask[max(0, y - 2):y + 2, max(0, x - 2):x + 2] = 1</span><br></pre></td></tr></table></figure>
+          <h1 id="矩阵分片取坐标时超出矩阵范围"><a href="#矩阵分片取坐标时超出矩阵范围" class="headerlink" title="矩阵分片取坐标时超出矩阵范围"></a>矩阵分片取坐标时超出矩阵范围</h1><h2 id="分片出现小于0的坐标会导致赋值无效"><a href="#分片出现小于0的坐标会导致赋值无效" class="headerlink" title="分片出现小于0的坐标会导致赋值无效"></a>分片出现小于0的坐标会导致赋值无效</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">y, x = 1, 1</span><br><span class="line">nearby_mask = torch.zeros((6, 6))</span><br><span class="line">nearby_mask[y - 2:y + 2, x - 2:x + 2] = 1</span><br><span class="line">&gt;&gt;&gt; </span><br><span class="line">[[0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.],</span><br><span class="line"> [0., 0., 0., 0., 0., 0.]]</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/05/pytorch-%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1229,13 +1231,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">114k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:15</span>
+    <span title="站点阅读时长">6:56</span>
   </span>
 </div>
 <div class="busuanzi-count">

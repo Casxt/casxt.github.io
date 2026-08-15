@@ -179,12 +179,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">214</span>
+        <span class="site-state-item-count">221</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -577,9 +577,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="linux用户登录流程"><a href="#linux用户登录流程" class="headerlink" title="linux用户登录流程"></a>linux用户登录流程</h1><ul>
+          <h1 id="linux用户登录流程"><a href="#linux用户登录流程" class="headerlink" title="linux用户登录流程"></a>linux用户登录流程</h1><ul>
 <li>init 阶段， 读&#x2F;etc&#x2F;inittab -&gt; &#x2F;etc&#x2F;rc.local</li>
 <li>getty 用于监听本地consloe, 打出username:, 获得用户输入之后调起&#x2F;ets&#x2F;login打出password:</li>
 <li>读&#x2F;etc&#x2F;passwd &#x2F;etc&#x2F;shadow 检查用户密码</li>
@@ -588,23 +586,14 @@
 <li>读&#x2F;etc&#x2F;profile -&gt; &#x2F;etc&#x2F;bashrc -&gt; .profile 或 .login</li>
 <li>读.bashrc, .bash_profile</li>
 </ul>
-<h1 id="locked-page-memory"><a href="#locked-page-memory" class="headerlink" title="locked page memory"></a>locked page memory</h1><h1 id="cgroup-使用"><a href="#cgroup-使用" class="headerlink" title="cgroup 使用"></a>cgroup 使用</h1><h1 id="数据库隔离机制"><a href="#数据库隔离机制" class="headerlink" title="数据库隔离机制"></a>数据库隔离机制</h1><h1 id="ssh-登录机制"><a href="#ssh-登录机制" class="headerlink" title="ssh 登录机制"></a>ssh 登录机制</h1><h2 id="ssh-与-tty-ptmx-pts"><a href="#ssh-与-tty-ptmx-pts" class="headerlink" title="ssh 与 tty ptmx pts"></a>ssh 与 tty ptmx pts</h2><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a></p>
-<h2 id="ssh-与-tls"><a href="#ssh-与-tls" class="headerlink" title="ssh 与 tls"></a>ssh 与 tls</h2><ul>
-<li>ssh验证双方，tls只验证服务端</li>
-<li>ssh在应用层，tls在传输层</li>
-<li>ssh同时完成验证和加密，tls可以不验证只加密</li>
-</ul>
-<h1 id="shm"><a href="#shm" class="headerlink" title="shm"></a>shm</h1><h1 id="GPU"><a href="#GPU" class="headerlink" title="GPU"></a>GPU</h1><h1 id="cuda-engine-context-stream"><a href="#cuda-engine-context-stream" class="headerlink" title="cuda engine context stream"></a>cuda engine context stream</h1><p>engine是trt中的概念</p>
-<p>context 是一个执行上下文，保存了各种状态，可以用push和pop方法出入栈，每个进程执行时必须要有一个context，通常每一个thread会分配一个独立的context</p>
-<h2 id="同一卡上能否同时存在两个context？"><a href="#同一卡上能否同时存在两个context？" class="headerlink" title="同一卡上能否同时存在两个context？"></a>同一卡上能否同时存在两个context？</h2><p>stream 代表了一系列gpu任务，包括内存拷贝，执行等，同一个context下可以有多个stream，stream之间可以并行运行，stream执行结束后可以触发回调</p>
-<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h2 id="b-tree-为什么快"><a href="#b-tree-为什么快" class="headerlink" title="b+tree 为什么快"></a>b+tree 为什么快</h2><h2 id="索引可以加在text上吗"><a href="#索引可以加在text上吗" class="headerlink" title="索引可以加在text上吗"></a>索引可以加在text上吗</h2><h1 id="四次挥手的合并"><a href="#四次挥手的合并" class="headerlink" title="四次挥手的合并"></a>四次挥手的合并</h1><p>客户端主动发起fin，如果服务端不需要回复对应的ack会出现如下情况。<br>情况1：</p>
-<ol>
-<li>客户端发起fin，服务端未收到</li>
-<li>客户端停止发送数据，并开始等待服务端剩余数据和fin</li>
-<li>服务端不知道客户端已经发送fin，发送完当前数据后，开始等待客户端数据</li>
-<li>服务端和客户端互相等待无法脱出。</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/02/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%89%AB%E7%9B%B2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -647,13 +636,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">114k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:15</span>
+    <span title="站点阅读时长">6:56</span>
   </span>
 </div>
 <div class="busuanzi-count">

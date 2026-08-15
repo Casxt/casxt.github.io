@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="基本类型复制有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature 12345678910111213141516message ProtoSrc&#123;    message Feature    &amp;#123">
+    <meta name="description" content="基本类型复制有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature">
 <meta property="og:type" content="article">
 <meta property="og:title" content="protobuf repeated 字段操作总结">
 <meta property="og:url" content="https://maple.link/2021/12/27/protobuf-repeated-%E5%AD%97%E6%AE%B5%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Maple.Link">
-<meta property="og:description" content="基本类型复制有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature 12345678910111213141516message ProtoSrc&#123;    message Feature    &amp;#123">
+<meta property="og:description" content="基本类型复制有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-27T08:10:00.000Z">
 <meta property="article:modified_time" content="2021-12-27T08:10:00.000Z">
@@ -187,12 +187,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">214</span>
+        <span class="site-state-item-count">221</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -291,9 +291,9 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+    <div class="post-body" itemprop="articleBody"><h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
+<span id="more"></span>
 
-<h1 id="基本类型复制"><a href="#基本类型复制" class="headerlink" title="基本类型复制"></a>基本类型复制</h1><p>有时会遇到源proto和目标proto具有相同成员的情况, 如果该成员仅仅是定义相同，是不能直接使用CopyFrom方法的，此时需要手动对结构体成员依次进行赋值。<br>以下文件模拟了两个不同proto文件中同时定义了相同的结构体Feature</p>
 <figure class="highlight proto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message </span><span class="title class_">ProtoSrc</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Feature</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">repeated</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">optional</span> Feature feature = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">message </span><span class="title class_">ProtoDst</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Feature</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">repeated</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">optional</span> Feature feature = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> srcFeature = src.<span class="built_in">feature</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstFeature = *dst.<span class="built_in">mutable_feature</span>();</span><br><span class="line"><span class="comment">// 👇错误操作，会有类似报错: Tried to merge messages of different types (merge protosrc.Feature to protodst.Feature)</span></span><br><span class="line"><span class="comment">// dstFeature.CopyFrom(srcFeature);</span></span><br><span class="line"><span class="comment">// 👇正确操作</span></span><br><span class="line">dstFeature.<span class="built_in">mutable_data</span>()-&gt;<span class="built_in">CopyFrom</span>(srcFeature.<span class="built_in">data</span>());</span><br></pre></td></tr></table></figure>
@@ -302,6 +302,7 @@
 <figure class="highlight proto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message </span><span class="title class_">ProtoSrc</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Result</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">optional</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">repeated</span> Result results = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">message </span><span class="title class_">ProtoDst</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">message </span><span class="title class_">Result</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">optional</span> <span class="type">float</span> data = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">repeated</span> Result results = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src = <span class="built_in">ProtoSrc</span>();</span><br><span class="line"><span class="keyword">auto</span> dst = <span class="built_in">ProtoDst</span>();</span><br><span class="line"><span class="keyword">auto</span> &amp;dstRes = *(dst.<span class="built_in">mutable_results</span>());</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> &amp;srcRes : *(src.<span class="built_in">mutable_results</span>()))&#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;temp = *(dstRes.<span class="built_in">Add</span>());</span><br><span class="line">    temp.<span class="built_in">set_data</span>(srcRes.<span class="built_in">data</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -360,13 +361,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">114k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:15</span>
+    <span title="站点阅读时长">6:56</span>
   </span>
 </div>
 <div class="busuanzi-count">

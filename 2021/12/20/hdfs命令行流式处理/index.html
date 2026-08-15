@@ -187,12 +187,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">214</span>
+        <span class="site-state-item-count">221</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -274,7 +274,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>238</span>
+      <span>239</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -295,6 +295,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">cat</span> hdfs://your_path/your_file |\</span><br><span class="line">sed  <span class="string">&quot;s/some_thing/some_other/g&quot;</span> |\</span><br><span class="line">hadoop -put - hdfs://your_path/your_processed_file</span><br></pre></td></tr></table></figure>
 
 <p>这样利用pipe完成了对数据的处理，同时避免了数据在本地落盘。</p>
+<span id="more"></span>
+
 <h1 id="遍历文件夹处理"><a href="#遍历文件夹处理" class="headerlink" title="遍历文件夹处理"></a>遍历文件夹处理</h1><p>此外还可以搭配xargs遍历整个目录</p>
 <ul>
 <li><code>hadoop -ls -h hdfs://your_path</code> 列出整个目录</li>
@@ -304,6 +306,7 @@
 <li><code>&quot;hadoop -cat  ...&quot;</code> 按照之前流式处理的方式处理每一个文件</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop -<span class="built_in">ls</span> -h hdfs://your_path | awk -F<span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | awk -F<span class="string">&#x27;/&#x27;</span> <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span> | xargs -I &#123;&#125; bash -c <span class="string">&quot;hadoop -cat hdfs://your_path/&#123;&#125; | sed &#x27;s/some_thing/some_other/g&#x27; | hadoop -put - hdfs://your_other_path/&#123;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -362,13 +365,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">114k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:15</span>
+    <span title="站点阅读时长">6:56</span>
   </span>
 </div>
 <div class="busuanzi-count">
