@@ -1,0 +1,12 @@
+date,period_label,spot_usd_per_lb_u3o8,long_term_usd_per_lb_u3o8,price_basis,source_url
+2016-12-01,2016年末,20.25,30.00,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2017-12-31,2017年末,22.32,30.67,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2018-12-31,2018年末,27.75,32.00,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2019-12-31,2019年末,24.93,32.50,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2020-12-31,2020年末,30.20,35.00,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2021-12-31,2021年末,42.05,42.75,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2022-12-31,2022年末,47.68,52.00,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2023-12-31,2023年末,91.00,68.00,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2024-12-31,2024年末,72.63,80.50,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2025-12-31,2025年末,81.55,86.50,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
+2026-07-31,2026年7月,86.38,95.50,当月月末名义价格,https://www.cameco.com/invest/markets/uranium-price
