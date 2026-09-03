@@ -1,0 +1,62 @@
+.uranium-table-marker { display: none; }
+.post-body .uranium-table-panel {
+  --ut-bg: var(--content-bg-color, #fff);
+  --ut-text: var(--text-color, #444);
+  --ut-border: var(--table-cell-border-bottom-color, #ccc);
+  margin: 18px 0 28px;
+  border: 1px solid var(--ut-border);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--ut-bg);
+  color: var(--ut-text);
+  max-width: 100%;
+  font-size: 13px;
+}
+.post-body .uranium-table-panel [hidden] { display: none !important; }
+.post-body .uranium-table-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 12px; border-bottom: 1px solid var(--ut-border);
+}
+.post-body .uranium-table-panel button, .post-body .uranium-table-panel select {
+  background: var(--ut-bg); color: var(--ut-text); border: 1px solid var(--ut-border);
+  border-radius: 4px; padding: 5px 9px; font: inherit; cursor: pointer;
+}
+.post-body .uranium-table-panel button:focus-visible,
+.post-body .uranium-table-panel select:focus-visible,
+.post-body .uranium-table-panel summary:focus-visible { outline: 2px solid #3886b7; outline-offset: 2px; }
+.post-body .uranium-table-filters { margin: 0; padding: 7px 12px; }
+.post-body .uranium-table-filters summary { cursor: pointer; font-weight: 600; }
+.post-body .uranium-filter-content { padding-top: 8px; }
+.post-body .uranium-filter-content fieldset { border: 0; padding: 0; margin: 0 0 9px; min-width: 0; }
+.post-body .uranium-filter-content legend { font-size: 12px; margin-bottom: 3px; }
+.post-body .uranium-filter-choice { display: inline-flex; align-items: center; gap: 5px; margin: 2px 12px 2px 0; white-space: nowrap; cursor: pointer; }
+.post-body .uranium-filter-choice input { margin: 0; accent-color: #2876a7; }
+.post-body .uranium-category { display: inline-flex; align-items: center; gap: 5px; margin: 0 10px 6px 0; max-width: 100%; }
+.post-body .uranium-category select { max-width: 235px; }
+.post-body .uranium-filter-note, .post-body .uranium-table-status { margin: 5px 0; font-size: 12px; line-height: 1.6; }
+.post-body .uranium-table-status { padding: 0 12px 8px; }
+.post-body .uranium-tabulator { border: 0; border-top: 1px solid var(--ut-border); font-size: 13px; background: var(--ut-bg); color: var(--ut-text); }
+.post-body .uranium-tabulator .tabulator-header,
+.post-body .uranium-tabulator .tabulator-header .tabulator-col,
+.post-body .uranium-tabulator .tabulator-row,
+.post-body .uranium-tabulator .tabulator-row.tabulator-row-even,
+.post-body .uranium-tabulator .tabulator-responsive-collapse { background: var(--ut-bg); color: var(--ut-text); border-color: var(--ut-border); }
+.post-body .uranium-tabulator .tabulator-cell { border-color: var(--ut-border); white-space: normal; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.post-body .uranium-tabulator .tabulator-header .tabulator-col .tabulator-col-title { white-space: normal; overflow-wrap: anywhere; }
+.post-body .uranium-tabulator .tabulator-col-content { padding: 8px 5px; }
+.post-body .uranium-tabulator .tabulator-row:hover { background: var(--table-row-hover-bg-color, #eee); }
+.post-body .uranium-tabulator .uranium-scenario-0 { box-shadow: inset 3px 0 #bd5252; }
+.post-body .uranium-tabulator .uranium-scenario-1 { box-shadow: inset 3px 0 #237ca6; font-weight: 600; }
+.post-body .uranium-tabulator .uranium-scenario-2 { box-shadow: inset 3px 0 #238a61; }
+.post-body .uranium-tabulator .uranium-scenario-3 { box-shadow: inset 3px 0 #8f57ad; }
+.post-body .uranium-tabulator .tabulator-responsive-collapse-toggle { background: #2876a7; color: white; }
+.post-body .uranium-collapse-list { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(75px, 1fr); gap: 4px 12px; margin: 6px 2px; white-space: normal; }
+.post-body .uranium-collapse-list dt { font-weight: 500; }
+.post-body .uranium-collapse-list dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 767px) {
+  .post-body .uranium-tabulator { font-size: 12px; }
+  .post-body .uranium-table-bar { padding: 8px; }
+  .post-body .uranium-table-filters { padding: 7px 8px; }
+  .post-body .uranium-table-status { padding: 0 8px 8px; }
+  .post-body .uranium-tabulator .tabulator-cell { padding: 6px 4px; }
+}
