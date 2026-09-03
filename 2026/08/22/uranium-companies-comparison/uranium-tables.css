@@ -1,4 +1,19 @@
 .uranium-table-marker { display: none; }
+/* Keep this 11-column financial statement as a native, horizontally scrollable table. */
+.uranium-native-financials { display: none; }
+.post-body .uranium-native-financials + .table-container { max-width: 100%; overflow-x: auto; }
+.post-body .uranium-native-financials + .table-container table { width: 1180px; min-width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.post-body .uranium-native-financials + .table-container th,
+.post-body .uranium-native-financials + .table-container td { box-sizing: border-box; padding: 9px 10px; border-width: 0 1px 1px 0; text-align: right; font-variant-numeric: tabular-nums; }
+.post-body .uranium-native-financials + .table-container th { text-align: left; word-break: normal; }
+.post-body .uranium-native-financials + .table-container td { white-space: nowrap; }
+.post-body .uranium-native-financials + .table-container tr > :nth-child(1),
+.post-body .uranium-native-financials + .table-container tr > :nth-child(2) {
+  position: sticky; z-index: 1; background: var(--content-bg-color, #fff); text-align: left;
+}
+.post-body .uranium-native-financials + .table-container tr > :nth-child(1) { left: 0; width: 100px; }
+.post-body .uranium-native-financials + .table-container tr > :nth-child(2) { left: 100px; width: 80px; border-right: 2px solid var(--table-cell-border-bottom-color, #ccc); }
+.post-body .uranium-native-financials + .table-container tr > :nth-last-child(-n+2) { width: 80px; }
 .post-body .uranium-table-panel {
   --ut-bg: var(--content-bg-color, #fff);
   --ut-text: var(--text-color, #444);

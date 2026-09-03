@@ -307,7 +307,7 @@
 <p>大表支持交互对比：展开表格上方“筛选情景 &#x2F; 年份”，可同时勾选多个情景和年份，筛选只影响当前表。点击表头可排序；手机端点“＋”查看折叠指标。“重置本表”恢复全部数据，“查看原表”切回完整原始表格。筛选不改变模型、期间口径或图表。</p>
 <!-- Tabulator 6.5.0 (MIT)，资源仅用于本文；将 data-uranium-tabulator-enabled 改为 false 可完全撤回增强。 -->
 <link rel="stylesheet" href="/2026/08/22/uranium-companies-comparison/tabulator.min.css?v=6.5.0">
-<link rel="stylesheet" href="/2026/08/22/uranium-companies-comparison/uranium-tables.css?v=1">
+<link rel="stylesheet" href="/2026/08/22/uranium-companies-comparison/uranium-tables.css?v=2">
 <script defer src="/2026/08/22/uranium-companies-comparison/tabulator.min.js?v=6.5.0"></script>
 <script defer data-uranium-tabulator-enabled="true" src="/2026/08/22/uranium-companies-comparison/uranium-tables.js?v=1"></script>
 
@@ -3566,6 +3566,7 @@
 <td>2.341 &#x2F; 2.346</td>
 </tr>
 </tbody></table>
+<p>以下四张分业务图的 <strong>2026E 留空不代表收入为零</strong>：中报未完整披露上半年四类收入拆分，因此不将下半年预测冒充全年值；下半年预测见图后表格，公司全年营收和利润预测已计入上半年实际总额。<a target="_blank" rel="noopener" href="https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0826/2026082601623.pdf">中期业绩，第12—13页</a></p>
 <figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:450px" role="img" aria-label="中核国际：第三方自营"></div><script class="hexo-echarts__option" type="application/json">{"backgroundColor":"#ffffff","title":{"text":"中核国际：第三方自营","subtext":"百万港元；实线为历史，虚线为情景\n财报2026H1；估值基准2026-09-02","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11,"lineHeight":17}},"tooltip":{"trigger":"axis","confine":true},"legend":{"type":"scroll","top":80,"textStyle":{"fontSize":11}},"grid":{"top":126,"left":15,"right":18,"bottom":43,"containLabel":true},"xAxis":{"type":"category","data":["2025A","2026E","2027E","2028E","2029E","2030E"],"axisLabel":{"fontSize":10,"rotate":0}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史","type":"line","data":[970.2970000000003,null,null,null,null,null],"showSymbol":true,"connectNulls":false,"lineStyle":{"color":"#374151","width":2.5},"itemStyle":{"color":"#374151"}},{"name":"Bear","type":"line","data":[null,null,255.84000000000003,249.6,249.6,255.84000000000003],"showSymbol":true,"connectNulls":false,"lineStyle":{"type":"dashed","width":2,"color":"#bd5252"},"itemStyle":{"color":"#bd5252"}},{"name":"Base","type":"line","data":[null,null,504.504,594.5940000000002,685.1988000000002,787.9786200000003],"showSymbol":true,"connectNulls":false,"lineStyle":{"type":"dashed","width":2,"color":"#237ca6"},"itemStyle":{"color":"#237ca6"}},{"name":"Bull","type":"line","data":[null,null,928.3949999999999,1206.9134999999999,1494.7159499999993,1780.3134618749991],"showSymbol":true,"connectNulls":false,"lineStyle":{"type":"dashed","width":2,"color":"#238a61"},"itemStyle":{"color":"#238a61"}},{"name":"Super Bull","type":"line","data":[null,null,1516.32,2156.544,2830.464,3493.6012799999994],"showSymbol":true,"connectNulls":false,"lineStyle":{"type":"dashed","width":2,"color":"#8f57ad"},"itemStyle":{"color":"#8f57ad"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
 
 <p>来源与口径：2025审计年报；2026H1未披露四类收入拆分，2026全年分项留空，H2数值另表列示；2027起为全年情景。</p>
@@ -3798,7 +3799,9 @@
 
 <p>来源与口径：公司2025年报五年数据&#x2F;历史资料与配套模型；2026为H1实际＋H2，未来口径为归母净利。</p>
 <p>下表金额均为百万元港元，EPS为本币&#x2F;股，ROE使用期初、期末平均归母权益。</p>
-<div class="uranium-table-marker" data-table-id="cnnc-financials" data-title="中核国际逐年财务"></div>
+<p><strong>中核国际逐年财务</strong></p>
+<p>本表保留原生表格，全部指标按列对齐，不再逐行展开。窄屏可左右滑动查看；情景与年度固定在左侧，便于核对。需要自选情景、年份时，可使用文末下载的 Excel 模型。</p>
+<div class="uranium-native-financials" id="cnnc-financials"></div>
 
 <table>
 <thead>
@@ -4643,7 +4646,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:12</span>
+    <span title="站点阅读时长">11:13</span>
   </span>
 </div>
 <div class="busuanzi-count">
