@@ -1,0 +1,62 @@
+html[data-region-guard] .post-header,
+html[data-region-guard] .post-body > :not(.region-guard),
+html[data-region-guard] .post-footer,
+html[data-region-guard] .comments,
+html[data-region-guard] .sidebar,
+html[data-region-guard] .sidebar-toggle,
+html[data-region-guard] .sidebar-dimmer {
+  display: none !important;
+}
+
+/* The notice must be visible before NexT's entrance animations finish. */
+html[data-region-guard] .post-block,
+html[data-region-guard] .post-body {
+  visibility: visible !important;
+  opacity: 1 !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-region-guard] body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+html[data-region-guard] .footer-fixed {
+  left: 0;
+  right: 0;
+}
+
+.region-guard:not([hidden]) {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 45vh;
+  padding: 48px 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.region-guard .region-guard__label {
+  margin: 0 0 16px;
+  font-size: 13px;
+  letter-spacing: .15em;
+  opacity: .65;
+}
+
+.region-guard .region-guard__title {
+  margin: 0 0 16px;
+  border: 0;
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.6;
+}
+
+.region-guard .region-guard__message {
+  margin: 0 0 24px;
+  font-size: 15px;
+}
+
+.region-guard .region-guard__home {
+  font-size: 14px;
+}

@@ -83,6 +83,9 @@
 
 
 
+    <link rel="stylesheet" href="/css/region-guard.css?v=1">
+    <script src="/js/region-guard.js?v=1"></script>
+  
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
@@ -300,7 +303,13 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><!-- Tabulator 是渐进增强；将下面的 data-operator-tabulator-enabled 改为 false 即可恢复原生 Markdown 表格。 -->
+    <div class="post-body" itemprop="articleBody"><section class="region-guard" hidden role="status" aria-live="polite">
+    <p class="region-guard__label">访问提示</p>
+    <h2 class="region-guard__title">正在加载…</h2>
+    <p class="region-guard__message">请稍候。</p>
+    <a class="region-guard__home" href="&#x2F;">返回首页</a>
+  </section>
+  <script>window.bootRegionGuard?.();</script><!-- Tabulator 是渐进增强；将下面的 data-operator-tabulator-enabled 改为 false 即可恢复原生 Markdown 表格。 -->
 <link rel="stylesheet" href="/2026/08/03/china-telecom-operators-comparison/tabulator.min.css?v=6.5.0">
 <link rel="stylesheet" href="/2026/08/03/china-telecom-operators-comparison/operator-growth-tabulator.css?v=1">
 <script defer src="/2026/08/03/china-telecom-operators-comparison/tabulator.min.js?v=6.5.0"></script>
