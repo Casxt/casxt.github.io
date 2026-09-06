@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="招行的客户与收费业务、建行的经营效率，在八家银行中相对突出；工行偏稳定经营，农行的县域业务提供增长机会，交行、中行、邮储和平安各有不同的改善条件。但质量、增长和买入回报是三个问题：在11%要求回报和长期维持较低派息上限的模型下，八家银行的Base价值均低于2026年9月2日的A股价格。 本文把比较拆成两条可复算的线：先从原始指标推导八家银行的48项评分，再从收入、信用损失和资本约束推导普通股现金价">
+<meta property="og:type" content="article">
+<meta property="og:title" content="八家银行怎么比较：从六维评分到普通股估值">
+<meta property="og:url" content="https://maple.link/2026/09/05/china-eight-banks-comparison/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="招行的客户与收费业务、建行的经营效率，在八家银行中相对突出；工行偏稳定经营，农行的县域业务提供增长机会，交行、中行、邮储和平安各有不同的改善条件。但质量、增长和买入回报是三个问题：在11%要求回报和长期维持较低派息上限的模型下，八家银行的Base价值均低于2026年9月2日的A股价格。 本文把比较拆成两条可复算的线：先从原始指标推导八家银行的48项评分，再从收入、信用损失和资本约束推导普通股现金价">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-05T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-05T16:00:00.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="DDM">
+<meta property="article:tag" content="RIM">
+<meta property="article:tag" content="中国银行">
+<meta property="article:tag" content="交通银行">
+<meta property="article:tag" content="农业银行">
+<meta property="article:tag" content="工商银行">
+<meta property="article:tag" content="平安银行">
+<meta property="article:tag" content="建设银行">
+<meta property="article:tag" content="招商银行">
+<meta property="article:tag" content="股票估值">
+<meta property="article:tag" content="邮储银行">
+<meta property="article:tag" content="银行业">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/09/05/china-eight-banks-comparison/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/09/05/china-eight-banks-comparison/","path":"2026/09/05/china-eight-banks-comparison/","title":"八家银行怎么比较：从六维评分到普通股估值"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>八家银行怎么比较：从六维评分到普通股估值 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="/css/region-guard.css?v=1">
+    <script src="/js/region-guard.js?v=1"></script>
+  
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start --><style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E7%9C%8B%E9%93%B6%E8%A1%8C%E5%A6%82%E4%BD%95%E8%B5%9A%E9%92%B1%EF%BC%8C%E5%86%8D%E6%AF%94%E8%BE%83%E8%B0%81%E7%9A%84%E6%9C%BA%E5%88%B6%E6%9B%B4%E5%A5%BD"><span class="nav-number">1.</span> <span class="nav-text">一、先看银行如何赚钱，再比较谁的机制更好</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%AC%94%E8%B4%B7%E6%AC%BE%E4%BA%A7%E7%94%9F%E7%9A%84%E5%88%A9%E6%81%AF%EF%BC%8C%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E8%82%A1%E4%B8%9C%E6%94%B6%E7%9B%8A"><span class="nav-number">1.1.</span> <span class="nav-text">一笔贷款产生的利息，怎样变成股东收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2026%E5%B9%B4%E4%B8%8A%E5%8D%8A%E5%B9%B4%E7%9A%84%E8%B5%B7%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">2026年上半年的起点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%AE%A1%E7%90%86%E5%B1%82%E4%B8%8E%E8%82%A1%E4%B8%9C%E5%88%A9%E7%9B%8A%EF%BC%9A50%E5%88%86%E4%B8%8D%E4%BB%A3%E8%A1%A8%E5%B7%B2%E7%BB%8F%E9%80%9A%E8%BF%87%E5%AE%A1%E6%9F%A5"><span class="nav-number">2.</span> <span class="nav-text">二、管理层与股东利益：50分不代表已经通过审查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%85%88%E7%9C%8B%E4%BC%B0%E5%80%BC%E7%BB%93%E8%AE%BA%EF%BC%9A%E8%B4%A8%E9%87%8F%E4%BC%98%E5%8A%BF%E6%9C%89%E6%B2%A1%E6%9C%89%E7%95%99%E4%B8%8B%E5%9B%9E%E6%8A%A5%E7%A9%BA%E9%97%B4"><span class="nav-number">3.</span> <span class="nav-text">三、先看估值结论：质量优势有没有留下回报空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%8148%E9%A1%B9%E8%B4%A8%E9%87%8F%E8%AF%84%E5%88%86%EF%BC%8C%E9%80%90%E9%A1%B9%E6%98%AF%E6%80%8E%E6%A0%B7%E7%AE%97%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="nav-number">4.</span> <span class="nav-text">四、48项质量评分，逐项是怎样算出来的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E4%B8%AA%E7%BB%B4%E5%BA%A6%E5%88%86%E5%88%AB%E6%83%B3%E6%B5%8B%E4%BB%80%E4%B9%88"><span class="nav-number">4.1.</span> <span class="nav-text">六个维度分别想测什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F%EF%BC%9A%E5%8E%9F%E5%A7%8B%E6%8C%87%E6%A0%87-%E2%86%92-%E5%85%AB%E8%A1%8C%E4%BD%8D%E7%BD%AE-%E2%86%92-%E6%94%B6%E7%BC%A9%E5%BE%97%E5%88%86-%E2%86%92-%E5%8A%A0%E6%9D%83%E8%B4%A1%E7%8C%AE"><span class="nav-number">4.2.</span> <span class="nav-text">统一计算顺序：原始指标 → 八行位置 → 收缩得分 → 加权贡献</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E5%80%BA%E5%88%86%EF%BC%9A%E4%BD%8E%E5%88%A9%E6%81%AF%E6%88%90%E6%9C%AC%E4%B8%8E%E8%BE%83%E9%AB%98%E5%AE%A2%E6%88%B7%E5%AD%98%E6%AC%BE%E5%8D%A0%E6%AF%94%E5%90%84%E5%8D%A0%E4%B8%80%E5%8D%8A"><span class="nav-number">4.3.</span> <span class="nav-text">负债分：低利息成本与较高客户存款占比各占一半</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E5%88%86%EF%BC%9A%E5%90%8C%E6%97%B6%E7%9C%8B%E4%B8%8D%E8%89%AF%E7%8E%87%E7%9A%84%E9%AB%98%E7%82%B9%E4%B8%8E%E6%B3%A2%E5%8A%A8"><span class="nav-number">4.4.</span> <span class="nav-text">风险分：同时看不良率的高点与波动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E5%88%86%E4%B8%8E%E9%9D%9E%E6%81%AF%E5%88%86%EF%BC%9A%E5%90%8C%E4%B8%80%E4%BB%A3%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%97%E5%88%B0%E4%BA%86%E4%B8%A4%E4%B8%AA%E5%88%86%E6%95%B0"><span class="nav-number">4.5.</span> <span class="nav-text">生态分与非息分：同一代理为什么得到了两个分数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%9C%AC%E5%88%86%EF%BC%9A%E9%A2%84%E6%B5%8B%E7%9B%88%E5%88%A9%E8%83%BD%E5%8A%9B%E4%B8%8E%E6%A8%A1%E5%9E%8B%E4%BD%99%E9%87%8F%E5%90%84%E5%8D%A0%E4%B8%80%E5%8D%8A"><span class="nav-number">4.6.</span> <span class="nav-text">资本分：预测盈利能力与模型余量各占一半</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B2%BB%E7%90%86%E5%88%86%EF%BC%9A%E5%85%AB%E5%AE%B6%E9%83%BD%E6%98%AF50%E5%88%86%EF%BC%8C%E5%8E%9F%E5%9B%A0%E6%98%AF%E9%87%87%E7%94%A8%E5%90%8C%E4%B8%80%E5%85%88%E9%AA%8C"><span class="nav-number">4.7.</span> <span class="nav-text">治理分：八家都是50分，原因是采用同一先验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%85%AD%E9%A1%B9%E8%B4%A1%E7%8C%AE%E5%8A%A0%E8%B5%B7%E6%9D%A5%EF%BC%9A%E6%AF%8F%E5%AE%B6%E7%BB%BC%E5%90%88%E5%88%86%E7%9A%84%E7%AE%97%E6%9C%AF%E6%9D%A5%E6%BA%90"><span class="nav-number">4.8.</span> <span class="nav-text">把六项贡献加起来：每家综合分的算术来源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%BC%B0%E5%80%BC%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E6%8A%8A%E4%B8%9A%E5%8A%A1%E5%81%87%E8%AE%BE%E8%90%BD%E5%AE%9E%E4%B8%BA%E5%88%A9%E6%B6%A6%E5%92%8C%E8%B5%84%E6%9C%AC"><span class="nav-number">5.</span> <span class="nav-text">五、估值的第一步：把业务假设落实为利润和资本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2%E6%81%AF%E5%B7%AE%E7%BB%99%E9%A2%84%E6%B5%8B%E8%AE%BE%E7%BD%AE%E4%BA%86%E4%BB%80%E4%B9%88%E7%BA%A6%E6%9D%9F"><span class="nav-number">5.1.</span> <span class="nav-text">历史息差给预测设置了什么约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%83%85%E6%99%AF%E5%85%88%E6%94%B9%E5%8F%98%E7%BB%8F%E8%90%A5%E5%8F%98%E9%87%8F%EF%BC%8C%E5%86%8D%E8%AE%A1%E7%AE%97%E5%88%A9%E6%B6%A6"><span class="nav-number">5.2.</span> <span class="nav-text">三情景先改变经营变量，再计算利润</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%9C%AC%E5%86%B3%E5%AE%9A%E6%89%A9%E5%BC%A0%E5%92%8C%E5%88%86%E7%BA%A2%E8%83%BD%E5%90%A6%E5%90%8C%E6%97%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.3.</span> <span class="nav-text">资本决定扩张和分红能否同时实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E8%A1%8CBase%EF%BC%9A%E4%BB%8E%E4%B8%8B%E5%8D%8A%E5%B9%B4%E6%94%B6%E5%85%A5%E8%B5%B0%E5%88%B0%E5%85%A8%E5%B9%B4%E6%99%AE%E9%80%9A%E8%82%A1%E5%88%A9%E6%B6%A6"><span class="nav-number">5.4.</span> <span class="nav-text">工行Base：从下半年收入走到全年普通股利润</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E5%AE%B6%E9%93%B6%E8%A1%8C%E7%9A%84%E5%A2%9E%E9%95%BF%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">5.5.</span> <span class="nav-text">八家银行的增长从哪里来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%95%86%E9%93%B6%E8%A1%8C"><span class="nav-number">5.6.</span> <span class="nav-text">工商银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%9C%E4%B8%9A%E9%93%B6%E8%A1%8C"><span class="nav-number">5.7.</span> <span class="nav-text">农业银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%BE%E9%93%B6%E8%A1%8C"><span class="nav-number">5.8.</span> <span class="nav-text">建设银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E9%80%9A%E9%93%B6%E8%A1%8C"><span class="nav-number">5.9.</span> <span class="nav-text">交通银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%AE%E5%82%A8%E9%93%B6%E8%A1%8C"><span class="nav-number">5.10.</span> <span class="nav-text">邮储银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E5%9B%BD%E9%93%B6%E8%A1%8C"><span class="nav-number">5.11.</span> <span class="nav-text">中国银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%9B%E5%95%86%E9%93%B6%E8%A1%8C"><span class="nav-number">5.12.</span> <span class="nav-text">招商银行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E5%AE%89%E9%93%B6%E8%A1%8C"><span class="nav-number">5.13.</span> <span class="nav-text">平安银行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E4%BC%B0%E5%80%BC%E7%9A%84%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E4%BB%8E%E5%88%A9%E6%B6%A6%E8%B5%B0%E5%88%B0%E7%8E%B0%E9%87%91%EF%BC%8C%E5%86%8D%E8%B5%B0%E5%88%B0%E4%BB%8A%E5%A4%A9%E7%9A%84%E4%BB%B7%E6%A0%BC"><span class="nav-number">6.</span> <span class="nav-text">六、估值的第二步：从利润走到现金，再走到今天的价格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%9B%B4%E6%8E%A5%E4%BC%B0%E6%99%AE%E9%80%9A%E8%82%A1%E6%9D%83%E7%9B%8A"><span class="nav-number">6.1.</span> <span class="nav-text">为什么直接估普通股权益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%B0%86%E8%82%A1%E6%81%AF%E6%94%BE%E5%88%B0%E6%AD%A3%E7%A1%AE%E6%97%A5%E6%9C%9F"><span class="nav-number">6.2.</span> <span class="nav-text">先将股息放到正确日期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E6%8A%8A%E6%9C%AA%E6%9D%A5%E7%8E%B0%E9%87%91%E6%8A%98%E5%9B%9E2026%E5%B9%B49%E6%9C%882%E6%97%A5"><span class="nav-number">6.3.</span> <span class="nav-text">再把未来现金折回2026年9月2日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E8%A1%8CBase%E7%9A%844-18%E5%85%83%E6%80%8E%E6%A0%B7%E5%BD%A2%E6%88%90"><span class="nav-number">6.4.</span> <span class="nav-text">工行Base的4.18元怎样形成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2036%E5%B9%B4%E4%BB%A5%E5%90%8E%E7%A9%B6%E7%AB%9F%E5%81%87%E8%AE%BE%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">6.5.</span> <span class="nav-text">2036年以后究竟假设了什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81RIM%E3%80%81PB%E3%80%81PE%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%B7%B7%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%AE%80%E5%8D%95%E5%B9%B3%E5%9D%87"><span class="nav-number">7.</span> <span class="nav-text">七、RIM、PB、PE为什么不能混在一起简单平均</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RIM%E4%BB%8E%E8%B4%A6%E9%9D%A2%E8%B5%84%E6%9C%AC%E5%87%BA%E5%8F%91%EF%BC%8C%E8%A1%A1%E9%87%8F%E8%B5%9A%E7%9A%84%E9%92%B1%E5%A4%9F%E4%B8%8D%E5%A4%9F%E8%A1%A5%E5%81%BF%E8%82%A1%E4%B8%9C"><span class="nav-number">7.1.</span> <span class="nav-text">RIM从账面资本出发，衡量赚的钱够不够补偿股东</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PB%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%83%BD%E5%90%88%E7%90%86%E5%9C%B0%E4%BD%8E%E4%BA%8E1%E5%80%8D"><span class="nav-number">7.2.</span> <span class="nav-text">PB为什么可能合理地低于1倍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E7%A7%8D%E6%96%B9%E6%B3%95%E5%88%86%E5%88%AB%E8%83%BD%E5%9B%9E%E7%AD%94%E4%BB%80%E4%B9%88"><span class="nav-number">7.3.</span> <span class="nav-text">各种方法分别能回答什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E4%BB%8E%E6%9C%AA%E6%9D%A5%E5%90%88%E7%90%86%E4%BB%B7%E6%A0%BC%E8%B5%B0%E5%88%B0%E5%AE%9E%E9%99%85%E6%8C%81%E6%9C%89%E5%9B%9E%E6%8A%A5"><span class="nav-number">8.</span> <span class="nav-text">八、从未来合理价格走到实际持有回报</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B4%E6%9C%AB%E5%90%88%E7%90%86%E4%BB%B7%E5%80%BC%E4%B8%8D%E6%98%AF%E5%B8%82%E5%9C%BA%E4%BB%B7%E6%A0%BC%E9%A2%84%E6%B5%8B"><span class="nav-number">8.1.</span> <span class="nav-text">年末合理价值不是市场价格预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%82%A1%E4%BB%B7%E3%80%81%E7%B4%AF%E8%AE%A1%E8%82%A1%E6%81%AF%E5%92%8C%E5%B9%B4%E5%8C%96%E5%9B%9E%E6%8A%A5%E6%80%8E%E6%A0%B7%E8%BF%9E%E6%8E%A5"><span class="nav-number">8.2.</span> <span class="nav-text">股价、累计股息和年化回报怎样连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%82%E5%9C%BA%E4%BB%B7%E6%AF%94Base%E9%AB%98%EF%BC%8C%E9%9A%90%E5%90%AB%E4%BA%86%E5%A4%9A%E5%B0%91%E9%A2%9D%E5%A4%96%E8%A6%81%E6%B1%82"><span class="nav-number">8.3.</span> <span class="nav-text">市场价比Base高，隐含了多少额外要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E7%BB%93%E8%AE%BA%E6%9C%80%E4%BE%9D%E8%B5%96%E4%BB%80%E4%B9%88%EF%BC%9A%E9%95%BF%E6%9C%9F%E6%B4%BE%E6%81%AF%E6%94%BF%E7%AD%96"><span class="nav-number">9.</span> <span class="nav-text">九、结论最依赖什么：长期派息政策</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%93%AA%E4%BA%9B%E8%AF%81%E6%8D%AE%E4%BC%9A%E6%94%B9%E5%8F%98%E8%BF%99%E4%BB%BD%E6%AF%94%E8%BE%83"><span class="nav-number">10.</span> <span class="nav-text">十、哪些证据会改变这份比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%A3%E5%BE%84%E3%80%81%E6%9D%A5%E6%BA%90%E4%B8%8E%E8%AE%A1%E7%AE%97%E9%99%84%E4%BB%B6"><span class="nav-number">11.</span> <span class="nav-text">数据口径、来源与计算附件</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">258</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/09/05/china-eight-banks-comparison/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="八家银行怎么比较：从六维评分到普通股估值 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          八家银行怎么比较：从六维评分到普通股估值
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-09-05 20:00:00" itemprop="dateCreated datePublished" datetime="2026-09-05T20:00:00+08:00">2026-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-09-06 00:00:00" itemprop="dateModified" datetime="2026-09-06T00:00:00+08:00">2026-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1:02</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><section class="region-guard" hidden role="status" aria-live="polite">
+    <p class="region-guard__label">访问提示</p>
+    <h2 class="region-guard__title">正在加载…</h2>
+    <p class="region-guard__message">请稍候。</p>
+    <a class="region-guard__home" href="&#x2F;">返回首页</a>
+  </section>
+  <script>window.bootRegionGuard?.();</script><p>招行的客户与收费业务、建行的经营效率，在八家银行中相对突出；工行偏稳定经营，农行的县域业务提供增长机会，交行、中行、邮储和平安各有不同的改善条件。但质量、增长和买入回报是三个问题：在11%要求回报和长期维持较低派息上限的模型下，八家银行的Base价值均低于2026年9月2日的A股价格。</p>
+<p>本文把比较拆成两条可复算的线：先从原始指标推导八家银行的48项评分，再从收入、信用损失和资本约束推导普通股现金价值。评分包含代理指标和中性假设，治理均为待核实；全文的质量判断与条件估值不构成已完成治理筛选的投资名单。</p>
+<span id="more"></span>
+
+<link rel="stylesheet" href="/2026/09/05/china-eight-banks-comparison/bank-comparison.css?v=1">
+
+<p><strong>估值与价格基准日：2026年9月2日；编写日期：2026年9月6日。</strong> 范围为八家银行A股，金额统一为人民币。历史指标覆盖2016—2025年，最新经营比较采用2026年半年报；2026全年由半年实际与下半年预测组成，2027—2036年均为预测。Bear、Base、Bull分别表示悲观、基准、乐观情景，未赋予发生概率。</p>
+<p>阅读时只需抓住一个问题：<strong>银行取得一笔资金后，扣完资金、运营和风险成本，究竟有多少钱能在什么时候交给普通股股东？</strong> 六维评分检查这条链的各个环节，估值则把现金支付放到时间轴上。</p>
+<h2 id="一、先看银行如何赚钱，再比较谁的机制更好"><a href="#一、先看银行如何赚钱，再比较谁的机制更好" class="headerlink" title="一、先看银行如何赚钱，再比较谁的机制更好"></a>一、先看银行如何赚钱，再比较谁的机制更好</h2><h3 id="一笔贷款产生的利息，怎样变成股东收益"><a href="#一笔贷款产生的利息，怎样变成股东收益" class="headerlink" title="一笔贷款产生的利息，怎样变成股东收益"></a>一笔贷款产生的利息，怎样变成股东收益</h3><p>银行主要从客户存款和市场融资取得资金，将资金配置为贷款、债券等资产，并提供结算、托管和财富管理服务。利息差和手续费形成收入，之后还要承担员工与渠道费用、信用损失、税费，以及少数股东和非普通股投资者的权益。</p>
+<p>普通股股东拥有剩余收益权。银行赚到利润后，还需要留下部分资本支持资产增长和抵御风险；剩下能分多少、何时支付，才决定股东收到的现金。可以把计算顺序写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户与资金来源 → 资产收益和收费 → 扣资金成本与经营费用</span><br><span class="line">→ 扣信用损失与税费 → 普通股利润 → 留足资本 → 股息与每股价值</span><br></pre></td></tr></table></figure>
+
+<p>例如一笔年收益率4%的贷款，若资金成本1.5%、运营成本0.8%、预期信用损失1%，税前只余0.7%。这是教学假设，用来说明高贷款利率必须与高风险成本一起分析。贷款利率更高，股东回报未必更高。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>主要客户与经营特点</th>
+<th>优势转化为收益的条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>广泛的对公结算、现金管理和账户网络</td>
+<td>客户账户留下低成本资金，较低费用率缓冲息差压力</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>县域、涉农和普惠客户覆盖</td>
+<td>扩张后的收益足以覆盖信用损失与新增资本</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>对公、住房与综合客户服务</td>
+<td>资金与效率优势能够承受住房和地方投资链条的风险</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>对公、结算和收费业务</td>
+<td>收费基础与负债成本改善共同增加利润</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>广泛的储蓄客户与代理网络</td>
+<td>低存款利息成本在扣除代理费后仍有优势</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>境内外客户、跨境结算和贸易金融</td>
+<td>跨境业务带来经常性收益，境外利润能够上划</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>零售、财富管理和低成本客户存款</td>
+<td>客户资金增长形成稳定收费，同时维持资金成本优势</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>零售、对公和集团渠道协同</td>
+<td>风险改善后仍能留住客户收益，且不过度消耗资本</td>
+</tr>
+</tbody></table>
+<p>这些是对业务机制的判断。县域、财富、跨境等机会已经通过贷款、收费、费用和信用成本进入情景，后文不再额外加一笔同名“业务价值”。业务事实对应各行半年报，具体链接见文末来源表。</p>
+<h3 id="2026年上半年的起点"><a href="#2026年上半年的起点" class="headerlink" title="2026年上半年的起点"></a>2026年上半年的起点</h3><p>净息差NIM等于年化净利息收入除以平均生息资产。它综合了贷款、投资、存款和其他融资结构，不能直接用“贷款收益率减存款利率”替代。成本收入比反映费用对收入的消耗，但各行披露口径与经营模式仍有差异。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>净息差</th>
+<th>存款利息成本</th>
+<th>存款&#x2F;负债</th>
+<th>成本收入比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>1.29%</td>
+<td>1.15%</td>
+<td>74.31%</td>
+<td>22.70%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>1.28%</td>
+<td>1.13%</td>
+<td>71.35%</td>
+<td>26.34%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>1.37%</td>
+<td>1.11%</td>
+<td>73.16%</td>
+<td>21.99%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>1.23%</td>
+<td>1.49%</td>
+<td>66.30%</td>
+<td>27.47%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>1.63%</td>
+<td>0.98%</td>
+<td>93.67%</td>
+<td>52.02%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>1.27%</td>
+<td>1.40%</td>
+<td>72.61%</td>
+<td>23.43%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>1.83%</td>
+<td>0.97%</td>
+<td>82.37%</td>
+<td>29.70%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>1.80%</td>
+<td>1.38%</td>
+<td>67.55%</td>
+<td>27.06%</td>
+</tr>
+</tbody></table>
+<p>表中为2026H1已采用的披露口径，来源为各行半年报及配套计算表。邮储的代理费用没有包含在“存款利息成本”中；中行的集团资金成本包含不同币种、地区结构。因而不能只把这一列从低到高排序，就宣布找到了最好的银行。</p>
+<p>招行的1.83%净息差与0.97%存款利息成本，支持其收入和资金端优势；建行21.99%的成本收入比，支持其费用效率判断。邮储0.98%的存款利息成本很低，但52.02%的成本收入比提醒我们，渠道的经济成本需要完整计算。</p>
+<h2 id="二、管理层与股东利益：50分不代表已经通过审查"><a href="#二、管理层与股东利益：50分不代表已经通过审查" class="headerlink" title="二、管理层与股东利益：50分不代表已经通过审查"></a>二、管理层与股东利益：50分不代表已经通过审查</h2><p>管理层评价应先看资本配置结果、诚信与披露、关联交易、持股行为以及少数股东待遇。重大欺骗、利益侵害，或长期反复且不纠正的严重资本配置失误，不能被高分红和低股价抵消。</p>
+<p>截至本文信息基准日，可用材料尚不足以完成八家的跨期事件核查。特别是关联敞口与交易定价、资本配置承诺和结果、管理层持股变化的完整比较仍有缺口。因此逐家状态如下。表中的检查重点是待补充证据，不是对银行存在不当行为的指控。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>当前可作的经营判断</th>
+<th>否决项状态与优先核实事项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>大型客户关系与费用效率有基础，不能据此认证配置能力</td>
+<td><strong>待核实</strong>；长期资本补充、关联授信条件、持股与分红执行记录</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>县域扩张有机会，需看风险调整后的资本回报</td>
+<td><strong>待核实</strong>；扩张承诺与回报、关联定价、增发及少数股东待遇</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>效率较优，仍需单独核对资本损失与配置结果</td>
+<td><strong>待核实</strong>；住房相关资本配置、补充资本的摊薄、管理层持股行为</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>融资改善可能增加利润，外部补资不能等同于内生能力</td>
+<td><strong>待核实</strong>；补资条件、关联授信与担保、股东回报执行</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>储蓄网络有价值，价值分配取决于代理成本与资本约束</td>
+<td><strong>待核实</strong>；代理协议与交易公允性、股东利益分配、持股变化</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>跨境经营具有特色，集团利润与可上划现金需分别分析</td>
+<td><strong>待核实</strong>；境外受限资本、关联往来、跨境合规及回报执行</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>客户和收费基础较强，不能替代诚信与关联交易核查</td>
+<td><strong>待核实</strong>；管理层资本配置、关联交易、长期持股及激励约束</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>集团渠道有协同可能，需核实获客与资金成本归属</td>
+<td><strong>待核实</strong>；集团关联业务公允性、资本安排、管理层激励与持股</td>
+</tr>
+</tbody></table>
+<p>这里既没有足够证据认定发生了否决事项，也不能把资料不足写成“未发现否决项、可以放心买入”。后续评分中的治理50分只是中性占位；财务比较继续保留，投资资格仍待核实。</p>
+<h2 id="三、先看估值结论：质量优势有没有留下回报空间"><a href="#三、先看估值结论：质量优势有没有留下回报空间" class="headerlink" title="三、先看估值结论：质量优势有没有留下回报空间"></a>三、先看估值结论：质量优势有没有留下回报空间</h2><p>下面的“条件价值”是把某一情景下未来股息按11%折回2026年9月2日的结果。在同一现金与退出估值假设下，它也等于达到11%要求回报的理论买价。由于治理尚待核实，表中价格仅作财务计算，不直接称为建议买入价。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>9月2日价格</th>
+<th>Bear价值</th>
+<th>Base价值</th>
+<th>Bull价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>8.22</td>
+<td>1.38</td>
+<td>4.18</td>
+<td>7.00</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>7.06</td>
+<td>1.24</td>
+<td>4.05</td>
+<td>7.06</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>11.14</td>
+<td>2.01</td>
+<td>6.06</td>
+<td>9.93</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>7.43</td>
+<td>0.92</td>
+<td>4.55</td>
+<td>8.73</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>5.56</td>
+<td>0.19</td>
+<td>2.94</td>
+<td>6.62</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>6.68</td>
+<td>0.80</td>
+<td>2.95</td>
+<td>5.16</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>40.87</td>
+<td>11.75</td>
+<td>30.26</td>
+<td>46.68</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>11.91</td>
+<td>2.79</td>
+<td>10.11</td>
+<td>16.73</td>
+</tr>
+</tbody></table>
+<p>单位：人民币元&#x2F;股。市场价采用9月2日A股收盘价，来源为文末逐行列出的价格查询；三种条件价值来自配套模型。两位小数用于核对，不代表估值具有分位精度。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:480px" role="img" aria-label="条件价值相当于市价的多少"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"条件价值相当于市价的多少","subtext":"2026-09-02；比值越高，价格条件越宽松","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"data":["Bear","Base","Bull"]},"grid":{"top":108,"bottom":40,"left":15,"right":22,"containLabel":true},"xAxis":{"type":"value","min":0,"max":1.5,"name":"倍","nameLocation":"middle","nameGap":23},"yAxis":{"type":"category","inverse":true,"data":["工商","农业","建设","交通","邮储","中国","招商","平安"]},"series":[{"name":"Bear","type":"bar","itemStyle":{"color":"#c15b5b"},"data":[0.1673,0.176,0.1805,0.1239,0.035,0.1205,0.2875,0.2347]},{"name":"Base","type":"bar","itemStyle":{"color":"#386cb0"},"data":[0.5089,0.5733,0.5442,0.6124,0.5283,0.4411,0.7403,0.8492],"markLine":{"symbol":"none","silent":true,"label":{"formatter":"市价 1倍","position":"start","fontSize":10,"rotate":0,"distance":6},"lineStyle":{"color":"#666"},"data":[{"xAxis":1}]}},{"name":"Bull","type":"bar","itemStyle":{"color":"#2a916f"},"data":[0.8512,1,0.891,1.1744,1.1913,0.7724,1.1423,1.4045]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<p>图中柱体是各情景价值&#x2F;基准市价；虚线表示两者相等。数据截止2026年9月2日，来源与上表一致。各行Base柱都在1倍左侧，表示按既定现金政策，它们无法从该日市价提供11%的模型回报。</p>
+<p>这项判断同时依赖经营预测、11%的要求回报和长期派息政策。后面会看到，单独放宽未来派息上限，就能显著提高估值。因此“Base低于市价”不能直接推导成“股价一定下跌”；市场可能采用更低要求回报、更强经营预期或更积极的资本返还政策。</p>
+<h2 id="四、48项质量评分，逐项是怎样算出来的"><a href="#四、48项质量评分，逐项是怎样算出来的" class="headerlink" title="四、48项质量评分，逐项是怎样算出来的"></a>四、48项质量评分，逐项是怎样算出来的</h2><p>每项先说明想测什么，再列原始指标与八行位置，最后计算得分。NPL指不良贷款，bp指基点，1bp&#x3D;0.01个百分点。分数不直接决定折现率或PB倍数。较宽的数值表可左右滚动，银行名称保留在第一列。</p>
+<h3 id="六个维度分别想测什么"><a href="#六个维度分别想测什么" class="headerlink" title="六个维度分别想测什么"></a>六个维度分别想测什么</h3><p>银行质量应回答一个经营问题：一家银行能否长期以合理成本获得稳定资金，将资金投向损失可控的资产，并把扣除风险成本后的利润转化为普通股股东的收益。规模、某一年利润或某一项比率，都只覆盖这条链的一部分。</p>
+<p>本文按这条经营链分六个维度。权重是研究者的判断：负债和风险各占25%，因为资金成本和信用损失直接影响银行的基本生存与盈利；客户生态和资本效率各占15%；经常性非息和治理各占10%。这些权重没有经过统计拟合，也不能证明是唯一正确的配置。</p>
+<table>
+<thead>
+<tr>
+<th>维度与权重</th>
+<th>希望测量的经济能力</th>
+<th>本文实际采用的代理</th>
+<th>代理遗漏了什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>负债25%</td>
+<td>低成本、稳定、可重复获取的客户资金</td>
+<td>2026H1存款成本、存款占负债比例</td>
+<td>存款留存、代理费、账户服务全成本、压力下流失</td>
+</tr>
+<tr>
+<td>风险25%</td>
+<td>完整周期内识别、定价和处置信用风险</td>
+<td>2016—2025年不良率最高值及波动</td>
+<td>核销掩盖、风险分类差异、未暴露和表外损失</td>
+</tr>
+<tr>
+<td>生态15%</td>
+<td>客户关系带来交叉服务和较低获客成本</td>
+<td>历史净手续费&#x2F;营业收入中位数</td>
+<td>客户活跃、留存、获客成本及分客户盈利</td>
+</tr>
+<tr>
+<td>非息10%</td>
+<td>可重复、可持续的收费收入</td>
+<td>同一历史净手续费占比</td>
+<td>经常性与一次性收入区分、收费率和市场周期</td>
+</tr>
+<tr>
+<td>资本15%</td>
+<td>盈利产生资本并支持有价值的增长</td>
+<td>Base正常化ROE、2026年末模型CET1余量</td>
+<td>ROA及杠杆分解、压力下真实资本可用性</td>
+</tr>
+<tr>
+<td>治理10%</td>
+<td>资本配置、约束关联风险和保护股东</td>
+<td>50分中性先验</td>
+<td>尚无足够可比证据给出差异化分数</td>
+</tr>
+</tbody></table>
+<p>因此，应把分数读作“在明确代理与假设下得到的比较摘要”。例如，历史不良率低支持已确认风险较低，却不能直接证明风险文化优秀；手续费占比高支持收费业务较多，却不能直接证明客户留存高。</p>
+<p><strong>评分与估值分工不同。</strong> 评分帮助检查经营机制；估值沿利润、资本与现金支付计算。当前模型没有把综合质量分直接映射为PB倍数或折现率。因此，“质量分多10分，所以股价上调20%”在本文中没有依据。</p>
+<h3 id="统一计算顺序：原始指标-→-八行位置-→-收缩得分-→-加权贡献"><a href="#统一计算顺序：原始指标-→-八行位置-→-收缩得分-→-加权贡献" class="headerlink" title="统一计算顺序：原始指标 → 八行位置 → 收缩得分 → 加权贡献"></a>统一计算顺序：原始指标 → 八行位置 → 收缩得分 → 加权贡献</h3><p><strong>第一步，统一比较样本。</strong> 工商、农业、建设、交通、邮储、中国、招商、平安八家共同构成一个评分样本，所有非治理代理均取n&#x3D;8。组织类型作为背景属性，不作为分开排名的边界。历史披露覆盖2016—2025十个完整年度；负债代理取2026H1；资本代理取当前Base预测。辅助研究采集的其他银行不进入本文这八家主体的评分。</p>
+<p>统一比较样本不代表会计、风险和业务结构完全同质。邮储代理费用、中行币种结构、零售与对公占比等差异，仍须分别分析其对经营的影响。</p>
+<p><strong>第二步，把不同单位的指标转成0—100的样本内位置。</strong> 对越高越好的指标，设L为八行中严格低于本行的银行数，E为与本行相等的银行数（含本行），n为样本内银行数，此处固定为8。</p>
+<ul>
+<li>负债采用中点位置：<code>M = 100 × (L + E/2) / n</code>。</li>
+<li>其余非治理代理采用端点位置：<code>R = 100 × [L + (E−1)/2] / (n−1)</code>。</li>
+<li>对越低越好的存款成本、不良率峰值和不良率波动，使用<code>100−M</code>或<code>100−R</code>；两个指标组成一个维度时，取两个位置分的简单平均。</li>
+</ul>
+<p>无并列时，八行的M可取6.25、18.75、31.25、43.75、56.25、68.75、81.25、93.75；R可取0、14.29、28.57、42.86、57.14、71.43、85.71、100。并列按平均位置处理。M将观察值放在每档的中点，R将样本最低与最高位置放在两端。两种刻度属于模型约定；每一个指标对八家银行使用相同公式。排名仍然只反映样本内位置，不能代替绝对经济质量。</p>
+<p><strong>第三步，对证据不足进行收缩。</strong> 记原始代理分为q，证据使用权重为λ，中性先验为50：</p>
+<p><code>维度得分 S = 50 + λ × (q−50)</code></p>
+<p>前五个维度均取λ&#x3D;0.5，所以q&#x3D;0、40、60、100分别变为S&#x3D;25、45、55、75。治理取λ&#x3D;0，八行统一为50。λ&#x3D;0.5是研究折中，表示只采用一半代理差异；它不是“该指标有50%概率正确”，也不是通过历史回测估计的系数。</p>
+<p><strong>第四步，计算综合分。</strong> 将六个S分别乘25%、25%、15%、10%、15%、10%后相加。所有计算先用未四舍五入值，最后才显示小数。±25分、限制在0—100的区间也是假设范围，不是统计置信区间；各维度相关，不能当成独立误差求一个很窄的总分区间。</p>
+<p>下面给出八家银行每项分数的中间计算。银行没有披露这些质量评分；48项原始指标、位置分与贡献分均可在文末计算附件中核对。</p>
+<h3 id="负债分：低利息成本与较高客户存款占比各占一半"><a href="#负债分：低利息成本与较高客户存款占比各占一半" class="headerlink" title="负债分：低利息成本与较高客户存款占比各占一半"></a>负债分：低利息成本与较高客户存款占比各占一半</h3><p>存款成本越低，通常越有利于息差；客户存款占负债比例越高，通常越少依赖批发融资。先分别比较两项，再等权合成q，最后收缩。表中的“成本位置”已经反向处理，越高表示成本越低。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>存款成本</th>
+<th>存款&#x2F;负债</th>
+<th>成本位置M</th>
+<th>存款占比位置M</th>
+<th>原始q</th>
+<th>S&#x3D;25+q&#x2F;2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>1.15%</td>
+<td>74.31%</td>
+<td>43.75</td>
+<td>68.75</td>
+<td>56.25</td>
+<td>53.12</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>1.13%</td>
+<td>71.35%</td>
+<td>56.25</td>
+<td>31.25</td>
+<td>43.75</td>
+<td>46.88</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>1.11%</td>
+<td>73.16%</td>
+<td>68.75</td>
+<td>56.25</td>
+<td>62.50</td>
+<td>56.25</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>1.49%</td>
+<td>66.30%</td>
+<td>6.25</td>
+<td>6.25</td>
+<td>6.25</td>
+<td>28.12</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>0.98%</td>
+<td>93.67%</td>
+<td>81.25</td>
+<td>93.75</td>
+<td>87.50</td>
+<td>68.75</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>1.40%</td>
+<td>72.61%</td>
+<td>18.75</td>
+<td>43.75</td>
+<td>31.25</td>
+<td>40.62</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>0.97%</td>
+<td>82.37%</td>
+<td>93.75</td>
+<td>81.25</td>
+<td>87.50</td>
+<td>68.75</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>1.38%</td>
+<td>67.55%</td>
+<td>31.25</td>
+<td>18.75</td>
+<td>25.00</td>
+<td>37.50</td>
+</tr>
+</tbody></table>
+<p>以工行为例：其存款成本在八行中优于三家，成本位置为<code>100×(3+0.5)/8=43.75</code>；存款占比高于五家，位置为<code>100×(5+0.5)/8=68.75</code>。所以q&#x3D;(43.75+68.75)&#x2F;2&#x3D;56.25，S&#x3D;25+56.25&#x2F;2&#x3D;53.125，最终贡献53.125×25%&#x3D;13.28125分。</p>
+<p>邮储和招行均得68.75分：邮储存款占比居首、利息成本次低，招行利息成本最低、存款占比次高，两个位置等权平均后相同。代理费未被加回邮储存款利息成本，该同分也不能证明两家资金全成本和存款稳定性相同。平安37.50分来自八行中两项指标的相对位置。</p>
+<h3 id="风险分：同时看不良率的高点与波动"><a href="#风险分：同时看不良率的高点与波动" class="headerlink" title="风险分：同时看不良率的高点与波动"></a>风险分：同时看不良率的高点与波动</h3><p>对每家银行取2016—2025年的十个年度不良率x。峰值为<code>max(x)</code>；波动为总体标准差<code>σ=√[Σ(x−均值)²/10]</code>。这里用总体标准差描述这十年，没有据此推断未来损失分布。峰值低、波动小分别获得较高位置分，再等权平均。</p>
+<p>不良率是不良贷款余额&#x2F;贷款余额，是存量指标；信用成本是当期减值&#x2F;平均贷款，是利润表流量。二者不能替换。低不良率可能受新增贷款摊薄、核销处置或分类政策影响。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>十年不良率峰值</th>
+<th>波动σ（bp）</th>
+<th>低峰值位置R</th>
+<th>低波动位置R</th>
+<th>原始q</th>
+<th>最终S</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>1.62%</td>
+<td>10.33</td>
+<td>57.14</td>
+<td>57.14</td>
+<td>57.14</td>
+<td>53.57</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>2.37%</td>
+<td>31.63</td>
+<td>0.00</td>
+<td>14.29</td>
+<td>7.14</td>
+<td>28.57</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>1.56%</td>
+<td>7.63</td>
+<td>71.43</td>
+<td>85.71</td>
+<td>78.57</td>
+<td>64.29</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>1.67%</td>
+<td>11.48</td>
+<td>42.86</td>
+<td>42.86</td>
+<td>42.86</td>
+<td>46.43</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>0.95%</td>
+<td>5.00</td>
+<td>100.00</td>
+<td>100.00</td>
+<td>100.00</td>
+<td>75.00</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>1.46%</td>
+<td>8.44</td>
+<td>85.71</td>
+<td>71.43</td>
+<td>78.57</td>
+<td>64.29</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>1.87%</td>
+<td>31.47</td>
+<td>14.29</td>
+<td>28.57</td>
+<td>21.43</td>
+<td>35.71</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>1.75%</td>
+<td>31.70</td>
+<td>28.57</td>
+<td>0.00</td>
+<td>14.29</td>
+<td>32.14</td>
+</tr>
+</tbody></table>
+<p>1bp&#x3D;0.01个百分点。工行两项位置均为57.14，故q&#x3D;57.14、S&#x3D;53.57；建行两项为71.43和85.71，中行恰好相反，两家均得64.29。招行两项位置为14.29和28.57，得到35.71；平安为28.57和0，得到32.14。这些位置衡量十年历史不良率的峰值与波动，仍需结合零售与对公结构、核销处置和风险分类理解。</p>
+<p>农行约28.57分只表示该十年样本内历史峰值与波动相对较高；邮储75分也只表示这两项相对较低。要把它们升级为风险文化结论，还需同口径净风险生成、核销后损失、逾期迁徙、抵押品回收及新投放批次表现。</p>
+<h3 id="生态分与非息分：同一代理为什么得到了两个分数"><a href="#生态分与非息分：同一代理为什么得到了两个分数" class="headerlink" title="生态分与非息分：同一代理为什么得到了两个分数"></a>生态分与非息分：同一代理为什么得到了两个分数</h3><p>先逐年计算<code>净手续费占比=净手续费及佣金收入/营业收入</code>，再取2016—2025十个年度的中位数。中位数比单一年份更少受异常高低值影响，但不是“经常性收入已被净化”的证明，也不是十年收入加总后的比例。</p>
+<p>在八行中占比越高，R越高。本文客户生态和经常性非息两个维度使用同一个q，因此两项S相同。其经济解释分别是客户服务的收费变现和收入结构，但证据本身没有变成两份。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>十年净手续费占比中位数</th>
+<th>八行R&#x3D;q</th>
+<th>生态S</th>
+<th>非息S</th>
+<th>生态贡献15%</th>
+<th>非息贡献10%</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>14.51%</td>
+<td>42.86</td>
+<td>46.43</td>
+<td>46.43</td>
+<td>6.96</td>
+<td>4.64</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>11.84%</td>
+<td>14.29</td>
+<td>32.14</td>
+<td>32.14</td>
+<td>4.82</td>
+<td>3.21</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>15.10%</td>
+<td>57.14</td>
+<td>53.57</td>
+<td>53.57</td>
+<td>8.04</td>
+<td>5.36</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>17.99%</td>
+<td>71.43</td>
+<td>60.71</td>
+<td>60.71</td>
+<td>9.11</td>
+<td>6.07</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>6.54%</td>
+<td>0.00</td>
+<td>25.00</td>
+<td>25.00</td>
+<td>3.75</td>
+<td>2.50</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>13.40%</td>
+<td>28.57</td>
+<td>39.29</td>
+<td>39.29</td>
+<td>5.89</td>
+<td>3.93</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>27.04%</td>
+<td>100.00</td>
+<td>75.00</td>
+<td>75.00</td>
+<td>11.25</td>
+<td>7.50</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>22.69%</td>
+<td>85.71</td>
+<td>67.86</td>
+<td>67.86</td>
+<td>10.18</td>
+<td>6.79</td>
+</tr>
+</tbody></table>
+<p>例如工行占比中位数14.51%，在八行中高于三家，所以R&#x3D;100×3&#x2F;7&#x3D;42.86，两个维度均得46.43；分别贡献6.96和4.64分。招行27.04%为八行最高，平安22.69%为第二，位置分分别100和85.71，收缩后为75和67.86。这一代理支持平安具有相对较高的收费业务占比；收费的稳定性与客户留存能力还需要独立证据。</p>
+<p><strong>重复计分的实质：手续费占比实际影响了综合分的25%。</strong> 因此两个高分不能被叙述成客户生态和收入稳定性两项互相独立的强证据。没有客户留存及经常性收费拆分时，本文明确这一限制，质量结论不按总分机械排序。</p>
+<h3 id="资本分：预测盈利能力与模型余量各占一半"><a href="#资本分：预测盈利能力与模型余量各占一半" class="headerlink" title="资本分：预测盈利能力与模型余量各占一半"></a>资本分：预测盈利能力与模型余量各占一半</h3><p>第一项为Base的正常化普通股ROE：取2034—2036三年会计普通股ROE的算术均值。会计ROE分母是平均会计普通股权益，包括权益内待付股息准备；不能混用扣除准备后的资本可用权益。</p>
+<p>第二项为<code>Base 2026年末CET1比例−同年研究经营目标</code>，不是2036年末比例，不是全预测期的最小余量，也不是高于法定最低资本要求的余额。CET1指核心一级资本；其比例的分母是风险加权资产RWA。研究经营目标是本模型采用的约束值，不应写成统一监管最低线。</p>
+<p>两项越高，八行位置R越高；两个R等权平均得q，再收缩得S。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2026年末CET1</th>
+<th>研究经营目标</th>
+<th>差额（bp）</th>
+<th>Base正常化ROE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>13.210854%</td>
+<td>13.210000%</td>
+<td>0.085385</td>
+<td>8.4636%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>10.802116%</td>
+<td>10.801405%</td>
+<td>0.071043</td>
+<td>9.8334%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>14.243113%</td>
+<td>14.240759%</td>
+<td>0.235383</td>
+<td>9.4808%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>11.251032%</td>
+<td>11.250000%</td>
+<td>0.103170</td>
+<td>7.7024%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>10.040336%</td>
+<td>10.040000%</td>
+<td>0.033584</td>
+<td>7.7506%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>12.042098%</td>
+<td>12.040000%</td>
+<td>0.209753</td>
+<td>7.5722%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>14.070770%</td>
+<td>14.070000%</td>
+<td>0.076953</td>
+<td>10.6652%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>9.320684%</td>
+<td>9.320000%</td>
+<td>0.068355</td>
+<td>9.4130%</td>
+</tr>
+</tbody></table>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>正常化ROE位置R</th>
+<th>2026余量位置R</th>
+<th>原始q</th>
+<th>最终S</th>
+<th>加权贡献15%</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>42.86</td>
+<td>57.14</td>
+<td>50.00</td>
+<td>50.00</td>
+<td>7.50</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>85.71</td>
+<td>28.57</td>
+<td>57.14</td>
+<td>53.57</td>
+<td>8.04</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>71.43</td>
+<td>100.00</td>
+<td>85.71</td>
+<td>67.86</td>
+<td>10.18</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>14.29</td>
+<td>71.43</td>
+<td>42.86</td>
+<td>46.43</td>
+<td>6.96</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>28.57</td>
+<td>0.00</td>
+<td>14.29</td>
+<td>32.14</td>
+<td>4.82</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>0.00</td>
+<td>85.71</td>
+<td>42.86</td>
+<td>46.43</td>
+<td>6.96</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>100.00</td>
+<td>42.86</td>
+<td>71.43</td>
+<td>60.71</td>
+<td>9.11</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>57.14</td>
+<td>14.29</td>
+<td>35.71</td>
+<td>42.86</td>
+<td>6.43</td>
+</tr>
+</tbody></table>
+<p>工行正常化ROE为8.4636%，八行位置42.86；2026年末模型余量约0.085385bp，位置57.14；所以q&#x3D;50，S&#x3D;50。农行两项为85.71和28.57，得53.57；建行为71.43和100，得67.86。招行两项为100和42.86，得60.71；平安为57.14和14.29，得42.86。</p>
+<p><strong>此项能够复算，但经济区分度薄弱。</strong> 八行2026余量仅约0.034—0.235bp，反映约束求解后贴近研究目标的程度。这远小于常见财务比率显示精度和预测不确定性；将这种微小差额排序，会把数值求解位置放大成明显的质量分差。表中多位小数仅用于核对计算，不表示资本安全性可如此精确测量。因此，本项不宜被用来宣称某行具有显著更强的资本韧性。更可靠的资本比较需要跨期资本生成、统一压力损失、可分配性和摊薄分析。</p>
+<p>正常化ROE又来自未来预测，因此分数会受模型假设影响。不能先用乐观预测抬高ROE，再用提高后的资本分证明该乐观预测可靠。</p>
+<h3 id="治理分：八家都是50分，原因是采用同一先验"><a href="#治理分：八家都是50分，原因是采用同一先验" class="headerlink" title="治理分：八家都是50分，原因是采用同一先验"></a>治理分：八家都是50分，原因是采用同一先验</h3><p>工商、农业、建设、交通、邮储、中国、招商、平安均采用<code>S=50+0×(50−50)=50</code>，各自对总分贡献<code>50×10%=5</code>分。</p>
+<p>这是缺少足够可比证据时不作差异化判断，并非认定八家治理都“合格”“一般”或彼此相同。治理维度在当前样本中对排序没有贡献，却会把综合分向中间拉近。它的25—75假设范围也不表示已有证据证明真实治理分落在其中。关联交易、资本上划、少数股东保护、增发与回购等问题仍应按事实逐项审查。</p>
+<h3 id="把六项贡献加起来：每家综合分的算术来源"><a href="#把六项贡献加起来：每家综合分的算术来源" class="headerlink" title="把六项贡献加起来：每家综合分的算术来源"></a>把六项贡献加起来：每家综合分的算术来源</h3><p>下表展示的是“已乘权重的贡献分”，不是前面0—100的维度分。先对全精度数值求和，最后四舍五入。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>负债贡献</th>
+<th>风险贡献</th>
+<th>生态贡献</th>
+<th>非息贡献</th>
+<th>资本贡献</th>
+<th>治理贡献</th>
+<th>综合分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>13.28</td>
+<td>13.39</td>
+<td>6.96</td>
+<td>4.64</td>
+<td>7.50</td>
+<td>5.00</td>
+<td>50.78</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>11.72</td>
+<td>7.14</td>
+<td>4.82</td>
+<td>3.21</td>
+<td>8.04</td>
+<td>5.00</td>
+<td>39.93</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>14.06</td>
+<td>16.07</td>
+<td>8.04</td>
+<td>5.36</td>
+<td>10.18</td>
+<td>5.00</td>
+<td>58.71</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>7.03</td>
+<td>11.61</td>
+<td>9.11</td>
+<td>6.07</td>
+<td>6.96</td>
+<td>5.00</td>
+<td>45.78</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>17.19</td>
+<td>18.75</td>
+<td>3.75</td>
+<td>2.50</td>
+<td>4.82</td>
+<td>5.00</td>
+<td>52.01</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>10.16</td>
+<td>16.07</td>
+<td>5.89</td>
+<td>3.93</td>
+<td>6.96</td>
+<td>5.00</td>
+<td>48.01</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>17.19</td>
+<td>8.93</td>
+<td>11.25</td>
+<td>7.50</td>
+<td>9.11</td>
+<td>5.00</td>
+<td>58.97</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>9.38</td>
+<td>8.04</td>
+<td>10.18</td>
+<td>6.79</td>
+<td>6.43</td>
+<td>5.00</td>
+<td>45.80</td>
+</tr>
+</tbody></table>
+<p>工行示例：<code>53.125×25% + 53.571429×25% + 46.428571×15% + 46.428571×10% + 50×15% + 50×10% = 50.78125</code>，上表显示50.78。邮储的负债、历史不良代理贡献较高，但代理费用和增量风险未充分进入分数；农行分数受历史不良高点影响，却仍可能存在有价值的县域机会。因此评分与经营判断出现差异，需要回到代理指标的适用范围解释。</p>
+<p>八家银行的每项分数均可回到同一评分样本的原始值核对。招行综合约58.97分，建行约58.71分，差距不足0.3分；这个差距不足以支持精确的质量名次。招行的负债与手续费代理较强，建行的历史不良与资本代理较高，两者得分的来源不同。</p>
+<p>平安的手续费占比在八行中位居第二，生态与非息各得67.86分；负债37.50分、风险32.14分则反映另外两项经营约束。综合约45.80分应理解为不同代理共同作用的结果，不能用一个总分替代逐项判断。</p>
+<p>资本分的数值问题也不应被收缩公式掩盖。将0.034—0.235bp的微小余量排成0—100的位置，再收缩到25—75，仍会放大缺乏经济意义的差异。关于资本实力的实质判断应回到压力后的资本和可分配现金。</p>
+<h2 id="五、估值的第一步：把业务假设落实为利润和资本"><a href="#五、估值的第一步：把业务假设落实为利润和资本" class="headerlink" title="五、估值的第一步：把业务假设落实为利润和资本"></a>五、估值的第一步：把业务假设落实为利润和资本</h2><h3 id="历史息差给预测设置了什么约束"><a href="#历史息差给预测设置了什么约束" class="headerlink" title="历史息差给预测设置了什么约束"></a>历史息差给预测设置了什么约束</h3><p>下面取2021—2025五个完整年度。NIM采用历史表中的已披露口径；表中历史数据与2026H1的半年口径分别列示，避免把半年流量直接与全年相加比较。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2021A</th>
+<th>2022A</th>
+<th>2023A</th>
+<th>2024A</th>
+<th>2025A</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>2.11%</td>
+<td>1.92%</td>
+<td>1.61%</td>
+<td>1.42%</td>
+<td>1.28%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>2.12%</td>
+<td>1.90%</td>
+<td>1.60%</td>
+<td>1.42%</td>
+<td>1.28%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>2.13%</td>
+<td>2.02%</td>
+<td>1.70%</td>
+<td>1.51%</td>
+<td>1.34%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>1.56%</td>
+<td>1.48%</td>
+<td>1.28%</td>
+<td>1.27%</td>
+<td>1.20%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>2.36%</td>
+<td>2.20%</td>
+<td>2.01%</td>
+<td>1.87%</td>
+<td>1.66%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>1.75%</td>
+<td>1.76%</td>
+<td>1.59%</td>
+<td>1.40%</td>
+<td>1.26%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>2.48%</td>
+<td>2.40%</td>
+<td>2.15%</td>
+<td>1.98%</td>
+<td>1.87%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>2.79%</td>
+<td>2.75%</td>
+<td>2.38%</td>
+<td>1.87%</td>
+<td>1.78%</td>
+</tr>
+</tbody></table>
+<p>单位：净息差百分比，来源为各行相应年度报告，完整历史值与来源标识见附件。持续收窄的息差说明，银行需要更多资产、更低资金成本、更高收费，或更低信用损失才能维持利润；规模增长本身不足以保证ROE回升。</p>
+<p>ROE是普通股利润除以平均普通股权益。利润分子、平均余额和期间一致时，可以写成“ROE&#x3D;资产回报率ROA×平均资产&#x2F;平均权益”。高杠杆可以提高ROE，也会放大损失对股东资本的冲击，所以不能只挑ROE最高的一家。</p>
+<h3 id="三情景先改变经营变量，再计算利润"><a href="#三情景先改变经营变量，再计算利润" class="headerlink" title="三情景先改变经营变量，再计算利润"></a>三情景先改变经营变量，再计算利润</h3><p>每一年先设贷款、投资、存款和融资的期初与目标余额，再设相应收益率、资金成本、手续费、费用、信用成本、税率及资本目标。资本约束会调整可实现规模，目标增长不等于最终实际增长。2026只对H2预测，期间长度为184&#x2F;365年，2027年起按全年计算。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">贷款利息 ≈ 平均贷款 × 年化收益率 × 期间长度</span><br><span class="line">净利息收入 = 贷款、投资等利息收入 − 存款、其他融资等利息支出</span><br><span class="line">营业收入 = 净利息收入 + 净手续费 + 其他经营收入</span><br><span class="line">拨备前利润 = 营业收入 − 经营费用</span><br><span class="line">税前利润 = 拨备前利润 − 贷款及非贷款减值 + 非经营净收入</span><br><span class="line">普通股利润 = 税前利润 − 所得税 − 少数股东利润 − 非普通股分配</span><br><span class="line">每股利润EPS = 普通股利润 ÷ 普通股股数</span><br></pre></td></tr></table></figure>
+
+<p>平均余额通常由期初和期末余额计算，模型还包含投资计息口径与其他生息资产调整。贷款减值近似为“平均贷款×信用成本×期间长度”。不良率是存量比例，信用成本是本期损失对利润的消耗，不能互相替代。NIM已经是利息收支的汇总结果，也不能在上述计算之外再加一次息差收益。</p>
+<p>以工行2036年输入为例，三情景的经营组合如下。这里是2036年的端点，其他年度在附件中逐年列出，不能用两端线性插值替代。</p>
+<table>
+<thead>
+<tr>
+<th>情景</th>
+<th>贷款收益率</th>
+<th>存款成本</th>
+<th>信用成本</th>
+<th>派息上限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bear</td>
+<td>2.34%</td>
+<td>1.05%</td>
+<td>1.00%</td>
+<td>26.00%</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>2.54%</td>
+<td>1.00%</td>
+<td>0.75%</td>
+<td>31.00%</td>
+</tr>
+<tr>
+<td>Bull</td>
+<td>2.74%</td>
+<td>1.05%</td>
+<td>0.60%</td>
+<td>31.00%</td>
+</tr>
+</tbody></table>
+<p>Bull的存款成本不必比Base更低：更强的经济活动也可能伴随更高资金价格，必须看贷款定价、损失和资金成本的净影响。把乐观情景写成每个变量都朝有利方向变化，会缺少经济约束。</p>
+<h3 id="资本决定扩张和分红能否同时实现"><a href="#资本决定扩张和分红能否同时实现" class="headerlink" title="资本决定扩张和分红能否同时实现"></a>资本决定扩张和分红能否同时实现</h3><p>CET1是核心一级资本，RWA是风险加权资产；模型要求CET1&#x2F;RWA不低于各行的研究经营目标。该目标是情景约束，不是全行业统一监管最低线，也不是银行持有现金的比例。</p>
+<p>贷款扩张会占用资金与资本。模型先寻找资产规模、存款、批发融资、流动性和派息的可行组合；不满足条件时降低增长或派息，必要时允许政策限度内的自然收缩。它没有用未说明的外部资本把差额填平。Bear年份的极低股息，是这条约束作用后的结果。</p>
+<p>用简化情形理解：若没有增发、其他综合收益OCI或其他权益变动，且每元权益获得ROE的收益，派出利润的比例为p，那么权益增长率约为<code>g=(1−p)×ROE</code>。ROE为10%、派息30%时，留存利润支持的权益增长约为7%。若要长期增长10%，就必须解释额外资本或更高盈利能力从哪里来。</p>
+<p>这个关系帮助检查逻辑，实际模型仍逐年计算，未用一条增长公式取代全部资产负债预测。OCI指不经过当期利润、直接影响权益的部分损益，例如某些金融资产的公允价值变动；忽略它会使会计权益与监管资本无法对齐。</p>
+<h3 id="工行Base：从下半年收入走到全年普通股利润"><a href="#工行Base：从下半年收入走到全年普通股利润" class="headerlink" title="工行Base：从下半年收入走到全年普通股利润"></a>工行Base：从下半年收入走到全年普通股利润</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>金额（亿元）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>H2净利息收入</td>
+<td>3,403.87</td>
+</tr>
+<tr>
+<td>加：H2净手续费</td>
+<td>450.34</td>
+</tr>
+<tr>
+<td>加：H2市场相关及其他业务收入</td>
+<td>478.14</td>
+</tr>
+<tr>
+<td>等于：H2营业收入</td>
+<td>4,332.34</td>
+</tr>
+<tr>
+<td>减：H2经营费用</td>
+<td>1,347.66</td>
+</tr>
+<tr>
+<td>减：H2贷款减值</td>
+<td>1,407.03</td>
+</tr>
+<tr>
+<td>减：H2非贷款及其他减值</td>
+<td>49.95</td>
+</tr>
+<tr>
+<td>等于：H2税前利润</td>
+<td>1,527.70</td>
+</tr>
+<tr>
+<td>减：H2所得税</td>
+<td>237.91</td>
+</tr>
+<tr>
+<td>减：H2少数股东利润</td>
+<td>20.41</td>
+</tr>
+<tr>
+<td>减：H2非普通股分配</td>
+<td>44.87</td>
+</tr>
+<tr>
+<td>等于：H2普通股利润</td>
+<td>1,224.51</td>
+</tr>
+<tr>
+<td>加：H1已实现普通股利润</td>
+<td>1,692.68</td>
+</tr>
+<tr>
+<td>等于：2026全年普通股利润</td>
+<td>2,917.19</td>
+</tr>
+<tr>
+<td>乘派息比例后：2026利润年确认股息</td>
+<td>904.21</td>
+</tr>
+</tbody></table>
+<p>单位：人民币亿元。2026H2为预测，H1普通股利润为所采用实际起点；分项显示值经过四舍五入，相加可能有0.01亿元尾差。2026全年普通股利润2,917.19亿元，除以约3,564.06亿普通股，EPS约0.819元。所有银行均使用同一普通股口径，不把集团净利润或归母净利润直接当成普通股可分配利润。</p>
+<h3 id="八家银行的增长从哪里来"><a href="#八家银行的增长从哪里来" class="headerlink" title="八家银行的增长从哪里来"></a>八家银行的增长从哪里来</h3><div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2026E普通股利润</th>
+<th>2036E普通股利润</th>
+<th>利润CAGR</th>
+<th>2036E ROE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>2,917.19</td>
+<td>5,940.77</td>
+<td>7.37%</td>
+<td>8.55%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>2,587.48</td>
+<td>5,517.50</td>
+<td>7.87%</td>
+<td>9.87%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>3,003.76</td>
+<td>6,506.08</td>
+<td>8.04%</td>
+<td>9.55%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>818.51</td>
+<td>1,507.10</td>
+<td>6.29%</td>
+<td>7.79%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>755.05</td>
+<td>1,347.81</td>
+<td>5.97%</td>
+<td>7.93%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>2,076.32</td>
+<td>3,519.07</td>
+<td>5.42%</td>
+<td>7.59%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>1,438.55</td>
+<td>2,586.18</td>
+<td>6.04%</td>
+<td>10.53%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>424.23</td>
+<td>850.73</td>
+<td>7.21%</td>
+<td>9.46%</td>
+</tr>
+</tbody></table>
+<p>单位：利润为亿元；CAGR为2026—2036十年复合年增长率，ROE使用平均会计普通股权益。来源为配套三情景模型的Base。十年CAGR只概括两个端点，2026部分银行基数偏低，不能理解为每年均匀增长。</p>
+<p>建行、农行的模型利润增长较快；招行更突出的特点是客户与收费结构，增长率并非最高。中行、邮储的模型利润增长相对较慢。既定预测采用各行固定股数，若发生再融资，必须同时更新利润、资本与股数，不能只增加总利润而漏掉每股摊薄。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>增长机制</th>
+<th>验证重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2026—2028年</td>
+<td>存贷款重定价、信用风险处置、费用调整</td>
+<td>息差企稳是否靠可持续资金成本改善；减值下降是否来自真实风险改善</td>
+</tr>
+<tr>
+<td>2029—2031年</td>
+<td>县域、结算、财富和跨境服务带来客户收入</td>
+<td>业务量增长是否增加净收费和风险调整后利润</td>
+</tr>
+<tr>
+<td>2032—2036年</td>
+<td>成熟经营中的资本积累与现金分配</td>
+<td>资本是否获得足够回报，留存利润能否转化为股息</td>
+</tr>
+</tbody></table>
+<p>下列八图展示2021—2025历史普通股利润和2026—2036三情景预测。灰线历史口径中，部分普通股利润经过估计，标为A*；A*表示历史所属年度，不能把其中全部数据当作未经调整的银行披露值。彩色预测线从2025年同一起点衔接。单位为亿元，来源为年度报告、配套历史口径表与三情景模型，信息截止2026年9月2日。</p>
+<p>前五年逐年贷款规模、贷款收益率、存款成本、信用成本、收入、普通股利润、EPS、现金股息及年末价值，集中列在文末“逐年预测说明”附件；计算包保留2026—2036全部年度。图中机会解释不另外叠加利润。</p>
+<h3 id="工商银行"><a href="#工商银行" class="headerlink" title="工商银行"></a>工商银行</h3><p>结算与现金管理增加客户资金沉淀，制造业和绿色转型带来融资需求；关键是全成本后的收益能够覆盖信用与资本成本。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="工商银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"工商银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[3387.31,3456.73,3490.29,3508.32,3534.2,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,3534.2,2261.59,1524.22,1640.79,1744.62,1850.57,1958.08,2066.04,2173.87,2270.63,2324.49,2344.81]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,3534.2,2917.19,2875.27,3161.43,3461.26,3773.12,4097.82,4434.76,4786.48,5155.03,5539.98,5940.77]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,3534.2,3353.61,3864.06,4335.5,4853,5415.07,6023.94,6680.51,7385.78,8140.48,8945.05,9799.53]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="农业银行"><a href="#农业银行" class="headerlink" title="农业银行"></a>农业银行</h3><p>县域与普惠覆盖提供新增业务，需观察新增贷款批次风险。资产增长若快于风险调整后利润，扩张不应自动得到更高估值。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="农业银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"农业银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[2273.85,2419.01,2532.93,2628,2739.56,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,2739.56,1954.4,1329.35,1410.75,1483.1,1557.02,1633.3,1710.54,1787.7,1865,1942.71,2021.13]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,2739.56,2587.48,2652.85,2903.89,3172.17,3457.48,3760.12,4079.56,4415.35,4767.22,5134.78,5517.5]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,2739.56,3056.04,3722.68,4182.05,4687.53,5236.2,5829.29,6467.72,7152.44,7884.05,8662.82,9488.68]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="建设银行"><a href="#建设银行" class="headerlink" title="建设银行"></a>建设银行</h3><p>综合客户服务和费用效率支持增长，住房、开发商与地方投资链条的共同风险决定效率优势能保留多少。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="建设银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"建设银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[2979.75,3193.23,3275.43,3284.69,3334.86,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,3334.86,2306.34,1578.52,1715.79,1841.01,1967.83,2096.73,2227.25,2358.17,2489.39,2622.12,2755.8]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,3334.86,3003.76,3024.39,3328.25,3651.28,3994.21,4359.38,4746.36,5154.78,5584.46,6035.06,6506.08]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,3334.86,3481.28,4088.99,4583.46,5127.33,5717.97,6357.04,7045.92,7785.75,8577.13,9420.34,10315.74]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="交通银行"><a href="#交通银行" class="headerlink" title="交通银行"></a>交通银行</h3><p>负债重定价和批发融资结构改善可能提高息差；手续费基础只有在资金成本和信用成本受控时，才会形成更高普通股回报。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="交通银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"交通银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[819.68,846.66,852.55,861.22,889.2,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,889.2,584.11,308.95,325.56,340.55,355.96,356.75,332.88,316.85,318.2,319.62,321.06]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,889.2,818.51,787.51,853.83,924.01,997.41,1074.14,1154.16,1237.28,1323.54,1413.37,1507.1]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,889.2,988.38,1166.95,1301.31,1449.03,1609.76,1784.02,1972.3,2175,2392.47,2624.99,2872.74]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="邮储银行"><a href="#邮储银行" class="headerlink" title="邮储银行"></a>邮储银行</h3><p>储蓄客户向财富、养老和支付服务转化可以增加收入，但代理费用、零售损失与资本约束必须同时改善。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="邮储银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"邮储银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[708.94,785.16,809.54,801.37,802.43,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,802.43,475.32,72,73.49,80.54,87.73,95.06,102.37,109.55,116.58,123.47,130.27]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,802.43,755.05,674.15,725.54,770.61,829.95,902.5,980.2,1063.49,1152.9,1247.98,1347.81]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,802.43,966.92,1149.67,1301.94,1469.69,1652.12,1849.68,2063.02,2292.38,2536.44,2794.38,3067.5]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="中国银行"><a href="#中国银行" class="headerlink" title="中国银行"></a>中国银行</h3><p>企业出海带来跨境现金管理和结算机会；增加外币资产不等于创造价值，还要扣当地资本要求、税费与上划限制。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="中国银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"中国银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[2059.08,2140.2,2166.08,2215.41,2291.87,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,2291.87,1664.71,1154.07,1171.69,1184.31,1198.78,1215.2,1185.41,1104.76,1050.1,1025.28,1000.19]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,2291.87,2076.32,2026.82,2168.5,2317.79,2473.37,2635.04,2802.05,2973.93,3150.66,3332.4,3519.07]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,2291.87,2366.76,2698.36,2983.61,3295.43,3631.32,3992,4378.05,4789.93,5227.97,5692.37,6183.14]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="招商银行"><a href="#招商银行" class="headerlink" title="招商银行"></a>招商银行</h3><p>财富管理的客户资产增长需要拆成净流入与市场涨跌；从存款转入理财可能增加收费，也可能抬高资金成本，两端不能同时无条件乐观。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="招商银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"招商银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[1163.09,1327.75,1420.44,1428.1,1438.74,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,1438.74,1209,984.45,1007.58,1027.96,1048.69,1069.78,1090.72,1112.5,1135.57,1159.03,1182.91]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,1438.74,1438.55,1463.99,1566.45,1674.99,1789.12,1908.97,2034.16,2164.55,2300.08,2440.66,2586.18]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,1438.74,1604.09,1830.47,2007.94,2200.65,2407.35,2628.54,2864.63,3116.01,3383.03,3665.99,3965.12]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h3 id="平安银行"><a href="#平安银行" class="headerlink" title="平安银行"></a>平安银行</h3><p>零售组合优化和清收可以降低损失拖累。若减值下降主要靠消耗拨备而非违约改善，修复假设就不成立。</p>
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:400px" role="img" aria-label="平安银行：普通股利润"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"平安银行：普通股利润","subtext":"亿元；2021—2025为历史口径（含估计）","textStyle":{"fontSize":16},"subtextStyle":{"fontSize":11}},"tooltip":{"trigger":"axis"},"legend":{"top":66,"type":"scroll","data":["历史（含估计）","Bear","Base","Bull"]},"grid":{"top":112,"bottom":56,"left":12,"right":18,"containLabel":true},"xAxis":{"type":"category","boundaryGap":false,"data":["2021A*","2022A*","2023A*","2024A*","2025A*","2026E","2027E","2028E","2029E","2030E","2031E","2032E","2033E","2034E","2035E","2036E"],"axisLabel":{"interval":3,"fontSize":10,"showMaxLabel":true,"hideOverlap":true}},"yAxis":{"type":"value","min":0,"axisLabel":{"fontSize":10}},"series":[{"name":"历史（含估计）","type":"line","showSymbol":false,"lineStyle":{"width":3,"color":"#737780"},"itemStyle":{"color":"#737780"},"data":[334.87,426.67,436.06,416.59,401.14,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Bear","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dashed","color":"#c15b5b"},"itemStyle":{"color":"#c15b5b"},"data":[null,null,null,null,401.14,312.94,181.84,193.01,204.2,215.77,227.71,239.9,252.37,265.13,278.2,291.59]},{"name":"Base","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"solid","color":"#386cb0"},"itemStyle":{"color":"#386cb0"},"data":[null,null,null,null,401.14,424.23,410.66,448.52,489.2,532.59,578.76,627.63,679.26,733.68,790.84,850.73]},{"name":"Bull","type":"line","showSymbol":false,"lineStyle":{"width":2,"type":"dotted","color":"#2a916f"},"itemStyle":{"color":"#2a916f"},"data":[null,null,null,null,401.14,502.65,580.23,644.07,713.93,789.41,870.74,958.14,1051.62,1151.34,1257.58,1370.47]}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+<h2 id="六、估值的第二步：从利润走到现金，再走到今天的价格"><a href="#六、估值的第二步：从利润走到现金，再走到今天的价格" class="headerlink" title="六、估值的第二步：从利润走到现金，再走到今天的价格"></a>六、估值的第二步：从利润走到现金，再走到今天的价格</h2><h3 id="为什么直接估普通股权益"><a href="#为什么直接估普通股权益" class="headerlink" title="为什么直接估普通股权益"></a>为什么直接估普通股权益</h3><p>银行的存款和融资构成经营资金来源，其利息已经进入利润计算。本文从普通股现金权利直接估值，求得总普通股权益价值后除以股数；不能把贷款总额当股东资产，也不能在股息现值计算完后再减一次存款。金融企业适合围绕股权现金与资本需求分析，方法背景可参见<a target="_blank" rel="noopener" href="https://pages.stern.nyu.edu/~adamodar/pdfiles/eqnotes/finsvc.pdf">Damodaran的金融服务企业估值讲义</a>。</p>
+<p>会计利润、留存资本、可分配能力和实际支付股息是四个不同的量。只有把它们分开，才能解释为什么利润增长很快，模型价值仍可能偏低。</p>
+<h3 id="先将股息放到正确日期"><a href="#先将股息放到正确日期" class="headerlink" title="先将股息放到正确日期"></a>先将股息放到正确日期</h3><p>模型通常假设利润年度的股息于次年6月30日支付。工行Base在2026年赚取普通股利润291,718.514百万元，派息比例约30.99597%，确认股息90,420.982百万元；除以356,406.257百万股，得到约0.253702元&#x2F;股，模型支付日为2027年6月30日。</p>
+<p>金额用百万元、股数用百万股，相除正好是元&#x2F;股。2026H2未来现金表中的股息为零，表示该预测段没有新增现金支付，不能解释成银行2026全年没有分红。9月2日前已付的股息不属于此后买入者新增的现金权利。</p>
+<p>“次年6月30日”是统一计算约定，不是逐笔已公布的实际支付日；现实中的中期分红、付款日期变化、税费会改变持有回报。完整现金事件核查仍有缺口，不能把模型时间表称为已经确定的派息计划。</p>
+<h3 id="再把未来现金折回2026年9月2日"><a href="#再把未来现金折回2026年9月2日" class="headerlink" title="再把未来现金折回2026年9月2日"></a>再把未来现金折回2026年9月2日</h3><p>要求回报率Ke统一取11%。这是一项估值假设，表示投资者对等待和风险要求的补偿；它没有通过每家银行各自的资本资产定价模型CAPM拟合，也不表示八家的风险完全相同。情景中的收益、损失与可分配现金分别体现经营风险。</p>
+<p>若D(u)表示在日期u收到的每股股息，t表示估值日，则股息折现法DDM为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">P(t) = Σ D(u) ÷ (1+Ke)^[(u−t)/365]，只纳入u&gt;t的现金</span><br></pre></td></tr></table></figure>
+
+<p>Σ表示逐笔求和，日期相减取实际天数，再除以365转成年数。2027年6月30日距基准日301天，因此工行第一笔0.253702元现金的现值约为：</p>
+<p><code>0.253702 ÷ 1.11^(301/365) = 0.232781元/股</code>。</p>
+<p>后面的每笔现金同样处理，再相加。不能把十年股息先合计、统一当作十年后支付，也不能漏掉2036年之后仍然属于股东的现金权利。</p>
+<h3 id="工行Base的4-18元怎样形成"><a href="#工行Base的4-18元怎样形成" class="headerlink" title="工行Base的4.18元怎样形成"></a>工行Base的4.18元怎样形成</h3><table>
+<thead>
+<tr>
+<th>现金支付年度</th>
+<th>总现值（百万元）</th>
+<th>每股现值（元）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2027—2036</td>
+<td>699,354.595</td>
+<td>1.962240</td>
+</tr>
+<tr>
+<td>2037—2236</td>
+<td>791,461.175</td>
+<td>2.220671</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>1,490,815.770</td>
+<td>4.182911</td>
+</tr>
+</tbody></table>
+<p>这与前一节的利润计算连接起来：收入与损失产生普通股利润，资本约束与派息政策决定股息，再按支付日期折现。工行Base约53.09%的价值来自2037年及以后的现金。</p>
+<p><strong>4.18元之外不能再加约11.24元的估计每股净资产BVPS。</strong> 账面资本通过未来经营与分配影响股息，额外加回全部净资产，会把同一经济权利计算两次。同样，已包含在集团收益中的子公司，不再另加一份子公司估值。</p>
+<p>八家Base均可拆为同样两部分：</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2027—2036现金现值</th>
+<th>2037—2236现金现值</th>
+<th>合计</th>
+<th>长期占比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>1.9622</td>
+<td>2.2207</td>
+<td>4.1829</td>
+<td>53.09%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>1.8833</td>
+<td>2.1640</td>
+<td>4.0473</td>
+<td>53.47%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>2.7923</td>
+<td>3.2700</td>
+<td>6.0623</td>
+<td>53.94%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>2.1873</td>
+<td>2.3629</td>
+<td>4.5502</td>
+<td>51.93%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>1.4026</td>
+<td>1.5345</td>
+<td>2.9372</td>
+<td>52.25%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>1.4626</td>
+<td>1.4841</td>
+<td>2.9467</td>
+<td>50.36%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>14.9686</td>
+<td>15.2891</td>
+<td>30.2577</td>
+<td>50.53%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>4.7701</td>
+<td>5.3443</td>
+<td>10.1144</td>
+<td>52.84%</td>
+</tr>
+</tbody></table>
+<p>单位：人民币元&#x2F;股，均折至2026年9月2日；来源为配套现金模型。各部分先用完整精度相加，再显示小数。</p>
+<h3 id="2036年以后究竟假设了什么"><a href="#2036年以后究竟假设了什么" class="headerlink" title="2036年以后究竟假设了什么"></a>2036年以后究竟假设了什么</h3><p>模型在2037年后延续2036年的单位收益、成本及拨备&#x2F;贷款本金比例，仍逐年计算资本和融资约束。Bear、Base、Bull的长期目标增长率分别为1%、2%、3%；实际可实现增长可能因约束而低于目标。长期派息上限维持2036年模型实际派息率，未假设突然返还全部多余资本。</p>
+<p>计算显式延长到2236年，覆盖200个长期现金年度，以近似长期股息现值。这是求和的数值截断长度，不表示可以精确预测两百年经营。更大的不确定性来自几十年后的盈利与分配政策，而非求和最后一年少了多少小数。</p>
+<p>2036利润年度的股息在2037年支付，已纳入长期现金表。若同时把这笔股息和包含它的长期价值再相加，就会重复计价。配套模型未把终期账面资本自动视为全额清算所得，也未把回购金额额外算成持有人收到的股息。</p>
+<p>固定工行Base的同一现金序列，仅把要求回报改为9%、11%、13%，价值分别约为5.63、4.18、3.30元。它展示折现率的影响，不等于重新建立了三种经营情景。</p>
+<h2 id="七、RIM、PB、PE为什么不能混在一起简单平均"><a href="#七、RIM、PB、PE为什么不能混在一起简单平均" class="headerlink" title="七、RIM、PB、PE为什么不能混在一起简单平均"></a>七、RIM、PB、PE为什么不能混在一起简单平均</h2><h3 id="RIM从账面资本出发，衡量赚的钱够不够补偿股东"><a href="#RIM从账面资本出发，衡量赚的钱够不够补偿股东" class="headerlink" title="RIM从账面资本出发，衡量赚的钱够不够补偿股东"></a>RIM从账面资本出发，衡量赚的钱够不够补偿股东</h3><p>剩余收益法RIM将“普通股利润减去股东要求的资本回报”定义为剩余收益。例如期初普通股权益100元，一年赚9元，而股东要求11%，则剩余收益为9−100×11%&#x3D;−2元。银行在会计上仍盈利，但当年尚未覆盖这项要求回报。</p>
+<p>对于持续Δ年的会计期间，资本费用是<code>期初普通股权益×[(1+Ke)^Δ−1]</code>。有限预测期内，完整关系可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">普通股价值 = 期初普通股权益</span><br><span class="line">           + 未来剩余收益现值</span><br><span class="line">           + 非利润权益变动现值</span><br><span class="line">           + 现金支付日期调整</span><br><span class="line">           +（终期普通股价值−终期账面权益）的现值</span><br></pre></td></tr></table></figure>
+
+<p>非利润权益变动包括OCI。日期调整把会计年度与实际股息支付时点对齐。工行的2026H2经营长度为184天，而9月2日至年末只剩120天；RIM需要估值日权益与剩余期间的对应调整，不能直接把整段H2利润当成估值日以后赚取的利润。</p>
+<p>工行Base的实际分解如下：</p>
+<table>
+<thead>
+<tr>
+<th>RIM组成</th>
+<th>金额（百万元）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>估值日起初普通股权益估计</td>
+<td>4,004,889.717</td>
+</tr>
+<tr>
+<td>加：剩余收益现值合计</td>
+<td>-905,975.469</td>
+</tr>
+<tr>
+<td>加：非利润权益变动现值合计</td>
+<td>-1,249.203</td>
+</tr>
+<tr>
+<td>加：现金日期桥接合计</td>
+<td>35,841.216</td>
+</tr>
+<tr>
+<td>加：终期价值减终期账面权益的现值</td>
+<td>-1,642,690.490</td>
+</tr>
+<tr>
+<td>股权价值合计</td>
+<td>1,490,815.770</td>
+</tr>
+<tr>
+<td>除以股数后（元&#x2F;股）</td>
+<td>4.182911</td>
+</tr>
+</tbody></table>
+<p>单位为百万元，最后一行为元&#x2F;股。大额负终期调整反映终期剩余股息价值低于终期账面权益；它不会自动变成额外清算收入。</p>
+<p>这里RIM与DDM使用同一组经营、资本与现金权利，最终都得到4.182911元。两者相等说明会计与现金计算相容，不能当作两份独立证据证明经济假设正确。配套模型以RIM登记主值、DDM进行现金核对，本文先讲DDM是为了便于理解钱从哪里来。</p>
+<h3 id="PB为什么可能合理地低于1倍"><a href="#PB为什么可能合理地低于1倍" class="headerlink" title="PB为什么可能合理地低于1倍"></a>PB为什么可能合理地低于1倍</h3><p>PB是市净率，即股价除以每股普通股净资产。假设一家稳定银行没有非利润权益变动和增发，ROE、Ke、增长g恒定，且将支持增长之外的利润全部派出：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">派息率 p = 1−g/ROE</span><br><span class="line">下一期每股股息 = (ROE−g) × 本期每股净资产</span><br><span class="line">股价 = 下一期每股股息 ÷ (Ke−g)</span><br><span class="line">合理PB = (ROE−g) ÷ (Ke−g)</span><br></pre></td></tr></table></figure>
+
+<p>以上要求Ke&gt;g，留存与增长关系可行。若ROE&#x3D;9%、g&#x3D;2%、Ke&#x3D;11%，合理PB约为7%&#x2F;9%&#x3D;0.78倍。折价可以反映资本长期赚不到要求回报；破净本身不足以证明便宜。</p>
+<p>注意这个公式假设“增长不需要的利润全部分配”。ROE&#x3D;9%、g&#x3D;2%时，隐含派息率约77.8%，与主模型长期只派约三成的政策差别很大。因此不能拿公式算出的PB替换主值，再把差异解释为算错。两个模型给股东的长期现金权利本来就不同。</p>
+<h3 id="各种方法分别能回答什么"><a href="#各种方法分别能回答什么" class="headerlink" title="各种方法分别能回答什么"></a>各种方法分别能回答什么</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>本文用途</th>
+<th>使用限制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RIM剩余收益法</td>
+<td>主模型会计表达</td>
+<td>权益、OCI、支付日期和终期权益必须与现金一致</td>
+</tr>
+<tr>
+<td>DDM股息折现法</td>
+<td>解释和核对实际分配权利</td>
+<td>对长期派息上限非常敏感，未自动估入未来释放全部资本</td>
+</tr>
+<tr>
+<td>DCF股权现金法</td>
+<td>方法框架；可分配现金需扣资本需求</td>
+<td>工业企业的“经营现金流减资本开支”不宜原样用于银行</td>
+</tr>
+<tr>
+<td>PB市净率</td>
+<td>检查ROE、增长与估值关系</td>
+<td>简化稳态公式的派息前提与主模型不同</td>
+</tr>
+<tr>
+<td>PE市盈率</td>
+<td>检查正常化利润对应的估值</td>
+<td>低PE可能来自低估信用损失或高杠杆，不能只用当年利润</td>
+</tr>
+<tr>
+<td>股息率法</td>
+<td>检查近期现金收入</td>
+<td>DPS&#x2F;股价忽略未来派息变化与资本约束；股息率不是总回报</td>
+</tr>
+<tr>
+<td>SOTP分部加总</td>
+<td>披露充分时拆分子公司与母行</td>
+<td>集团盈利已包含子公司，未完成抵销前不可再加一次</td>
+</tr>
+<tr>
+<td>PR市赚率</td>
+<td>低可信度的筛选指标</td>
+<td>PR&#x3D;PE_TTM&#x2F;(ROE_TTM×100)，TTM为最近12个月，ROE用小数；仍受会计与杠杆影响</td>
+</tr>
+</tbody></table>
+<p>这些方法没有简单平均。判断差异是否有信息，应先核对利润口径、增长、资本分配和估值日期，只有经济前提一致，数值比较才有意义。</p>
+<h2 id="八、从未来合理价格走到实际持有回报"><a href="#八、从未来合理价格走到实际持有回报" class="headerlink" title="八、从未来合理价格走到实际持有回报"></a>八、从未来合理价格走到实际持有回报</h2><h3 id="年末合理价值不是市场价格预测"><a href="#年末合理价值不是市场价格预测" class="headerlink" title="年末合理价值不是市场价格预测"></a>年末合理价值不是市场价格预测</h3><p>配套表计算2026—2036各年12月31日之后尚未支付股息的现值，始终使用2026年9月2日的信息与情景。它回答的是“既定假设成立时，该时点剩余权利值多少”，没有预测未来市场情绪与新增信息。</p>
+<p>若t₁到t₂之间没有经营假设变化，满足：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">P(t₂) = P(t₁)×(1+Ke)^[(t₂−t₁)/365]</span><br><span class="line">        − Σ期间已付股息D(u)×(1+Ke)^[(t₂−u)/365]</span><br></pre></td></tr></table></figure>
+
+<p>等待时间缩短会提高尚未支付现金的现值；已收股息则离开股票、进入股东账户。因此年末价值上升不全是经营改善，也不代表还能把已付股息留在股票价值里。</p>
+<p>为便于横向看时间变化，先列Base三个年末节点。完整264个年度价格保留在附件，均由现金折现计算，没有在节点之间插值。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2026年末E</th>
+<th>2031年末E</th>
+<th>2036年末E</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>4.33</td>
+<td>5.47</td>
+<td>6.53</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>4.19</td>
+<td>5.32</td>
+<td>6.36</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>6.27</td>
+<td>8.01</td>
+<td>9.62</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>4.71</td>
+<td>5.86</td>
+<td>6.95</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>3.04</td>
+<td>3.79</td>
+<td>4.51</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>3.05</td>
+<td>3.72</td>
+<td>4.36</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>31.31</td>
+<td>38.36</td>
+<td>44.97</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>10.47</td>
+<td>13.21</td>
+<td>15.72</td>
+</tr>
+</tbody></table>
+<p>单位：元&#x2F;股。年末价值与前文9月2日价值的日期不同，不能直接混用。</p>
+<h3 id="股价、累计股息和年化回报怎样连接"><a href="#股价、累计股息和年化回报怎样连接" class="headerlink" title="股价、累计股息和年化回报怎样连接"></a>股价、累计股息和年化回报怎样连接</h3><p>XIRR是按具体收付日期计算的年化内部收益率。它寻找一个r，使买入支出等于期间股息和退出价格的折现值：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">买入价格 = Σ期间股息/(1+r)^支付年数 + 退出价格/(1+r)^持有年数</span><br></pre></td></tr></table></figure>
+
+<p>例如工行Base从8.22元买入，2036年末条件退出价6.53元，期间累计现金约3.50元&#x2F;股，按逐笔支付日期计算XIRR约2.30%。6.53+3.50可以表示不计时点的回收总额，不能直接当作年化回报。计算不含税费，不假设股息再投资；XIRR只由现金日期和退出价定义。</p>
+<p>八家的长期三情景结果如下。每个单元格依次列“2036年末价格／期间累计现金／XIRR”，前两项为元&#x2F;股，最后一项为年化回报。</p>
+<div class="bank-numeric-table" aria-hidden="true"></div>
+
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>Bear：价格&#x2F;现金&#x2F;回报</th>
+<th>Base：价格&#x2F;现金&#x2F;回报</th>
+<th>Bull：价格&#x2F;现金&#x2F;回报</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>1.86 &#x2F; 1.33 &#x2F; -10.10%</td>
+<td>6.53 &#x2F; 3.50 &#x2F; 2.30%</td>
+<td>12.32 &#x2F; 5.13 &#x2F; 8.90%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>1.76 &#x2F; 1.16 &#x2F; -9.41%</td>
+<td>6.36 &#x2F; 3.36 &#x2F; 3.76%</td>
+<td>12.45 &#x2F; 5.18 &#x2F; 11.00%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>2.99 &#x2F; 1.84 &#x2F; -8.83%</td>
+<td>9.62 &#x2F; 5.00 &#x2F; 3.15%</td>
+<td>17.53 &#x2F; 7.25 &#x2F; 9.49%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>1.09 &#x2F; 0.95 &#x2F; -13.82%</td>
+<td>6.95 &#x2F; 3.86 &#x2F; 4.48%</td>
+<td>15.38 &#x2F; 6.38 &#x2F; 13.19%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>0.35 &#x2F; 0.15 &#x2F; -21.95%</td>
+<td>4.51 &#x2F; 2.48 &#x2F; 2.68%</td>
+<td>11.61 &#x2F; 4.92 &#x2F; 13.38%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>0.90 &#x2F; 0.87 &#x2F; -14.32%</td>
+<td>4.36 &#x2F; 2.56 &#x2F; 0.42%</td>
+<td>8.91 &#x2F; 3.86 &#x2F; 7.63%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>15.59 &#x2F; 11.59 &#x2F; -4.61%</td>
+<td>44.97 &#x2F; 26.32 &#x2F; 6.85%</td>
+<td>78.45 &#x2F; 36.02 &#x2F; 12.85%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>3.97 &#x2F; 2.60 &#x2F; -6.49%</td>
+<td>15.72 &#x2F; 8.49 &#x2F; 8.75%</td>
+<td>28.69 &#x2F; 12.66 &#x2F; 15.80%</td>
+</tr>
+</tbody></table>
+<p>来源为三情景现金模型；区间从2026年9月2日买入至2036年12月31日退出。此前已支付股息不计入期间现金，退出价仍包含2037年及以后尚未支付的权利。</p>
+<p>Base中平安8.75%、招行6.85%的回报相对较高，但均低于11%。Bull中农行约11.00%处在门槛附近，交行、邮储、招行、平安超过门槛；工行、建行、中行仍未达到。Bear全部低于门槛。达到某个乐观情景下的回报要求，只说明条件组合成立时的数学结果，不能替代情景可信度与治理判断。</p>
+<h3 id="市场价比Base高，隐含了多少额外要求"><a href="#市场价比Base高，隐含了多少额外要求" class="headerlink" title="市场价比Base高，隐含了多少额外要求"></a>市场价比Base高，隐含了多少额外要求</h3><p>我们无法只凭一个股价唯一识别市场的全部假设，但可以做一个有限的反推：若保持11%和支付时点不变，让所有每股现金同比例变化，达到市价需要把Base现金乘以“市价&#x2F;Base价值”。这只是等比例诊断，现实中现金改善受资本约束，不会这样机械增长。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>Base&#x2F;市价</th>
+<th>市价要求的Base现金倍数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>50.89%</td>
+<td>1.97倍</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>57.33%</td>
+<td>1.74倍</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>54.42%</td>
+<td>1.84倍</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>61.24%</td>
+<td>1.63倍</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>52.83%</td>
+<td>1.89倍</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>44.11%</td>
+<td>2.27倍</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>74.03%</td>
+<td>1.35倍</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>84.92%</td>
+<td>1.18倍</td>
+</tr>
+</tbody></table>
+<p>工行约需1.97倍Base现金，平安约需1.18倍。较小差距可以来自较低买价，也可能来自模型对修复的积极假设，不能据此反推平安的经营质量最高。市场也可能用更低折现率，或把尚未纳入主模型的资本返还估得更高。</p>
+<h2 id="九、结论最依赖什么：长期派息政策"><a href="#九、结论最依赖什么：长期派息政策" class="headerlink" title="九、结论最依赖什么：长期派息政策"></a>九、结论最依赖什么：长期派息政策</h2><p>同一银行即使资产、利润和资本仍在增长，长期保留资本却不给普通股股东支付，会降低DDM的现金价值。主模型只维持2036年的派息上限；另一项敏感性假设在2037—2041五年内提高上限，仍受资本约束。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>Base主值</th>
+<th>提高派息上限</th>
+<th>价值变化</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>4.18</td>
+<td>6.53</td>
+<td>56.15%</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>4.05</td>
+<td>6.40</td>
+<td>58.04%</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>6.06</td>
+<td>9.80</td>
+<td>61.63%</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>4.55</td>
+<td>6.75</td>
+<td>48.32%</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>2.94</td>
+<td>4.43</td>
+<td>50.83%</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>2.95</td>
+<td>4.38</td>
+<td>48.51%</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>30.26</td>
+<td>44.90</td>
+<td>48.40%</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>10.11</td>
+<td>16.99</td>
+<td>67.94%</td>
+</tr>
+</tbody></table>
+<p>单位：元&#x2F;股，均为2026年9月2日价值，来源为配套模型两种分配政策。提高派息上限是条件测试，并非管理层承诺，也不是估值误差的统计区间。它显示价值变化约48%—68%，足以影响对价格的理解。</p>
+<p>不能因为高派息结果更接近市价，就自动用它取代Base；也不能把当前较低派息率当成永恒事实。应该核对未来资本需求、可释放资本、公司分配意愿和实际执行。如果有可信的资本返还证据，应修改政策后统一复算；如果出现未识别损失或股权摊薄，则可能向相反方向调整。</p>
+<p>部分Bear值很低，尤其邮储，反映低收益、较高信用成本、代理费用和资本约束共同挤压股息。它是特定现金政策下的压力价值，不等于净资产即将归零，也不是破产概率。长时间低分配所造成的估值影响，需要与真实经济损失分开理解。</p>
+<h2 id="十、哪些证据会改变这份比较"><a href="#十、哪些证据会改变这份比较" class="headerlink" title="十、哪些证据会改变这份比较"></a>十、哪些证据会改变这份比较</h2><p>比较的顺序应是经营机制、风险与资本，再到价格。客户和效率维度支持优先理解招行、建行；工行适合观察大型结算网络；农行适合观察县域业务的增长质量。交行、中行、邮储和平安的价值分别依赖负债、跨境现金转化、代理成本和信用修复，难以压成同一条“最好银行”排名。</p>
+<p>下面把每家最有区分度的证伪条件列明。出现这些现象，应修改对应输入，不只是给总分加减几分。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>要观察的证据</th>
+<th>什么情况削弱Base逻辑</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td>结算沉淀存款、资金成本、对公损失和普通股ROE</td>
+<td>低收益对公扩张继续压低回报，费用效率无法抵消损失</td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td>县域新增贷款批次、风险生成、资本消耗与EPS</td>
+<td>贷款增长快，但损失和资本占用使每股收益改善不足</td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td>成本收入比、住房相关损失、资本与股数</td>
+<td>住房及地方链条损失或摊薄抵消效率优势</td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td>批发融资成本、存款结构、关注贷款与净风险生成</td>
+<td>资金成本未改善，风险增加继续压缩派息</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>含代理费全成本、客户收费、零售损失、派息后CET1</td>
+<td>名义低资金成本无法变成全成本优势，资本约束迫使降低增长和分红</td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td>币种分层息差、跨境收费、境外实际上划</td>
+<td>跨境业务量增长未增加经常性利润或可上划现金</td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td>客户资产净流入、经常性手续费、存款成本和零售损失</td>
+<td>财富收费弱、存款定期化、风险生成上升同时发生</td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td>违约批次、处置后风险生成、拨备与资本</td>
+<td>减值减少靠拨备消耗，风险改善不足以支持修复</td>
+</tr>
+</tbody></table>
+<p>一个可执行的复算规则是：同口径NIM连续两期比情景低10bp以上，贷款信用成本比情景高20bp以上，派息后CET1低于研究目标，或发生重大摊薄、代理费、境外资本上划政策变化，就更新八行模型。10bp&#x2F;20bp是本文提出的监测阈值，不是统计显著性标准。</p>
+<p>治理另行核查：明确的重大误导、利益侵害或严重资本配置问题一旦获得充分证据，应触发投资资格重评，不能仅切换到Bear情景后继续用低价弥补。解除“待核实”需要补足事件、交易和持股证据，不取决于股价涨跌。</p>
+<h2 id="数据口径、来源与计算附件"><a href="#数据口径、来源与计算附件" class="headerlink" title="数据口径、来源与计算附件"></a>数据口径、来源与计算附件</h2><p><strong>可以复算的部分：</strong> 八家48项评分的原始指标、八行位置、收缩与加权贡献；264条经营预测；24个基准日价值；264个年度价值；48组2031&#x2F;2036退出回报。经营与长期现金求解均与配套表对平；一致性验证说明计算复现，不等于独立证明假设正确。</p>
+<p><strong>仍须保留的限制：</strong> 广义风险穿透与真实经济损失正常化不完整，部分历史普通股指标含估计，2008—2015历史面板不足；手续费代理重复使用，资本分依赖预测且余量过小；治理、完整现金事件和历史模型回测均未完成全面核查。情景和质量分的范围属于假设范围，不是概率或置信区间。</p>
+<p>公开来源如下。半年报链接直接指向发行人披露文件；价格查询采用腾讯证券行情接口，参数固定至2026年9月2日，读取不复权收盘价。本次核验八个半年报链接均返回PDF，工行8.22元另与<a target="_blank" rel="noopener" href="https://wap.stockstar.com/detail/RB2026090200038872">9月2日收盘记录</a>交叉核对。模型不滚动采用9月2日以后的价格。</p>
+<table>
+<thead>
+<tr>
+<th>银行</th>
+<th>2026半年报</th>
+<th>价格来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工商银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225526043.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601398,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>农业银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225527334.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601288,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>建设银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225531678.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601939,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>交通银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225530238.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601328,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225525154.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601658,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>中国银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225526341.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh601988,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>招商银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-29/1225530237.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh600036,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+<tr>
+<td>平安银行</td>
+<td><a target="_blank" rel="noopener" href="https://static.cninfo.com.cn/finalpage/2026-08-15/1225475344.PDF">发行人披露</a></td>
+<td><a target="_blank" rel="noopener" href="https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz000001,day,2026-01-01,2026-09-02,320,">9月2日行情</a></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>附件</th>
+<th>内容与使用方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="/2026/09/05/china-eight-banks-comparison/bank-forecast-details.MD" title="逐年预测说明">逐年预测说明</a></td>
+<td>八行三情景2026—2030逐年业务输入、收入、利润、EPS、现金股息和年末估值；术语、单位及估计标识</td>
+</tr>
+<tr>
+<td><a href="/2026/09/05/china-eight-banks-comparison/bank-comparison-model.zip" title="评分与估值计算包">评分与估值计算包</a></td>
+<td>CSV输入与结果、48项评分明细、2026—2036完整预测、两种长期派息政策、200年现金延伸、Python复算程序与公开来源索引</td>
+</tr>
+</tbody></table>
+<p>计算包解压后先阅读README.MD。<code>python3 scripts/verify_scoring.py</code>复算评分，<code>python3 scripts/recalculate.py</code>复算经营、现金现值与持有回报，追加<code>--tail</code>可重算长期资本与现金约束。输入单位为百万元、百万股、比例小数，文章金额已转换为亿元。程序校验固定情景是否复现；改变假设后，需要同步重算后续年度，不能只改一个最终价格单元格。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%93%B6%E8%A1%8C%E4%B8%9A/" rel="tag"># 银行业</a>
+              <a href="/tags/%E5%B7%A5%E5%95%86%E9%93%B6%E8%A1%8C/" rel="tag"># 工商银行</a>
+              <a href="/tags/%E5%86%9C%E4%B8%9A%E9%93%B6%E8%A1%8C/" rel="tag"># 农业银行</a>
+              <a href="/tags/%E5%BB%BA%E8%AE%BE%E9%93%B6%E8%A1%8C/" rel="tag"># 建设银行</a>
+              <a href="/tags/%E4%BA%A4%E9%80%9A%E9%93%B6%E8%A1%8C/" rel="tag"># 交通银行</a>
+              <a href="/tags/%E9%82%AE%E5%82%A8%E9%93%B6%E8%A1%8C/" rel="tag"># 邮储银行</a>
+              <a href="/tags/%E4%B8%AD%E5%9B%BD%E9%93%B6%E8%A1%8C/" rel="tag"># 中国银行</a>
+              <a href="/tags/%E6%8B%9B%E5%95%86%E9%93%B6%E8%A1%8C/" rel="tag"># 招商银行</a>
+              <a href="/tags/%E5%B9%B3%E5%AE%89%E9%93%B6%E8%A1%8C/" rel="tag"># 平安银行</a>
+              <a href="/tags/DDM/" rel="tag"># DDM</a>
+              <a href="/tags/RIM/" rel="tag"># RIM</a>
+              <a href="/tags/%E8%82%A1%E7%A5%A8%E4%BC%B0%E5%80%BC/" rel="tag"># 股票估值</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/08/31/silicon-chain-companies-comparison/" rel="prev" title="合盛、新安、东岳、兴发、协鑫：硅产业链的利润、现金流与估值比较">
+                  <i class="fa fa-angle-left"></i> 合盛、新安、东岳、兴发、协鑫：硅产业链的利润、现金流与估值比较
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">202k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">12:15</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"casxt/casxt.github.io","issue_term":"pathname","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>

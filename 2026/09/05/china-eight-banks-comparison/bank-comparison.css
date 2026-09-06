@@ -1,0 +1,9 @@
+/* Numeric comparison tables in this article only; Markdown retains all data. */
+.post-body .hexo-echarts { background: #fff; border-radius: 4px; }
+.bank-numeric-table { display: none; }
+.bank-numeric-table + .table-container { overflow-x: auto; }
+.bank-numeric-table + .table-container table { min-width: 650px; }
+.bank-numeric-table + .table-container th,
+.bank-numeric-table + .table-container td { white-space: nowrap; text-align: right; }
+.bank-numeric-table + .table-container th:first-child,
+.bank-numeric-table + .table-container td:first-child { text-align: left; min-width: 4.5em; }
