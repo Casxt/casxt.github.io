@@ -1,0 +1,24 @@
+/* Local scrolling for the explicitly wrapped wide Markdown tables. */
+.post-body .textile-table-scroll {
+  max-width: 100%;
+  margin: 1em 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.post-body .textile-table-scroll table {
+  min-width: 100%;
+  margin: 0;
+}
+
+.post-body .textile-table-scroll:focus-visible {
+  outline: 2px solid #2975b8;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .post-body .textile-chart svg text {
+    fill: #dedede;
+    stroke: none;
+  }
+}
