@@ -1,0 +1,6 @@
+.fertilizer-table-marker + table,
+.fertilizer-table-marker + .table-container { display: block; max-width: 100%; overflow-x: auto; }
+.fertilizer-table-marker + table th,
+.fertilizer-table-marker + table td,
+.fertilizer-table-marker + .table-container th,
+.fertilizer-table-marker + .table-container td { white-space: nowrap; text-align: left; }
