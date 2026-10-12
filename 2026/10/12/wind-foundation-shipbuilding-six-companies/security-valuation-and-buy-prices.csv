@@ -1,0 +1,9 @@
+entity_id,scenario,price_date,target_year,currency,market_price,fair_current,target_price,buy_15,buy_20,market_xirr
+security:中国船舶A_600150.SH,industry_base,2026-10-09,2029,CNY,38.54,8.6486,10.1015,7.7787,6.8611,-0.31967
+security:中船防务A_600685.SH,industry_base,2026-10-09,2029,CNY,28.41,4.2759,5.1056,3.8459,3.3924,-0.400986
+security:中船防务H_00317.HK,industry_base,2026-10-09,2029,HKD,14.3,4.9837,5.9508,4.3357,3.8167,-0.220754
+security:大金重工A_002487.SZ,industry_base,2026-10-09,2029,CNY,43.75,23.4372,32.3275,20.8985,18.2325,-0.086418
+security:大金重工H_01081.HK,industry_base,2026-10-09,2029,HKD,29.1,27.3168,37.6786,24.2368,21.1417,0.086344
+security:天顺风能A_002531.SZ,industry_base,2026-10-09,2029,CNY,7.52,1.0134,1.4188,0.9031,0.7873,-0.404006
+security:泰胜风能A_300129.SZ,industry_base,2026-10-09,2029,CNY,7.27,3.3126,4.4708,2.9566,2.5826,-0.132733
+security:海力风电A_301155.SZ,industry_base,2026-10-09,2029,CNY,41.93,20.7384,28.2109,18.4981,16.1445,-0.10937

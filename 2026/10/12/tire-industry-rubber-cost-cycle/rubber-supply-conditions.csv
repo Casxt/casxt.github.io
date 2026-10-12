@@ -1,0 +1,4 @@
+entity_id,scenario,year,production_dry_t,consumption_dry_t,deficit_dry_t,gap_over_consumption,basis
+industry:natural_rubber_global,reference,2026,15039000.0,15356000.0,317000.0,0.020643396717895286,ANRPC预测快照+条件假设；非自主点预测
+industry:natural_rubber_global,reference,2027,15339780.0,15663120.0,323340.0,0.020643396717895286,ANRPC预测快照+条件假设；非自主点预测
+industry:natural_rubber_global,reference,2028,15646575.6,15976382.4,329806.80000000075,0.02064339671789533,ANRPC预测快照+条件假设；非自主点预测

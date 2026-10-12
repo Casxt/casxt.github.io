@@ -1,0 +1,3 @@
+region,manufacturing_usd_t,landed_quote_usd_t,manufacturing_eur_t,landed_quote_eur_t,manufacturing_advantage_fraction,quote_advantage_fraction,scope
+china,2030.0,3969.0,1815.0,3548.0,0.413295,0.050822,Rystad2026-09同规格模型，非厂家披露现金成本或签单均价；制造成本与报价不同，英国预算模型独立。
+europe,3460.0,4181.0,3093.0,3738.0,0.0,0.0,Rystad2026-09同规格模型，非厂家披露现金成本或签单均价；制造成本与报价不同，英国预算模型独立。
