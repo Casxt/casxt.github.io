@@ -1,0 +1,14 @@
+/* 本页专用：深色主题下提高 ECharts 文字对比度，并固定首列最小宽度 */
+@media (prefers-color-scheme: dark) {
+  .post-body .hexo-echarts svg text {
+    fill: #d4d4d4;
+  }
+  .post-body .hexo-echarts svg text[fill="#c0392b"] {
+    fill: #e57373;
+  }
+}
+
+.post-body .table-container table th:first-child,
+.post-body .table-container table td:first-child {
+  min-width: 4.6em;
+}
