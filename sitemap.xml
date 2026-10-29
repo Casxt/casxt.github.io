@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://maple.link/2026/10/30/mla-kv-cache-and-inference/</loc>
+    
+    <lastmod>2026-10-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://maple.link/2026/10/29/ai-distribution-credit-trade/</loc>
     
     <lastmod>2026-10-29</lastmod>
@@ -2249,6 +2258,48 @@
   </url>
   
   <url>
+    <loc>https://maple.link/tags/DeepSeek/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/MLA/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/Attention/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/KV-Cache/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://maple.link/tags/MOMO/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -2831,13 +2882,6 @@
   
   <url>
     <loc>https://maple.link/tags/%E8%9B%8B%E6%B0%A8%E9%85%B8/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/tags/Attention/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3455,14 +3499,56 @@
   </url>
   
   <url>
-    <loc>https://maple.link/categories/python/</loc>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E5%95%86%E5%93%81%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/python/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3483,7 +3569,14 @@
   </url>
   
   <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/</loc>
+    <loc>https://maple.link/categories/%E4%BC%81%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3498,20 +3591,6 @@
   
   <url>
     <loc>https://maple.link/categories/%E5%A4%A7%E5%BC%80%E7%9C%BC%E7%95%8C/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3533,41 +3612,6 @@
   
   <url>
     <loc>https://maple.link/categories/%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E5%95%86%E5%93%81%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E4%BC%81%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://maple.link/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

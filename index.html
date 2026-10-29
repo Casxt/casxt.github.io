@@ -180,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -191,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">344</span>
+        <span class="site-state-item-count">349</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -208,6 +208,107 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/30/mla-kv-cache-and-inference/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/30/mla-kv-cache-and-inference/" class="post-title-link" itemprop="url">MLA 如何压缩 KV Cache 并加速推理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-30 10:00:00" itemprop="dateCreated datePublished" datetime="2026-10-30T10:00:00+08:00">2026-10-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>22 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>MLA 把每个 token 的多头 Key、Value 压进一个共享的低维向量，再通过矩阵乘法的结合律，直接在压缩表示上计算注意力。这样可以显著缩小 KV Cache，也能减少生成阶段反复读取历史信息的开销。</p>
+<p>但它有一个值得追问的细节：矩阵吸收后，每个头的内容点积可能从 128 维变成 512 维，Value 聚合也跟着变宽。计算量增加，为什么推理仍可能更快？沿着低秩压缩、矩阵吸收和解耦 RoPE 走一遍，再把 prefill 与 decode 分开计算，这个问题就能解释清楚。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/30/mla-kv-cache-and-inference/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1152,115 +1253,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/10/fresh-tea-five-companies-valuation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/10/10/fresh-tea-five-companies-valuation/" class="post-title-link" itemprop="url">五家现制茶饮公司：谁承担门店资本，当前价格要求什么</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-10-10 18:00:00" itemprop="dateCreated datePublished" datetime="2026-10-10T18:00:00+08:00">2026-10-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/" itemprop="url" rel="index"><span itemprop="name">消费</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/%E6%B6%88%E8%B4%B9/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>7.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>28 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>古茗、蜜雪集团和茶百道都靠向加盟店供货和服务赚钱，门店的租金、装修和设备主要由加盟商承担；奈雪的茶相反，集团自己开店，人租、维护和再投资都压在上市公司报表上；霸王茶姬介于两者之间，加盟供货占收入多数，同时直接经营部分门店，直营份额上升会机械放大合并收入。同样的门店扩张对股东含义不同：加盟总部要先证明加盟商愿意持续经营，直营和混合模式要先证明单店现金能覆盖人租与再投资。只看收入增速或门店总数，无法判断谁在为增长承担资本。</p>
-<p>按 2026 年 10 月 9 日收盘价，古茗、蜜雪、茶百道暂未发现投资否决项，奈雪的茶和霸王茶姬因资本配置与反转证据不足列为待核实。用稳态 DCF 与市盈率（PE）的融合方法站在 2031 年末计算，茶百道和奈雪的茶现价低于 20% 要求回报的最高买价，蜜雪和霸王茶姬只达到 15% 档，古茗两档都未达到。奈雪的茶潜在回报最高，霸王茶姬的回报依赖需求恢复，两者都来自可信度较低的情景；现价达标不等于值得投资。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/10/10/fresh-tea-five-companies-valuation/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1286,13 +1278,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">305k</span>
+    <span title="站点总字数">311k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">18:31</span>
+    <span title="站点阅读时长">18:52</span>
   </span>
 </div>
 <div class="busuanzi-count">
