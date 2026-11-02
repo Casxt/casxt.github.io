@@ -1,0 +1,10 @@
+/*
+ * ECharts 以 SVG 渲染，option 中未写死文字颜色，默认 #333 在深色主题下不可读。
+ * 主题（NexT Mist，preferred-color-scheme）只通过媒体查询切换，故在此覆盖文本填充色。
+ * 仅作用于本文图表，不影响其他文章。
+ */
+@media (prefers-color-scheme: dark) {
+  .post-body .hexo-echarts svg text {
+    fill: #d9dee6 !important;
+  }
+}

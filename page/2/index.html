@@ -180,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">102</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -191,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">349</span>
+        <span class="site-state-item-count">382</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -208,6 +208,639 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/24/nvidia-cuda-execution-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/24/nvidia-cuda-execution-model/" class="post-title-link" itemprop="url">从 CUDA 代码到 GPU 执行：Grid、Block、CTA、Warp 与 SM 如何对应</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-24 10:00:00" itemprop="dateCreated datePublished" datetime="2026-10-24T10:00:00+08:00">2026-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GPU/" itemprop="url" rel="index"><span itemprop="name">GPU</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>44 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>一个 kernel 启动时，程序员给出的只有两个数字：多少个 Block，每个 Block 多少线程。这两个数字怎样变成 SM 上真实发生的执行，取决于几层固定的分组规则——Block 内的线程被切成 Warp，Warp 由 SM 调度，Grid 里的 Block 分批进入硬件。</p>
+<p>先用一次向量加法建立编程视角，再看硬件怎样执行，最后回到同一个例子把对应关系走完。Cluster、CLC、Stream 会沿这条线依次出现，分别改变协作范围、工作分配和启动顺序。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/24/nvidia-cuda-execution-model/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/23/vsa-video-sparse-attention/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/23/vsa-video-sparse-attention/" class="post-title-link" itemprop="url">VSA 实现详解：三维分块、均值路由与块稀疏 Attention</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-23 17:30:00" itemprop="dateCreated datePublished" datetime="2026-10-23T17:30:00+08:00">2026-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1:14</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>VSA（Video Sparse Attention）先把视频 token 按 (T,H,W) 时空邻域分块，对每块的 Q、K 分别求均值，再用两个均值向量的点积决定保留哪些区块连接。选块完成后，正式 attention 仍用原始 Q&#x2F;K&#x2F;V 计算。</p>
+<p>下文默认读者熟悉 FlashAttention，按“全量 Q&#x2F;K → 分块均值 → 小 S → 每块 TopK → 稀疏 attention”的顺序讲。例子固定为 <code>(T,H,W)=(4,4,4)</code> 的 64 个 token 切成四个 <code>(4,2,2)</code> 区块，同一批 token 会依次经过池化、选块和 GPU 读取。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/23/vsa-video-sparse-attention/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/19/china-population-labor-pension-2080/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/19/china-population-labor-pension-2080/" class="post-title-link" itemprop="url">人口下降的二阶效应：2025—2080 年的七条曲线</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-19 12:00:00" itemprop="dateCreated datePublished" datetime="2026-10-19T12:00:00+08:00">2026-10-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%8F%E8%A7%82%E6%8C%87%E6%A0%87/" itemprop="url" rel="index"><span itemprop="name">宏观指标</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>2025 年出生 792 万，年末总人口 14.0489 亿。把出生、教育、劳动和养老放进同一套人口队列，本文的 2080 年情景是：总人口 6.32 亿，出生 234 万，劳动年龄供给 2.44 亿，20—44 岁潜在劳动供给 1.24 亿，养老金支出 29.83 万亿元，每名劳动人口对应 12.23 万元。</p>
+<p>这些数字是条件预测。基准条件包括：2025 年起平均生育年龄 30 岁、总和生育率从 0.896 降到 2045 年 0.8 再回到 2065 年 1.0、死亡年龄模式固定在 2025 年、退休按 2024 年渐进延迟方案、教育按 40% 峰值下限、养老金等效人均支出每年增长 2.60%。改动其中一个条件，结果会明显变化。</p>
+<p>几条不太直观的结论：</p>
+<ul>
+<li>2025—2080 年出生下降 70.5%，总人口下降 53.8%。生育率在 2045 年见底，之后回升，但育龄女性下降更快，出生在 2065 年以后继续减少。</li>
+<li>劳动供给在 2030 年代是平台期，2045 年后加速下降；2080 年 2.44 亿，比 2025 年少 65.6%。</li>
+<li>20—44 岁潜在劳动供给占比由 64.1% 降到 50.7%；45 岁及以上在 2040 年见顶 3.02 亿，之后才下降。</li>
+<li>新增劳动供给的本科及以上占比稳定在三分之一左右；2030 年代中后期总量在 1,700—1,800 万的高位，2080 年降到 353 万。</li>
+<li>养老金总支出是 2025 年的 3.9 倍，每劳动人口负担是 11.2 倍；人均养老金只增 2% 时，2080 年总量 21.60 万亿元、每劳动人口 8.86 万元。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/19/china-population-labor-pension-2080/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/12/wind-foundation-shipbuilding-six-companies/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/12/wind-foundation-shipbuilding-six-companies/" class="post-title-link" itemprop="url">风电海工与造船六家公司：订单利润的时间表与买入价格</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-12 23:40:00" itemprop="dateCreated datePublished" datetime="2026-10-12T23:40:00+08:00">2026-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">行业研究</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>27 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>以 2026 年 10 月 9 日收盘价买入、按同一套模型算到 2029 年末，八只证券里只有大金重工 H 股的条件年化为正（+8.6%），仍低于本文 11% 的折现基准；其余七只在 −8.6% 到 −40.4% 之间。这组数字衡量的是现价与本文经营条件之间的距离；公司之间的相对排序是另一个问题。</p>
+<p>距离最大的是两家造船公司和天顺风能：天顺风能 7.52 元的收盘价是基准合理现值 1.01 元的 7.4 倍，中船防务 A 股 28.41 元对应 4.28 元，中国船舶 38.54 元对应 8.65 元。大金重工 A 股 43.75 元对应 23.44 元，H 股 29.10 港元对应 27.32 港元，是八只里唯一接近合理现值的一只。</p>
+<p>价格背后的时间表分成两段。风电装备公司的利润要等交付爬坡：大金重工单桩收入 2027 年 22.4 亿元，2029 年到 44.7 亿元。两家造船公司的利润高峰就在眼前：中国船舶 2026 年归母净利 154.7 亿元、2029 年 89.6 亿元，2036 年降到 4.1 亿元，后面的利润取决于现在还没有签的续单价格。</p>
+<p>本文用一套统一模型回答六家公司的量、价、利润、现金和买入价格，并把两类生意的周期位置分开计算。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/12/wind-foundation-shipbuilding-six-companies/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/12/tire-industry-rubber-cost-cycle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/12/tire-industry-rubber-cost-cycle/" class="post-title-link" itemprop="url">轮胎行业：需求低增长，橡胶涨价先压利润再谈修复</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-12 21:00:00" itemprop="dateCreated datePublished" datetime="2026-10-12T21:00:00+08:00">2026-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E8%A1%8C%E4%B8%9A%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">行业研究</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>39 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>轮胎制造对橡胶的用量以十万吨计。按2025年已披露的消耗量和固定的研究参照价测算，天然胶每吨上涨1000元，三角轮胎、赛轮轮胎、玲珑轮胎、贵州轮胎的全年材料成本分别增加约1.88亿元、5.20亿元、4.32亿元和2.14亿元。这是不含售价传导、不含税收和汇率影响的税前增量。</p>
+<p>把幅度放大到天然胶上涨50%并持续六个月，四家公司的事件内十二个月累计税前影响分别为−2.74亿元、−7.58亿元、−6.30亿元和−3.12亿元；涨到100%则为−5.47亿元、−15.17亿元、−12.59亿元和−6.23亿元。这一组数字所用的条件写在下文第九节，属于条件测算，不带发生概率。</p>
+<p>对轮胎股来说，橡胶的方向、公司自身现金能力、以及胶价回落后能否留住提价，是三件需要分开判断的事。橡胶涨价先增加采购资金和材料成本；随后看实际净售价覆盖了多少；最后看便宜原料何时进入成本。只有在后两段同时成立时，利润才有超过涨价前水平的可能。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/12/tire-industry-rubber-cost-cycle/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/10/textile-apparel-manufacturers-valuation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/10/textile-apparel-manufacturers-valuation/" class="post-title-link" itemprop="url">申洲、晶苑、健盛、百隆、华利：纺织服装制造的订单、人工与买入价格</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-10 21:00:00" itemprop="dateCreated datePublished" datetime="2026-10-10T21:00:00+08:00">2026-10-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>37 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>申洲国际、晶苑国际、健盛集团、百隆东方和华利集团都在为品牌做纺织服装制造，但处在链条的不同位置：申洲是面料与成衣一体化，晶苑是多品类成衣，健盛做棉袜与无缝服饰，百隆做色纺纱，华利做运动鞋履。业务都叫代工，工序、人工密度、原料周期和资本结构却不一样。同一轮终端需求变化，先在品牌库存和采购份额上分岔，再经过报价、产能利用率和单位人工成本，才落到各家的利润和现金。</p>
+<p>以2026年10月9日收盘价为起点，按2029年末的 Base 情景目标价折回，只有申洲国际的当前价达到20%要求年化（约22.0%）；晶苑国际约9.3%、华利集团约5.5%，健盛集团和百隆东方为负。管理层方面，公开资料没有发现触及本文否决标准的行为，晶苑的保理披露整改、健盛的基金认缴与回购资金来源仍待核实。达到要求回报率只是条件测算，不等于值得买入。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/10/textile-apparel-manufacturers-valuation/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -640,652 +1273,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/09/10/power-operators-2031-valuation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/09/10/power-operators-2031-valuation/" class="post-title-link" itemprop="url">八家发电运营商的增长与估值：从用电需求推算2031年每股价值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-09-10 16:00:00" itemprop="dateCreated datePublished" datetime="2026-09-10T16:00:00+08:00">2026-09-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>9.9k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>36 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>用电需求增长可以带来发电企业的盈利增长，但增量能否落到每一股，需要看电源结构、投产进度、电价、融资成本和利润归属。本文按这些因素建立八家公司的2027—2031年情景：基准EPS年均增长约−0.50%—2.64%，Bull情景约−1.00%—5.28%，公司之间的增长来源和约束并不相同。</p>
-<p>以2026年9月7日参考价计算，三情景中的所有证券，仅靠2031年退出价格均未达到11%的年化回报要求。这不等于实际含息回报均低于11%：未来可支付股息与项目净资本责任仍未完整验证，八家公司的治理评价也均为待核实。下面先解释增长如何计算，再说明增长为什么未必足以抵消买入价格。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/09/10/power-operators-2031-valuation/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/09/07/smart-grid-equipment-comparison/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/09/07/smart-grid-equipment-comparison/" class="post-title-link" itemprop="url">智能电网设备四公司：从订单、利润与现金，一步步算到合理买价</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-09-07 23:00:00" itemprop="dateCreated datePublished" datetime="2026-09-07T23:00:00+08:00">2026-09-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">投资研究</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>8.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>29 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>电网建设给设备企业带来需求，但中标、确认收入、取得利润和收到现金分别发生在不同时间。国电南瑞的业务平台较广，四方股份的保护与自动化业务盈利基础较好，许继电气需要验证利润恢复，国电南自需要验证产品组合改善能否转化为上市股东的现金。</p>
-<p>以2026年9月4日收盘价买入、持有至2031年末，本文基准情景的税前年化总回报依次约为10.31%、2.78%、−4.87%和3.77%，均未达到11%的要求回报率。四家公司的管理层长期资本配置与持股证据仍有缺口，本文均列为“待核实”，以下是条件估值比较。更关键的是，部分悲观情景出现资金缺口，完整下行价值暂时无法计算。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/09/07/smart-grid-equipment-comparison/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/09/07/submarine-high-voltage-cable-comparison/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/09/07/submarine-high-voltage-cable-comparison/" class="post-title-link" itemprop="url">海缆与高压电缆四公司：从订单、现金到每股估值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-09-07 21:00:00" itemprop="dateCreated datePublished" datetime="2026-09-07T21:00:00+08:00">2026-09-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">投资研究</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>38 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>海缆与高压电缆的需求增长，要经过合同生效、制造交付、收入确认和现金回收，才能成为股东的收益。东方电缆、亨通光电、中天科技和汉缆股份的业务组合与资金约束差异很大，同一轮行业增长不会带来相同的利润和投资回报。</p>
-<p>以2026年9月4日收盘价入场、持有至2036年末计算，在本文经营与市盈率假设下，只有东方电缆的 Bull 情景达到11%的含息年化回报要求。四家公司的管理层评价仍有关键事项待核实；这一计算结果不构成投资候选排序。下文逐步解释收入、利润、现金、未来股价和今日可接受价格之间的关系。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/09/07/submarine-high-voltage-cable-comparison/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/09/05/china-eight-banks-comparison/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/09/05/china-eight-banks-comparison/" class="post-title-link" itemprop="url">八家银行怎么比较：从六维评分到普通股估值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-09-05 20:00:00" itemprop="dateCreated datePublished" datetime="2026-09-05T20:00:00+08:00">2026-09-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-09-06 00:00:00" itemprop="dateModified" datetime="2026-09-06T00:00:00+08:00">2026-09-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">投资</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%95%E8%B5%84/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>15k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>55 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>招行的客户与收费业务、建行的经营效率，在八家银行中相对突出；工行偏稳定经营，农行的县域业务提供增长机会，交行、中行、邮储和平安各有不同的改善条件。但质量、增长和买入回报是三个问题：在11%要求回报和长期维持较低派息上限的模型下，八家银行的Base价值均低于2026年9月2日的A股价格。</p>
-<p>本文把比较拆成两条可复算的线：先从原始指标推导八家银行的48项评分，再从收入、信用损失和资本约束推导普通股现金价值。评分包含代理指标和中性假设，治理均为待核实；全文的质量判断与条件估值不构成已完成治理筛选的投资名单。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/09/05/china-eight-banks-comparison/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/08/31/silicon-chain-companies-comparison/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/08/31/silicon-chain-companies-comparison/" class="post-title-link" itemprop="url">合盛、新安、东岳、兴发、协鑫：硅产业链的利润、现金流与估值比较</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-08-31 00:00:00" itemprop="dateCreated datePublished" datetime="2026-08-31T00:00:00+08:00">2026-08-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-09-01 00:00:00" itemprop="dateModified" datetime="2026-09-01T00:00:00+08:00">2026-09-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BC%81%E4%B8%9A%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">企业研究</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BC%81%E4%B8%9A%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>39 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>合盛硅业、新安股份、东岳硅材、兴发集团和协鑫科技都与硅有关，股东拿到的却是不同的利润来源：工业硅成本、有机硅加工价差、农化与磷资源回报，以及多晶硅现金成本。2026 年上半年，合盛的简单自由现金流为 21.79 亿元，兴发为 −22.84 亿元；协鑫归母亏损 20.81 亿元，且半年业绩公告没有提供经营现金流和现金资本开支。用同一个“硅价上涨”逻辑挑选公司，会跳过产品、成本、融资和币种上的差别。</p>
-<p>以 2026 年 8 月 28 日收盘价、11% 的税前年化要求回报率计算，现有企业经营情景中，仅兴发的 Bull 在持有至 2031 年时达标，约为 12.6%；持有至 2036 年则降至 9.6%。这只能说明特定假设下的价格关系：五家公司同名情景的产品、价格和经营输入尚有差异，治理核查也均保留“待核实”，本文不据此给出买入推荐或投资排名。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/08/31/silicon-chain-companies-comparison/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/08/30/industrial-silicon-supply-demand-2036/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Maple">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Maple.Link">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/08/30/industrial-silicon-supply-demand-2036/" class="post-title-link" itemprop="url">工业硅供需到2036：三条需求曲线、供给响应与价格再平衡</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-08-30 23:30:00" itemprop="dateCreated datePublished" datetime="2026-08-30T23:30:00+08:00">2026-08-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%95%86%E5%93%81%E7%A0%94%E7%A9%B6/" itemprop="url" rel="index"><span itemprop="name">商品研究</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%95%86%E5%93%81%E7%A0%94%E7%A9%B6/%E9%A3%8E%E9%99%A9%E6%8A%95%E8%B5%84/" itemprop="url" rel="index"><span itemprop="name">风险投资</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>20 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>2026 年三大用途折算的全球工业硅需求约 471 万吨，加入 2% 的其他用途后，Base 总需求为 480.8 万吨；供应研究给出的合理原生供应为 480.2 万吨，两者只差 0.65 万吨。四套独立材料在统一到“工业硅直接耗用、生产地归属、全球贸易抵消”的口径后，2026 年可以闭合。</p>
-<p>这组数据暂不支持持续短缺。Base 情景中，2030 年终端毛需求约 515.6 万吨，价格反馈后的供应约 512.2 万吨，余量由库存补充，模型价格约 8,700 元&#x2F;吨。到 2036 年，Base 价格约 9,100 元&#x2F;吨；只有高需求、低可动用库存和供给兑现偏慢同时发生的 Bull 情景，2036 年价格才升至约 1.19 万元&#x2F;吨。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/08/30/industrial-silicon-supply-demand-2036/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1309,13 +1298,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">311k</span>
+    <span title="站点总字数">359k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">18:52</span>
+    <span title="站点阅读时长">21:47</span>
   </span>
 </div>
 <div class="busuanzi-count">
