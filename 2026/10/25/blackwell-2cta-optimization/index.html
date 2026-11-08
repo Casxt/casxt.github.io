@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Blackwell 的 2CTA MMA 让两个 SM 上的一对线程块协作计算一个矩阵块。它可以减少重复搬运、降低每个 CTA 的输入存储需求，并支持更大的计算块；同时也引入配对调度、跨 CTA 同步和更大的累加结果。 优化的关键，是用数据复用和流水线收益覆盖这些成本。本文以 B200 上的 FP16／BF16 GEMM 为例，先算清一组分块的资源账，再讨论 tile、TMA、流水线、TMEM 和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="B200 的 2CTA 怎样调优：从矩阵分块到流水线">
+<meta property="og:url" content="https://maple.link/2026/10/25/blackwell-2cta-optimization/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="Blackwell 的 2CTA MMA 让两个 SM 上的一对线程块协作计算一个矩阵块。它可以减少重复搬运、降低每个 CTA 的输入存储需求，并支持更大的计算块；同时也引入配对调度、跨 CTA 同步和更大的累加结果。 优化的关键，是用数据复用和流水线收益覆盖这些成本。本文以 B200 上的 FP16／BF16 GEMM 为例，先算清一组分块的资源账，再讨论 tile、TMA、流水线、TMEM 和">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-24T16:00:00.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="B200">
+<meta property="article:tag" content="Blackwell">
+<meta property="article:tag" content="CUDA">
+<meta property="article:tag" content="CUTLASS">
+<meta property="article:tag" content="NVIDIA">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/10/25/blackwell-2cta-optimization/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/10/25/blackwell-2cta-optimization/","path":"2026/10/25/blackwell-2cta-optimization/","title":"B200 的 2CTA 怎样调优：从矩阵分块到流水线"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>B200 的 2CTA 怎样调优：从矩阵分块到流水线 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"neutral","dark":"dark"},"js":{"url":"/assets/vendor/mermaid/mermaid.min.js"}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="/css/region-guard.css?v=1">
+    <script src="/js/region-guard.js?v=1"></script>
+  
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+<style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><style>.post-body .katex-display{overflow-x:auto;overflow-y:hidden;padding:.7em .15em}.post-body .katex{font-size:1.08em}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E6%98%8E%E7%A1%AE%EF%BC%9A2CTA-%E5%8D%8F%E4%BD%9C%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-text">一、先明确：2CTA 协作的是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster%EF%BC%9A%E6%8A%8A%E5%A4%9A%E4%B8%AA-CTA-%E7%BB%84%E6%88%90%E4%B8%80%E4%B8%AA%E5%8D%8F%E4%BD%9C%E7%BB%84"><span class="nav-text">Cluster：把多个 CTA 组成一个协作组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-%E6%8F%90%E4%BE%9B%E5%93%AA%E4%BA%9B%E5%8A%9F%E8%83%BD"><span class="nav-text">Cluster 提供哪些功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E4%BE%8B%E5%AD%90%EF%BC%9A%E8%AF%BB%E5%8F%96%E5%90%8C%E7%BB%84%E5%8F%A6%E4%B8%80%E5%9D%97%E7%9A%84%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-text">一个最小例子：读取同组另一块的共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2CTA%EF%BC%9A%E5%9C%A8-Cluster-%E5%86%85%E9%85%8D%E5%AF%B9%E5%81%9A%E7%9F%A9%E9%98%B5%E4%B9%98%E5%8A%A0"><span class="nav-text">2CTA：在 Cluster 内配对做矩阵乘加</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%AE%97%E4%B8%80%E7%AC%94%E8%B4%A6%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%83%BD%E6%9B%B4%E5%BF%AB"><span class="nav-text">二、算一笔账：为什么可能更快</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%9B%B8%E5%90%8C%E7%9A%84%E8%BE%93%E5%87%BA%EF%BC%8C%E9%9C%80%E8%A6%81%E5%93%AA%E4%BA%9B%E8%BE%93%E5%85%A5"><span class="nav-text">1. 相同的输出，需要哪些输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%A4%E4%B8%AA%E7%8B%AC%E7%AB%8B-1CTA%EF%BC%9A%E5%90%84%E8%87%AA%E5%AD%98%E5%AE%8C%E6%95%B4-B"><span class="nav-text">2. 两个独立 1CTA：各自存完整 B</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2CTA%EF%BC%9AB-%E5%88%86%E5%BC%80%E5%AD%98%EF%BC%8C%E8%AE%A1%E7%AE%97%E6%97%B6%E5%8D%8F%E5%90%8C%E4%BD%BF%E7%94%A8"><span class="nav-text">3. 2CTA：B 分开存，计算时协同使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%9C%81%E4%BA%86%E5%A4%9A%E5%B0%91%EF%BC%9A%E4%B8%80%E4%BB%BD-B%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E4%B8%80%E5%8D%8A-A-%E5%8A%A0%E4%B8%80%E5%8D%8A-B"><span class="nav-text">4. 省了多少：一份 B，而不是一半 A 加一半 B</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%83%BD%E8%87%AA%E5%B7%B1%E5%88%86%E7%89%87%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E7%94%A8-2CTA-%E6%8C%87%E4%BB%A4"><span class="nav-text">5. 能自己分片，为什么还要用 2CTA 指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%85%88%E9%80%89-tile%EF%BC%8C%E5%86%8D%E8%B0%83%E6%95%B4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-text">三、先选 tile，再调整流水线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#M%E3%80%81N-%E5%86%B3%E5%AE%9A%E5%A4%8D%E7%94%A8%EF%BC%8C%E4%B9%9F%E5%86%B3%E5%AE%9A%E6%9C%89%E5%A4%9A%E5%B0%91%E5%B7%A5%E4%BD%9C%E5%8F%AF%E4%BB%A5%E8%B0%83%E5%BA%A6"><span class="nav-text">M、N 决定复用，也决定有多少工作可以调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K-tile-%E4%B8%8E-stage-%E6%95%B0%E8%A6%81%E4%B8%80%E8%B5%B7%E7%9C%8B"><span class="nav-text">K_tile 与 stage 数要一起看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81TMA%EF%BC%9A%E9%85%8D%E5%AF%B9%E5%85%B1%E4%BA%AB%E4%B8%8E-multicast-%E5%88%86%E5%BC%80%E8%B0%83"><span class="nav-text">四、TMA：配对共享与 multicast 分开调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%9A%E8%AE%A9%E6%90%AC%E8%BF%90%E3%80%81MMA%E3%80%81%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86%E9%87%8D%E5%8F%A0"><span class="nav-text">五、流水线：让搬运、MMA、结果处理重叠</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E5%8F%91%E8%B5%B7-MMA%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E5%88%86%E9%85%8D%E4%B8%80%E4%B8%AA-Warp"><span class="nav-text">一个线程发起 MMA，为什么还分配一个 Warp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%93%E8%81%8C-Warp-%E7%9A%84%E6%88%90%E6%9C%AC%E4%B8%8E%E6%94%B6%E7%9B%8A"><span class="nav-text">专职 Warp 的成本与收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E7%BC%93%E5%86%B2%E6%80%8E%E6%A0%B7%E4%BA%A4%E6%8E%A5"><span class="nav-text">输入缓冲怎样交接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E4%B8%A4%E5%9D%97%E7%9A%84%E5%90%8C%E6%AD%A5%E4%B8%8E-TMEM-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%A6%81%E4%B8%80%E8%B5%B7%E8%AE%BE%E8%AE%A1"><span class="nav-text">六、两块的同步与 TMEM 生命周期要一起设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81TMEM-%E4%B8%8E-epilogue%EF%BC%9A%E8%AE%A1%E7%AE%97%E5%8F%98%E5%BF%AB%E4%BB%A5%E5%90%8E%EF%BC%8C%E7%93%B6%E9%A2%88%E4%BC%9A%E7%A7%BB%E5%8A%A8"><span class="nav-text">七、TMEM 与 epilogue：计算变快以后，瓶颈会移动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MMA-%E7%AE%97%E7%BB%93%E6%9E%9C%EF%BC%8C%E7%B4%AF%E5%8A%A0%E7%BC%93%E5%86%B2%E5%AD%98%E7%BB%93%E6%9E%9C%EF%BC%8Cepilogue-%E5%A4%84%E7%90%86%E7%BB%93%E6%9E%9C"><span class="nav-text">MMA 算结果，累加缓冲存结果，epilogue 处理结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Epilogue-%E7%9A%84%E5%B7%A5%E4%BD%9C%E9%80%9A%E5%B8%B8%E5%88%86%E7%BB%99%E8%B0%81"><span class="nav-text">Epilogue 的工作通常分给谁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E8%BD%BB%E6%88%96%E9%87%8D%EF%BC%8C%E5%85%88%E7%9C%8B%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4"><span class="nav-text">工作轻或重，先看依赖范围</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#to-fp16%EF%BC%9A%E8%BE%B9%E5%8F%96%E7%BB%93%E6%9E%9C%EF%BC%8C%E8%BE%B9%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%86%99%E5%9B%9E"><span class="nav-text">to_fp16：边取结果，边转换和写回</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gate%EF%BC%8FSwiGLU%EF%BC%9A%E8%AE%A9%E5%90%8C%E4%B8%80%E6%89%B9%E7%BA%BF%E7%A8%8B%E6%8B%BF%E5%88%B0%E6%88%90%E5%AF%B9%E7%BB%93%E6%9E%9C"><span class="nav-text">Gate／SwiGLU：让同一批线程拿到成对结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Softmax%EF%BC%9A%E5%85%88%E6%B1%87%E6%80%BB%E4%B8%80%E8%A1%8C%EF%BC%8C%E5%86%8D%E5%BE%97%E5%88%B0%E6%AF%8F%E4%B8%AA%E8%BE%93%E5%87%BA"><span class="nav-text">Softmax：先汇总一行，再得到每个输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MoE-router%EF%BC%9A%E6%8A%8A%E9%80%89%E4%B8%93%E5%AE%B6%E4%B8%8E-token-%E6%95%B4%E7%90%86%E5%88%86%E9%98%B6%E6%AE%B5%E5%AE%89%E6%8E%92"><span class="nav-text">MoE router：把选专家与 token 整理分阶段安排</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2CTA-%E7%9A%84%E2%80%9C%E4%B8%A4%E5%9D%97%E2%80%9D%EF%BC%8C%E4%B8%8E%E5%8F%8C%E7%BC%93%E5%86%B2%E7%9A%84%E2%80%9C%E4%B8%A4%E4%BB%BD%E2%80%9D"><span class="nav-text">2CTA 的“两块”，与双缓冲的“两份”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E7%BC%93%E5%86%B2%E5%92%8C%E5%8F%8C%E7%BC%93%E5%86%B2%EF%BC%8C%E6%89%A7%E8%A1%8C%E6%80%8E%E6%A0%B7%E4%B8%8D%E5%90%8C"><span class="nav-text">单缓冲和双缓冲，执行怎样不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%94%BE%E4%B8%80%E4%BB%BD%E7%BC%93%E5%86%B2%E7%9A%84%E6%88%90%E6%9C%AC%E4%B8%8E%E6%94%B6%E7%9B%8A"><span class="nav-text">多放一份缓冲的成本与收益</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81Cluster%E3%80%81L2-%E4%B8%8E%E8%B0%83%E5%BA%A6%EF%BC%9A%E8%AE%A9%E8%B6%B3%E5%A4%9F%E5%A4%9A%E7%9A%84%E9%85%8D%E5%AF%B9%E6%8C%81%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="nav-text">八、Cluster、L2 与调度：让足够多的配对持续工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E7%94%A8%E5%AE%98%E6%96%B9%E7%A4%BA%E4%BE%8B%E6%A0%B8%E5%AF%B9%E5%AE%9E%E7%8E%B0"><span class="nav-text">九、用官方示例核对实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E6%8C%89%E7%93%B6%E9%A2%88%E8%B0%83%E5%8F%82%EF%BC%8C%E7%94%A8%E5%AE%9E%E6%B5%8B%E5%86%B3%E5%AE%9A%E4%BF%9D%E7%95%99%E5%93%AA%E9%A1%B9%E6%94%B9%E5%8A%A8"><span class="nav-text">十、按瓶颈调参，用实测决定保留哪项改动</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">110</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">401</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/25/blackwell-2cta-optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="B200 的 2CTA 怎样调优：从矩阵分块到流水线 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          B200 的 2CTA 怎样调优：从矩阵分块到流水线
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2026-10-25T00:00:00+08:00">2026-10-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GPU/" itemprop="url" rel="index"><span itemprop="name">GPU</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>37 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Blackwell 的 2CTA MMA 让两个 SM 上的一对线程块协作计算一个矩阵块。它可以减少重复搬运、降低每个 CTA 的输入存储需求，并支持更大的计算块；同时也引入配对调度、跨 CTA 同步和更大的累加结果。</p>
+<p>优化的关键，是用数据复用和流水线收益覆盖这些成本。本文以 B200 上的 FP16／BF16 GEMM 为例，先算清一组分块的资源账，再讨论 tile、TMA、流水线、TMEM 和调度怎样配合。</p>
+<span id="more"></span>
+
+<link rel="stylesheet" href="/2026/10/25/blackwell-2cta-optimization/two-cta.css?v=6">
+
+<h2 id="一、先明确：2CTA-协作的是什么"><a href="#一、先明确：2CTA-协作的是什么" class="headerlink" title="一、先明确：2CTA 协作的是什么"></a>一、先明确：2CTA 协作的是什么</h2><h3 id="Cluster：把多个-CTA-组成一个协作组"><a href="#Cluster：把多个-CTA-组成一个协作组" class="headerlink" title="Cluster：把多个 CTA 组成一个协作组"></a>Cluster：把多个 CTA 组成一个协作组</h3><p>CTA 就是 CUDA 的 Block。<strong>Thread Block Cluster（线程块集群，本文简称 Cluster）是 Grid 与 Block 之间的一层可选分组：把若干 Block 组织在一起，允许它们在一次 kernel 执行中通信和同步。</strong> 这项能力从 Hopper 的计算能力 9.0 开始提供，B200 继续支持。</p>
+<p>例如，一个 Grid 有 8 个 Block，每个 Cluster 包含 2 个 Block，就形成 4 个 Cluster：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Grid：一次 kernel 启动，共 8 个 Block</span><br><span class="line">├─ Cluster 0：Block 0、1</span><br><span class="line">├─ Cluster 1：Block 2、3</span><br><span class="line">├─ Cluster 2：Block 4、5</span><br><span class="line">└─ Cluster 3：Block 6、7</span><br></pre></td></tr></table></figure>
+
+<p><strong>Cluster 是程序定义的协作组，SM 和 GPC 是硬件资源。</strong> GPC（Graphics Processing Cluster）包含多个 SM；同一 Cluster 的 Block 保证被共同调度到同一个 GPC 中执行，每个 Block 仍由一个 SM 执行。共同调度保证这些块能在执行期间协作，不要求所有线程逐条指令同步推进，也不表示整个 Grid 的所有 Cluster 同时运行。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/intro-to-cuda-cpp.html#thread-block-clusters">CUDA 的 Thread Block Clusters</a></p>
+<h3 id="Cluster-提供哪些功能"><a href="#Cluster-提供哪些功能" class="headerlink" title="Cluster 提供哪些功能"></a>Cluster 提供哪些功能</h3><table>
+<thead>
+<tr>
+<th>能力</th>
+<th>程序能做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>共同调度</td>
+<td>同组 Block 同时具备协作条件，支持跨块数据交接</td>
+</tr>
+<tr>
+<td>跨 Block 同步</td>
+<td>用 <code>cluster.sync()</code> 等机制等待组内线程完成准备，再进入下一阶段</td>
+</tr>
+<tr>
+<td>分布式共享内存（DSMEM）</td>
+<td>读取、写入或原子更新其他块的共享内存，分摊输入存储、交换结果</td>
+</tr>
+<tr>
+<td>为硬件协作指定范围</td>
+<td>在支持的架构上使用 TMA multicast 广播输入，或用 2CTA MMA 配对计算</td>
+</tr>
+</tbody></table>
+<p>其中，DSMEM 把组内各块的共享内存暴露为可跨块访问的地址空间。每块仍分配自己的 SMEM；访问远端 SMEM 需要遵守地址映射、同步和生命周期规则。它也不会让不同 Cluster 自动共享片上数据。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html#distributed-shared-memory">分布式共享内存的使用规则</a></p>
+<p>Cluster 的大小可以是一维、二维或三维。CUDA 的可移植上限通常为 8 个 Block，实际配置还受设备和 MIG 分区限制；B200 在显式启用非可移植配置后可支持 16 个。更大的 Cluster 会增加共同驻留的资源要求，应结合活跃 Cluster 数评估收益。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html#thread-block-clusters">B200 的 Cluster 大小与限制</a></p>
+<h3 id="一个最小例子：读取同组另一块的共享内存"><a href="#一个最小例子：读取同组另一块的共享内存" class="headerlink" title="一个最小例子：读取同组另一块的共享内存"></a>一个最小例子：读取同组另一块的共享内存</h3><p>下面每个 Cluster 固定包含两个 Block。每块把自己的 Grid 编号写入本地共享内存，再读取同组另一块写入的编号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cooperative_groups.h&gt;</span></span></span><br><span class="line"><span class="keyword">namespace</span> cg = cooperative_groups;</span><br><span class="line"></span><br><span class="line">__global__ <span class="type">void</span> __cluster_dims__(<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>) <span class="built_in">cluster_peer</span>(<span class="type">int</span>* out) &#123;</span><br><span class="line">    cg::cluster_group cluster = cg::<span class="built_in">this_cluster</span>();</span><br><span class="line">    __shared__ <span class="type">int</span> marker;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (threadIdx.x == <span class="number">0</span>) marker = blockIdx.x;</span><br><span class="line">    cluster.<span class="built_in">sync</span>();  <span class="comment">// 同组各块已启动，并完成 marker 初始化</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (threadIdx.x == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">int</span> peer_rank = <span class="number">1</span> - <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(cluster.<span class="built_in">block_rank</span>());</span><br><span class="line">        <span class="type">int</span>* peer_marker = cluster.<span class="built_in">map_shared_rank</span>(&amp;marker, peer_rank);</span><br><span class="line">        out[blockIdx.x] = *peer_marker;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cluster.<span class="built_in">sync</span>();  <span class="comment">// 等所有远端读取完成，各块才能退出</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// d_out 已分配，可容纳 4 个 int；显存管理、错误检查省略。</span></span><br><span class="line">cluster_peer&lt;&lt;&lt;<span class="number">4</span>, <span class="number">128</span>&gt;&gt;&gt;(d_out);  <span class="comment">// 4 个 Block，形成 2 个 Cluster</span></span><br><span class="line"><span class="comment">// 完成并复制回主机后，结果应为 [1, 0, 3, 2]。</span></span><br></pre></td></tr></table></figure>
+
+<p>这里 <code>&lt;&lt;&lt;4,128&gt;&gt;&gt;</code> 的第一个参数仍是 <strong>Block 总数</strong>，不是 Cluster 数；Grid 各维的 Block 数必须是对应 Cluster 维度的整数倍。<code>block_rank()</code> 是块在本 Cluster 内的编号，<code>blockIdx.x</code> 是块在 Grid 内的编号。两次 <code>cluster.sync()</code> 分别保证数据已准备好、读取结束前对方不会退出；所有线程都要参与，<code>__syncthreads()</code> 只能同步本块，不能替代它。这个例子只演示 Cluster 通信，没有执行矩阵运算。</p>
+<h3 id="2CTA：在-Cluster-内配对做矩阵乘加"><a href="#2CTA：在-Cluster-内配对做矩阵乘加" class="headerlink" title="2CTA：在 Cluster 内配对做矩阵乘加"></a>2CTA：在 Cluster 内配对做矩阵乘加</h3><p><strong>2CTA MMA，也称 2-SM MMA，指同一 Cluster 中一对 CTA 协作完成矩阵乘加。</strong> 每个 CTA 仍由自己的 SM 执行，两个 CTA 保留各自的共享内存和 Tensor Memory（TMEM，保存矩阵累加结果的专用片上存储）。</p>
+<p>本文讨论的运算是 <code>D = A × B</code>，矩阵维度分别为 <code>A[M,K]</code>、<code>B[K,N]</code>、<code>D[M,N]</code>。一个 tile 是从大矩阵中切出的小块；沿 K 方向分段累加，最终得到一块 D。</p>
+
+<figure class="b2-diagram" aria-label="2CTA 协作关系">
+  <div class="b2-cluster-label">同一个 Cluster：包含一对 CTA</div>
+  <div class="b2-pair">
+    <div class="b2-card"><b>CTA 0 → SM 0</b><span>本地 SMEM：部分 A、B</span><span>本地 TMEM：部分累加结果</span></div>
+    <div class="b2-card"><b>CTA 1 → SM 1</b><span>本地 SMEM：部分 A、B</span><span>本地 TMEM：部分累加结果</span></div>
+  </div>
+  <div class="b2-operation">一对 CTA 协作完成一次 2CTA MMA<br><code>tcgen05.mma.cta_group::2</code></div>
+  <figcaption>图 1：两个 CTA 在同一个 GPC 内的两个 SM 上协作。SM 编号为示意；Cluster 规定协作范围，各块的线程和存储资源仍有边界。</figcaption>
+</figure>
+
+
+<p>PTX 用 <code>.cta_group::2</code> 指定配对协作。只把 Cluster 大小设为 2，不会自动把普通矩阵运算变成 2CTA MMA。实际实现还需要匹配的矩阵指令、数据布局、TMEM 分配与同步。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-issue-granularity">PTX 的发射粒度与 CTA Pair</a></p>
+<p>Cluster 可以容纳多对 CTA；<strong>2CTA 是一条 MMA 的协作粒度，Cluster 大小是更外层的组织参数。</strong> 下文先用只含一对 CTA 的 Cluster，避免把配对计算和更大范围的数据广播混在一起。</p>
+<h2 id="二、算一笔账：为什么可能更快"><a href="#二、算一笔账：为什么可能更快" class="headerlink" title="二、算一笔账：为什么可能更快"></a>二、算一笔账：为什么可能更快</h2><p><strong>这一例子里，A 的总量没有减少；减少的是两个 CTA 对 B 的重复存储和加载。</strong> 矩阵元素没有压缩，计算结果也没有少算。先把矩阵乘法拆开，再看数据放在哪里。</p>
+<h3 id="1-相同的输出，需要哪些输入"><a href="#1-相同的输出，需要哪些输入" class="headerlink" title="1. 相同的输出，需要哪些输入"></a>1. 相同的输出，需要哪些输入</h3><p>设这一轮要完成 <code>256 × 256</code> 的输出更新，沿 K 方向先处理 64 个元素。A 分块为 <code>256 × 64</code>，B 分块为 <code>64 × 256</code>。</p>
+<p>将 A 按行切成上下两半，将 B 按列切成左右两半：</p>
+
+<figure class="b2-diagram" aria-label="A按行分块与B按列分块的矩阵乘法图">
+  <div class="b2-cluster-label">A × B → 本轮输出更新</div>
+  <div class="b2-multiply-layout">
+    <div class="b2-matrix-key"><b>A</b><span>256 行</span><span>64 列</span></div>
+    <div class="b2-matrix-b-wrap">
+      <div class="b2-matrix-dimension">B：64 行 × 256 列 →</div>
+      <div class="b2-matrix-b">
+        <div class="b2-matrix-left"><b>B左</b><span>64 × 128</span></div>
+        <div class="b2-matrix-right"><b>B右</b><span>64 × 128</span></div>
+      </div>
+    </div>
+    <div class="b2-matrix-a">
+      <div class="b2-matrix-top"><b>A上</b><span>128 × 64</span></div>
+      <div class="b2-matrix-bottom"><b>A下</b><span>128 × 64</span></div>
+    </div>
+    <div class="b2-matrix-output">
+      <div class="b2-matrix-top"><b>A上 × B左</b><span>输出左上</span></div>
+      <div class="b2-matrix-top"><b>A上 × B右</b><span>输出右上</span></div>
+      <div class="b2-matrix-bottom"><b>A下 × B左</b><span>输出左下</span></div>
+      <div class="b2-matrix-bottom"><b>A下 × B右</b><span>输出右下</span></div>
+    </div>
+  </div>
+  <div class="b2-matrix-dimension b2-output-dimension">输出：256 行 × 256 列；每格 128 × 128</div>
+  <figcaption>图 1a：左侧 A 按行分，上方 B 按列分；沿 A 的行、B 的列找到交点，就是对应的输出分块。图中尺寸均为“行数 × 列数”，这一轮沿 K 方向处理 64 个元素。</figcaption>
+</figure>
+
+
+<p>例如，输出上半的某一行，既要乘 B 的左 128 列，也要乘右 128 列。因此，<strong>负责上半输出的计算需要完整 B，负责下半输出的计算也需要完整 B。</strong> 它们分别使用不同的 A，但共用同一份 B。</p>
+<p>这里的 64 是一次搬入 SMEM 的 K 分段，不代表一条底层 MMA 指令就覆盖 K&#x3D;64；实现可通过多条 MMA 累加完成。若整个矩阵的 K 更长，再重复处理后续分段。</p>
+<h3 id="2-两个独立-1CTA：各自存完整-B"><a href="#2-两个独立-1CTA：各自存完整-B" class="headerlink" title="2. 两个独立 1CTA：各自存完整 B"></a>2. 两个独立 1CTA：各自存完整 B</h3><p>先用两个普通的 1CTA MMA 任务，各算一半输出。每个任务的矩阵指令使用本 CTA 准备的输入：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CTA 0 的 SMEM：A上 + B左 + B右 → 输出上半</span><br><span class="line">CTA 1 的 SMEM：A下 + B左 + B右 → 输出下半</span><br></pre></td></tr></table></figure>
+
+<p>A上、A下各存一次；B左、B右却都存了两次。两个独立 CTA 即使同时运行在两个 SM 上，也不会仅因为数据相同，就自动把另一块的 SMEM 作为自己的 1CTA MMA 输入。</p>
+<h3 id="3-2CTA：B-分开存，计算时协同使用"><a href="#3-2CTA：B-分开存，计算时协同使用" class="headerlink" title="3. 2CTA：B 分开存，计算时协同使用"></a>3. 2CTA：B 分开存，计算时协同使用</h3><p>换成配对的 2CTA MMA 后，输入这样放置：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CTA 0 的 SMEM：A上 + B左</span><br><span class="line">CTA 1 的 SMEM：A下 + B右</span><br></pre></td></tr></table></figure>
+
+<p><strong>存储按这个方式分摊，计算仍要覆盖四个乘积：</strong></p>
+
+<figure class="b2-diagram" aria-label="2CTA 输入存储与四个输出分块">
+  <div class="b2-cluster-label">CTA 0 的 SMEM：A上、B左<br>CTA 1 的 SMEM：A下、B右</div>
+  <table class="b2-products">
+    <thead><tr><th scope="col">输出归属</th><th scope="col">左 128 列</th><th scope="col">右 128 列</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">CTA 0<br>上 128 行</th><td><b>A上 × B左</b><span>B 在本地</span></td><td class="b2-peer"><b>A上 × B右</b><span>B 来自对端</span></td></tr>
+      <tr><th scope="row">CTA 1<br>下 128 行</th><td class="b2-peer"><b>A下 × B左</b><span>B 来自对端</span></td><td><b>A下 × B右</b><span>B 在本地</span></td></tr>
+    </tbody>
+  </table>
+  <figcaption>图 1b：四格构成完整的 256 × 256 输出更新。每格为 128 × 128；行表示输出在两块 TMEM 中的归属，格内标明所需 B 位于本地还是对端。示意不表示四条独立指令或固定执行顺序。</figcaption>
+</figure>
+
+
+<p>CTA 0 对应的计算需要 A上、B左和 B右，CTA 1 对应的计算需要 A下、B左和 B右。<strong>2CTA MMA 允许硬件使用分布在配对 CTA 共享内存中的 B，两个 SM 因而能共同使用完整 B，而无须在每块 SMEM 中都常驻一份完整副本。</strong> PTX 对 B 的位置明确包含当前 CTA 和 peer CTA。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-mma">PTX 的 tcgen05 矩阵操作数</a></p>
+<p>实际流程是：两个 CTA 按布局准备各自输入，完成必要同步，再由配对中选出的一个线程发起 2CTA MMA；硬件完成跨 SM 的配合，结果按布局累加到两块各自的 TMEM。CTA 0 负责的输出覆盖左、右两半，CTA 1 也一样；只计算图中的两个对角格，会漏掉一半输出。</p>
+<p>这与官方教程使用的 A 按行分、B 按列分、输出按行分的布局一致。其他 MMA 形状和布局需按对应规则推导。<a target="_blank" rel="noopener" href="https://nvidia.github.io/tilus/latest/tutorials/matmul-blackwell/v6.html#tile-partitioning">NVIDIA 的 2CTA 分块教程</a></p>
+<h3 id="4-省了多少：一份-B，而不是一半-A-加一半-B"><a href="#4-省了多少：一份-B，而不是一半-A-加一半-B" class="headerlink" title="4. 省了多少：一份 B，而不是一半 A 加一半 B"></a>4. 省了多少：一份 B，而不是一半 A 加一半 B</h3><p>A、B 都使用 2 字节的 FP16／BF16，<code>1 KiB = 1024 B</code>。完成相同的 <code>256 × 256 × 64</code> 工作，单轮输入存储如下：</p>
+<table>
+<thead>
+<tr>
+<th>单轮输入存储</th>
+<th>两个独立的 1CTA，各算 128 × 256</th>
+<th>一对 2CTA，共算 256 × 256</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每个 CTA 的 A</td>
+<td>128 × 64 × 2 B &#x3D; 16 KiB</td>
+<td>16 KiB</td>
+</tr>
+<tr>
+<td>每个 CTA 的 B</td>
+<td>64 × 256 × 2 B &#x3D; 32 KiB</td>
+<td>64 × 128 × 2 B &#x3D; 16 KiB</td>
+</tr>
+<tr>
+<td>每个 CTA 的 A＋B</td>
+<td>48 KiB</td>
+<td>32 KiB</td>
+</tr>
+<tr>
+<td>两个 CTA 合计</td>
+<td>96 KiB</td>
+<td>64 KiB</td>
+</tr>
+</tbody></table>
+<p>按两个 CTA 合计，更容易看出差别：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">两个独立 1CTA：一份 A（32 KiB）＋ 两份 B（64 KiB）＝ 96 KiB</span><br><span class="line">一对 2CTA：   一份 A（32 KiB）＋ 一份 B（32 KiB）＝ 64 KiB</span><br></pre></td></tr></table></figure>
+
+<p>所以，<strong>A 总量保持 32 KiB，B 的 SMEM 副本从两份变一份；合计省下 32 KiB。</strong> 每个 CTA 的输入缓冲由 48 KiB 降到 32 KiB。省下的空间可以用于增加流水线 stage，或为 epilogue 留出空间。Stage 是循环缓冲区的一份独立槽位。</p>
+<p>两边仍完成同样的乘加；2CTA 增加了跨 SM 协作和同步成本。是否更快，取决于减少重复加载、缓解存储压力和改善流水线带来的收益，能否覆盖这些成本。</p>
+<p>这里统计的是算法要求加载到 SMEM 的数据量。独立 CTA 对 B 的重复读取可能命中 L2，因此不能据此断言 HBM 流量也下降三分之一，更不能把它直接换算成加速比。</p>
+<p>同一轮执行 <code>2 × 256 × 256 × 64 = 8,388,608</code> 次浮点运算。只除以输入加载字节数，计算强度从约 <code>85.3</code> 提高到 <code>128 FLOP/B</code>。这是忽略输出、缓存和同步的模型，作用是解释复用收益。</p>
+<p>硬件总量没有翻倍：两个独立的 1CTA 本来就能使用两个 SM。2CTA 的优势要从减少冗余、指令形状和执行效率中获得。</p>
+<h3 id="5-能自己分片，为什么还要用-2CTA-指令"><a href="#5-能自己分片，为什么还要用-2CTA-指令" class="headerlink" title="5. 能自己分片，为什么还要用 2CTA 指令"></a>5. 能自己分片，为什么还要用 2CTA 指令</h3><p>分片由程序决定，矩阵乘加由执行单元完成。自己用 CUDA Core 写循环和 FMA，也能算出同一结果；<code>tcgen05.mma.cta_group::2</code> 则让两个 SM 的 Tensor Core 按规定布局协同计算，直接使用分布在两块中的输入，并将结果累加到各自的 TMEM。对于支持的数据类型和大块稠密矩阵，这条专用路径通常有更高的乘加吞吐。</p>
+<p>输入复用也有不同层次：TMA multicast 可以把同一输入送给多个 CTA，但每个接收者仍保存自己的副本；前例的 2CTA MMA 则允许 B 的左右半片分放两块，计算时协同使用。普通 1CTA MMA 需要在本地备齐当前运算所需的 B，也可以分多轮加载较小子块来节省空间。<a target="_blank" rel="noopener" href="https://nvidia.github.io/tilus/latest/tutorials/matmul-blackwell/v6.html#tile-partitioning">2CTA 的输入分布与计算方式</a></p>
+<p>因此，2CTA 的价值包括 <strong>Tensor Core 跨 SM 协同、支持更大的 MMA 形状，以及减少输入副本</strong>。软件分片仍然需要做，专门指令负责高效执行这些分片之间的乘加。</p>
+<h2 id="三、先选-tile，再调整流水线"><a href="#三、先选-tile，再调整流水线" class="headerlink" title="三、先选 tile，再调整流水线"></a>三、先选 tile，再调整流水线</h2><h3 id="M、N-决定复用，也决定有多少工作可以调度"><a href="#M、N-决定复用，也决定有多少工作可以调度" class="headerlink" title="M、N 决定复用，也决定有多少工作可以调度"></a>M、N 决定复用，也决定有多少工作可以调度</h3><p>增大输出 tile，通常能让一次输入读取服务更多乘加；代价是累加结果增大、独立输出任务减少。2CTA 配对后，一个任务又需要两个 SM，不能只看任务数减少了多少。</p>
+<p>例如把 <code>128 × 256</code> 的 1CTA tile 换成 <code>256 × 256</code> 的 2CTA tile，任务数大致减半，但每个任务使用的 SM 数也加倍。是否改善整卡利用率，还要看实际驻留资源、任务数量与最后一批工作的分布。</p>
+<p>边界同样重要。若 M 只有 128，却使用覆盖 256 行的 2CTA tile，在补零并计算完整 tile 的实现里，M 方向有效工作比例只有 50%。为整齐的大矩阵选出的配置，可能在小 batch 或 MoE 的小专家矩阵上吃亏。</p>
+<p>下面这个小计算器可在 CPU 上估算输出覆盖率与输入缓冲。它只做预算，不判断某个后端是否支持该配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> ceil</span><br><span class="line"></span><br><span class="line">M, N, K = <span class="number">384</span>, <span class="number">4096</span>, <span class="number">4096</span></span><br><span class="line">BM, BN, BK = <span class="number">256</span>, <span class="number">256</span>, <span class="number">64</span>  <span class="comment"># 一对 CTA 的 tile</span></span><br><span class="line">stages = <span class="number">3</span></span><br><span class="line">input_bytes = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">pair_tiles = ceil(M / BM) * ceil(N / BN)</span><br><span class="line">coverage = M * N / (pair_tiles * BM * BN)</span><br><span class="line">smem_per_cta = stages * ((BM // <span class="number">2</span>) * BK + BK * (BN // <span class="number">2</span>)) * input_bytes</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输出 tile 数:&quot;</span>, pair_tiles)                 <span class="comment"># 32</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;M/N 覆盖率:&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;coverage:<span class="number">.1</span>%&#125;</span>&quot;</span>)            <span class="comment"># 75.0%</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;每 CTA 输入缓冲:&quot;</span>, smem_per_cta // <span class="number">1024</span>, <span class="string">&quot;KiB&quot;</span>)  <span class="comment"># 96 KiB</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;K 分段数:&quot;</span>, ceil(K / BK))                   <span class="comment"># 64</span></span><br></pre></td></tr></table></figure>
+
+<p>覆盖率是几何指标，不是实际 Tensor Core 利用率。若实现能跳过部分工作，或者还有 K 尾块，实际情况需要另算。</p>
+<h3 id="K-tile-与-stage-数要一起看"><a href="#K-tile-与-stage-数要一起看" class="headerlink" title="K_tile 与 stage 数要一起看"></a>K_tile 与 stage 数要一起看</h3><p>固定 M、N 分块时，增大 K_tile 会同时增加单轮运算量和输入字节数，不会凭空提高前面那个输入计算强度。它可能减少循环和同步次数，却也让每个 stage 更大，挤掉可驻留任务或预取空间。</p>
+<p>在上面的 2CTA 布局里，K_tile 从 64 增至 128，每个 CTA 的输入缓冲从每 stage 32 KiB 增至 64 KiB。3 stage 就从 96 KiB 增至 192 KiB，尚未计入屏障、padding、缩放因子和 epilogue。</p>
+<p>因此应搜索 <strong>tile × stage 数的组合</strong>，先排除资源超限和边界浪费严重的候选，再实测。B200 的共享内存有每 SM、每 Block 的限制，Cluster 内也不能把两个 SM 的容量当作单个 CTA 可任意使用的一大块内存。Cluster 驻留情况应使用 <code>cudaOccupancyMaxActiveClusters</code> 等接口计算。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html#occupancy">Blackwell 资源与 Cluster occupancy</a></p>
+<h2 id="四、TMA：配对共享与-multicast-分开调"><a href="#四、TMA：配对共享与-multicast-分开调" class="headerlink" title="四、TMA：配对共享与 multicast 分开调"></a>四、TMA：配对共享与 multicast 分开调</h2><p>TMA（Tensor Memory Accelerator）负责异步搬运矩阵块。2CTA 调优时，需要区分两件事：</p>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>数据怎样使用</th>
+<th>主要调优点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一对 CTA 的 MMA 协作</td>
+<td>两块存放不同输入片段，共同参与一次 MMA</td>
+<td>分片、描述符、配对完成通知</td>
+</tr>
+<tr>
+<td>TMA multicast</td>
+<td>将一份输入送到多个需要它的 CTA</td>
+<td>接收掩码、广播范围、屏障记账</td>
+</tr>
+</tbody></table>
+<p>对于前面的单对 CTA，B 左右各存一半，已经能支持配对计算；无需为了“两个 CTA 都要完整 B”再各复制一整份。若 Cluster 包含多个输出任务，沿 N 排列的任务可以复用 A，沿 M 排列的任务可以复用 B，再考虑 multicast。</p>
+<p>优化时先确定每个接收者需要哪一片，再由布局生成 multicast mask。<strong>广播范围更大，也会增加接收存储和同步范围。</strong> 只向会消费数据的 CTA 广播；不要把普通 1CTA 的 TMA atom、掩码和期望字节数直接复制到 2CTA 实现。</p>
+<p>SMEM 的 swizzle 是地址重排，用于配合访存和矩阵指令。应先沿用库为该 MMA 提供的布局，再根据瓶颈改动；手工转置或压缩缓冲时，需要同时校验 TMA 描述符与 MMA 看到的布局。<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/cutlass/blob/v4.8.0/examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu">官方 CuTe 教程的 TMA 分片、掩码与 SMEM 布局</a></p>
+<h2 id="五、流水线：让搬运、MMA、结果处理重叠"><a href="#五、流水线：让搬运、MMA、结果处理重叠" class="headerlink" title="五、流水线：让搬运、MMA、结果处理重叠"></a>五、流水线：让搬运、MMA、结果处理重叠</h2><p>2CTA 的输入更省空间，一个直接用途是多放几份输入缓冲：当前 K 分段做 MMA，后续 K 分段由 TMA 预取。</p>
+
+<figure class="b2-diagram" aria-label="2CTA 流水线示意">
+  <div class="b2-scroll">
+    <table class="b2-timeline">
+      <thead><tr><th scope="col">角色</th><th scope="col">阶段 1</th><th scope="col">阶段 2</th><th scope="col">阶段 3</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">TMA 生产者</th><td>加载 K 段 0</td><td>加载 K 段 1</td><td>加载 K 段 2</td></tr>
+        <tr><th scope="row">MMA 发起者</th><td>等待输入</td><td>累加 K 段 0</td><td>累加 K 段 1</td></tr>
+        <tr><th scope="row">Epilogue</th><td colspan="3">处理上一输出 tile 的完整累加结果</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <figcaption>图 2：TMA 与 MMA 处理当前输出 tile 的各个 K 分段；epilogue 同时处理上一 tile。假设上一 tile 已完成全部 K 累加，且结果缓冲独立。时间段仅为示意，不按比例。</figcaption>
+</figure>
+
+
+<h3 id="一个线程发起-MMA，为什么还分配一个-Warp"><a href="#一个线程发起-MMA，为什么还分配一个-Warp" class="headerlink" title="一个线程发起 MMA，为什么还分配一个 Warp"></a>一个线程发起 MMA，为什么还分配一个 Warp</h3><p><strong>“一个线程发起”是指令要求，“分配一个 Warp”是程序的分工方式。</strong> 一个 Warp 有 32 个线程；<code>tcgen05.mma.cta_group::2</code> 由整对 CTA 中选出的一个线程发起，Tensor Core 随后异步执行矩阵乘加。专职 MMA Warp 通常负责持续运行“等输入 → 发起 MMA → 更新流水线状态 → 下一轮”的控制循环，发起时选出一个线程即可。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-issue-granularity">PTX 的发起粒度</a></p>
+<p>Warp Specialization 将这些控制工作与搬运、结果处理分给不同 Warp，让各角色独立推进。角色也可以合并：同一个 Warp 在不同阶段承担多种工作，具体由流水线设计决定。<a target="_blank" rel="noopener" href="https://docs.jax.dev/en/latest/pallas/gpu/blackwell_matmul.html#warp-specialization">JAX 的 Blackwell Warp Specialization 教程</a></p>
+<h3 id="专职-Warp-的成本与收益"><a href="#专职-Warp-的成本与收益" class="headerlink" title="专职 Warp 的成本与收益"></a>专职 Warp 的成本与收益</h3><p>专职 Warp 会占用 32 个线程名额、一个驻留 Warp 槽位及相应寄存器。例如每块 8 个 Warp，其中 1 个专职控制，便用了 1&#x2F;8 的线程名额；这不等于损失 1&#x2F;8 的计算吞吐。<strong>等待中的 Warp 不会独占 32 个 CUDA Core</strong>，执行单元可以服务其他就绪 Warp。</p>
+<table>
+<thead>
+<tr>
+<th>更可能划算</th>
+<th>更可能不划算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K 循环较长，少量控制指令就能持续驱动大量 Tensor Core 计算</td>
+<td>小矩阵、短 K，流水线很快收尾</td>
+</tr>
+<tr>
+<td>搬运、MMA、epilogue 有足够工作重叠，分工后减少互相等待</td>
+<td>额外 Warp 和寄存器挤掉驻留任务，其他角色又经常空等</td>
+</tr>
+</tbody></table>
+<p>收益来自让 Tensor Core 更少断粮，同时让其他 Warp 处理 softmax、类型转换等工作。调优时比较整个 kernel 的耗时，再决定拆开角色还是合并角色。</p>
+<h3 id="输入缓冲怎样交接"><a href="#输入缓冲怎样交接" class="headerlink" title="输入缓冲怎样交接"></a>输入缓冲怎样交接</h3><p>用状态机看一份输入缓冲，比记住几条 barrier 指令更容易：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">EMPTY：前一轮 MMA 已不再读取这份输入</span><br><span class="line">  ↓ 生产者取得槽位，设置正确的 TMA 完成条件</span><br><span class="line">FILLING：TMA 正在写入</span><br><span class="line">  ↓ 相关输入全部到达</span><br><span class="line">FULL：允许发起使用这份输入的 MMA</span><br><span class="line">  ↓ MMA 已完成对这份输入的使用</span><br><span class="line">EMPTY：允许下一轮覆盖</span><br></pre></td></tr></table></figure>
+
+<p><strong>发起异步 MMA，不等于它已经读完 SMEM；发起 TMA，也不等于数据已可用。</strong> 提前释放输入缓冲可能覆盖仍在被读取的数据。循环复用屏障时，还需要正确维护 stage 索引和 phase，区分本轮完成与上一轮完成。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-consistency-model">PTX 的 tcgen05 内存顺序与异步完成规则</a></p>
+<p>Stage 数增加后，先看 MMA 等输入的停顿是否减少。若等待没改善、驻留任务却减少，继续加深流水线通常没有收益。K 很短的任务，还可能来不及进入稳态就已经收尾。</p>
+<h2 id="六、两块的同步与-TMEM-生命周期要一起设计"><a href="#六、两块的同步与-TMEM-生命周期要一起设计" class="headerlink" title="六、两块的同步与 TMEM 生命周期要一起设计"></a>六、两块的同步与 TMEM 生命周期要一起设计</h2><p>2CTA 中有几个容易混淆的粒度：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>需要关注的参与者</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>发起 <code>.mma.cta_group::2</code></td>
+<td>一对 CTA 中选出的一个线程；库封装可能要求一个 Warp 共同进入调用</td>
+</tr>
+<tr>
+<td><code>.alloc/.dealloc.cta_group::2</code></td>
+<td>两个 CTA 各有一个 Warp，配对执行分配／释放</td>
+</tr>
+<tr>
+<td><code>__syncthreads()</code></td>
+<td>只同步当前 CTA 的线程</td>
+</tr>
+<tr>
+<td>Cluster barrier／异步完成通知</td>
+<td>按规则协调多个 CTA，或等待对应异步操作</td>
+</tr>
+</tbody></table>
+<p>这里的分工是：一个线程代表整对 CTA 发起 MMA，两个 CTA 各派一个 Warp，共同完成 TMEM 的分配和释放。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-issue-granularity">tcgen05 的 Issue Granularity</a></p>
+<p>同步负责交接缓冲：MMA 用完输入后复用 SMEM，epilogue 读完结果后复用 TMEM；两块结束相互访问后，再释放资源。CUTLASS 的 pipeline 和 TMEM allocator 可以管理这些交接，调优时再用细粒度完成通知减少整组等待。</p>
+<h2 id="七、TMEM-与-epilogue：计算变快以后，瓶颈会移动"><a href="#七、TMEM-与-epilogue：计算变快以后，瓶颈会移动" class="headerlink" title="七、TMEM 与 epilogue：计算变快以后，瓶颈会移动"></a>七、TMEM 与 epilogue：计算变快以后，瓶颈会移动</h2><h3 id="MMA-算结果，累加缓冲存结果，epilogue-处理结果"><a href="#MMA-算结果，累加缓冲存结果，epilogue-处理结果" class="headerlink" title="MMA 算结果，累加缓冲存结果，epilogue 处理结果"></a>MMA 算结果，累加缓冲存结果，epilogue 处理结果</h3><p><strong>累加缓冲保存一个输出 tile 已经算出的部分和。</strong> 沿 K 每处理一段，MMA 就把新的乘积加进去；全部 K 段完成后，缓冲中才是这一块完整的矩阵乘法结果。在本文的 B200 实现里，它位于 TMEM。</p>
+<p><strong>Epilogue（尾处理）读取累加结果，把它变成最终输出。</strong> 最简单的是转换类型并写回，也可以融合 bias、激活和缩放。用一个输出元素表示，两阶段的逻辑如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 逻辑示意：实际 GPU 指令一次处理矩阵分块</span></span><br><span class="line">acc = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(K):</span><br><span class="line">    acc += A[i, k] * B[k, j]       <span class="comment"># 主循环：持续累加</span></span><br><span class="line"></span><br><span class="line">D[i, j] = to_fp16(acc + bias[j])   <span class="comment"># epilogue：处理并输出</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="b2-diagram" aria-label="MMA累加缓冲与epilogue数据流">
+  <div class="b2-acc-flow">
+    <div class="b2-acc-node"><b>① MMA</b><span>读取 A、B 分块</span><span>沿 K 逐段乘加</span></div>
+    <div class="b2-acc-arrow" aria-hidden="true">→</div>
+    <div class="b2-acc-node b2-acc-storage"><b>② 累加缓冲 · TMEM</b><span>部分和 → 完整结果</span><span>对应一个输出 tile</span></div>
+    <div class="b2-acc-arrow" aria-hidden="true">→</div>
+    <div class="b2-acc-node"><b>③ Epilogue</b><span>读到寄存器中处理</span><span>转换／激活／归约</span></div>
+    <div class="b2-acc-arrow" aria-hidden="true">→</div>
+    <div class="b2-acc-node"><b>④ 输出到显存</b><span>直接存储</span><span>或经 SMEM＋TMA</span></div>
+  </div>
+  <div class="b2-acc-overlap">
+    <div><b>累加槽位 0</b><span>MMA 正在累加 tile p</span></div>
+    <div><b>累加槽位 1</b><span>Epilogue 正在读取 tile p−1</span></div>
+  </div>
+  <figcaption>图 3：上方为一块输出的数据流；下方为双累加缓冲的一种重叠状态。两槽轮换使用，输入 A、B 的 SMEM 缓冲另行管理。图中阶段和箭头不表示耗时比例。</figcaption>
+</figure>
+
+
+<p>MMA 与累加缓冲之间会反复发生读改写，直到 K 累加完成。Epilogue 随后把 TMEM 中的结果分批取到寄存器，做相应运算并输出；2CTA 中两个 CTA 分别处理自己拥有的输出部分。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/4.8.0/media/docs/pythonDSL/guides/mma/tcgen05_programming.html">tcgen05 的累加与输出数据流</a></p>
+<h3 id="Epilogue-的工作通常分给谁"><a href="#Epilogue-的工作通常分给谁" class="headerlink" title="Epilogue 的工作通常分给谁"></a>Epilogue 的工作通常分给谁</h3><p><strong>在 Warp Specialization 实现中，由一组 epilogue Warp 分担输出元素。</strong> 线程按布局各取一批结果，进行转换和计算，再协同写回；它们与 MMA 发起 Warp 是不同角色。这样的分工让 Tensor Core 做下一块乘加时，普通算术和访存管线可以处理上一块结果。</p>
+<p>例如，CUTLASS 的一种 SM100 持久化 GEMM 将 Warp 0 分给 MMA，Warp 1 负责调度，Warp 2 搬运输入，Warp 3 加载 epilogue 需要的额外输入，Warp 4～7 执行 epilogue。<strong>Warp 数由 kernel 设计决定</strong>，这个配置是实例，不是 B200 的固定分配。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/latest/media/docs/cpp/blackwell_cluster_launch_control.html#blackwell-warp-specialized-persistent-kernel">官方 Warp 分工示例</a></p>
+<p>简单 kernel 也可以由完成前一阶段工作的线程继续做 epilogue。是否单独安排一组 Warp，取决于能否获得有用的重叠，以及为此增加的线程和缓冲开销。</p>
+<h3 id="工作轻或重，先看依赖范围"><a href="#工作轻或重，先看依赖范围" class="headerlink" title="工作轻或重，先看依赖范围"></a>工作轻或重，先看依赖范围</h3><h4 id="to-fp16：边取结果，边转换和写回"><a href="#to-fp16：边取结果，边转换和写回" class="headerlink" title="to_fp16：边取结果，边转换和写回"></a><code>to_fp16</code>：边取结果，边转换和写回</h4><p>FP32 转 FP16 是逐元素工作，每个输出可以独立处理。通常直接放在 GEMM 的 epilogue：epilogue Warp 各自取出一批累加结果，向量化转换并写回，不必为类型转换再启动一次 kernel。</p>
+<p>这时更值得关注的是 TMEM 读取、输出访存和子块布局。运算指令虽少，整块输出的数据搬运仍有成本；给更多 Warp 也要看这些管线是否还有余量。</p>
+<h4 id="Gate／SwiGLU：让同一批线程拿到成对结果"><a href="#Gate／SwiGLU：让同一批线程拿到成对结果" class="headerlink" title="Gate／SwiGLU：让同一批线程拿到成对结果"></a>Gate／SwiGLU：让同一批线程拿到成对结果</h4><p>如果 gate 指的是 <code>y = up × SiLU(gate)</code>，每个位置只需要一对投影结果，没有整行归约。可以把 up 和 gate 投影安排在同一个 GEMM 的相邻或交错列块中，再由 epilogue 线程配对取值、计算并输出。</p>
+<p>它比单纯转换类型多了激活运算和输入配对，仍适合做融合 epilogue。关键是让两路结果在当前处理范围内就绪，避免为了配对而增加大量跨块交换。cuDNN 的 SM100 GEMM＋SwiGLU 实现就采用了列块配对。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cudnn/latest/fe-oss-apis/gemm_fusions/gemm_swiglu/">官方 SwiGLU 融合说明</a></p>
+<p>Gate 若指 MoE 的专家选择网络，则还包含下面的 router 工作，组织方式会不同。</p>
+<h4 id="Softmax：先汇总一行，再得到每个输出"><a href="#Softmax：先汇总一行，再得到每个输出" class="headerlink" title="Softmax：先汇总一行，再得到每个输出"></a>Softmax：先汇总一行，再得到每个输出</h4><p>Softmax 需要计算行最大值、指数和行内总和，再归一化。它的关键依赖是<strong>同一行的其他元素</strong>。短行可以交给一个 Warp；更宽的行可由多个 Warp 分担，再合并局部最大值和总和。</p>
+<p>如果一整行就在当前 CTA 的输出范围内，可以融合在本地处理。若一行横跨多个输出 tile，就需要合并这些 tile 的统计量：可以先由 GEMM 写出 logits，再交给专门的 softmax kernel；也可以为整个融合算法设计分块归约或在线更新。</p>
+<p>Attention 是后一种方式的典型场景：<code>QKᵀ → softmax → PV</code> 可以组织成多阶段融合 kernel，softmax 在中间参与流水线，而不只是最后一次写回前的尾处理。CUTLASS v4.8.0 的一个 Blackwell FMHA 配置给两组 softmax 各分配 4 个 Warp，另设 correction、MMA、load 和最终 epilogue 角色；更多线程投入归约与归一化，MMA 仍由专门角色发起。<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/cutlass/blob/v4.8.0/examples/77_blackwell_fmha/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp">官方 FMHA 分工源码</a>、<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.08691">FlashAttention-2 的分块与工作划分</a></p>
+<h4 id="MoE-router：把选专家与-token-整理分阶段安排"><a href="#MoE-router：把选专家与-token-整理分阶段安排" class="headerlink" title="MoE router：把选专家与 token 整理分阶段安排"></a>MoE router：把选专家与 token 整理分阶段安排</h4><p>Router 通常先通过投影得到每个 token 的专家分数，再做评分、top-k 选择和路由权重计算。后面还要统计各专家的 token 数、安排输出位置，并把 token 整理成专家 GEMM 需要的布局。</p>
+<p>一种常见组织是 <strong>router GEMM → 融合评分与 top-k 的路由 kernel → token dispatch → 专家 GEMM</strong>。选择阶段可以按 token 分配 Warp 或 CTA；批量计数、前缀和和重排则按各自的数据依赖安排。TensorRT-LLM 提供了将 softmax、top-k 和权重归一化合成一个路由操作的实现。<a target="_blank" rel="noopener" href="https://nvidia.github.io/TensorRT-LLM/1.3.0rc21/_modules/tensorrt_llm/_torch/auto_deploy/transform/library/moe_routing.html">官方路由融合示例</a></p>
+<p>若专家数较少、完整分数行已在当前处理范围内，也可以进一步融合投影后的选择工作。选择融合边界时，需要比较省下的启动和显存往返，能否覆盖额外的寄存器、同步与驻留开销。Router 本身在小 batch 下还可能主要受启动开销影响，并不总是一个“大计算量”操作。</p>
+<h3 id="2CTA-的“两块”，与双缓冲的“两份”"><a href="#2CTA-的“两块”，与双缓冲的“两份”" class="headerlink" title="2CTA 的“两块”，与双缓冲的“两份”"></a>2CTA 的“两块”，与双缓冲的“两份”</h3><p><strong>2CTA 决定一块输出怎样由两个 CTA 合作完成；双累加缓冲决定能同时保存几块输出的累加结果。</strong> 前者是计算分工，后者是存储槽位数，可以分别选择。</p>
+<p>本文的 2CTA MMA 把累加结果保存在 TMEM。高性能持久化 kernel 常把它与多累加槽位一起设计，让前后输出 tile 的处理重叠；简单实现也可以只用一个槽位。CUTLASS 的教程就分别说明了单 stage 和双 stage 的累加布局，1CTA 同样可以使用双缓冲。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/4.8.0/media/docs/pythonDSL/guides/mma/tcgen05_programming.html#making-fragments">官方累加缓冲布局</a></p>
+<p>继续使用 <code>256 × 256</code> 的输出 tile：CTA 0 拥有上半结果，CTA 1 拥有下半结果。<strong>两块各存一半，合起来才是一份完整结果；双缓冲再为下一块输出准备一组这样的空间。</strong></p>
+
+<figure class="b2-diagram" aria-label="两个CTA与两个累加槽位的区别">
+  <div class="b2-cluster-label">同一对 CTA，管理两组结果槽位</div>
+  <table class="b2-buffer-map">
+    <thead><tr><th scope="col">累加槽位</th><th scope="col">CTA 0 · SM 0</th><th scope="col">CTA 1 · SM 1</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">槽位 0<br>输出 tile P</th><td><b>P 的上半</b><span>128 × 256</span></td><td><b>P 的下半</b><span>128 × 256</span></td></tr>
+      <tr class="b2-second-slot"><th scope="row">槽位 1<br>输出 tile Q</th><td><b>Q 的上半</b><span>128 × 256</span></td><td><b>Q 的下半</b><span>128 × 256</span></td></tr>
+    </tbody>
+  </table>
+  <div class="b2-buffer-note">横看一行：两块共同拥有一个 tile 的结果。<br>纵看一列：一个 CTA 的 TMEM 中放两份不同 tile 的结果。</div>
+  <figcaption>图 4：单缓冲只需要槽位 0；双缓冲使用两个槽位。增加的是两块各自的结果存储空间，CTA 数量始终为 2。尺寸表示 FP32 累加元素的行数 × 列数。</figcaption>
+</figure>
+
+
+<p>两个 CTA 仍然共同计算 P，再共同计算 Q。双缓冲并没有变成“CTA 0 单独算 P、CTA 1 单独算 Q”，也不需要再增加两个 CTA。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/4.8.0/media/docs/pythonDSL/cute_dsl_api/utils_sm100.html#cutlass.utils.sm100.compute_acc_tmem_cols_per_stage">2CTA 的每块 TMEM 分片</a></p>
+<h3 id="单缓冲和双缓冲，执行怎样不同"><a href="#单缓冲和双缓冲，执行怎样不同" class="headerlink" title="单缓冲和双缓冲，执行怎样不同"></a>单缓冲和双缓冲，执行怎样不同</h3><p>假设同一对 CTA 连续处理 P、Q、R 三块输出。<strong>单缓冲要先把 P 从 TMEM 读出，才能覆盖同一个槽位计算 Q；双缓冲则可以一边读 P，一边在另一槽位计算 Q。</strong></p>
+
+<figure class="b2-diagram" aria-label="单累加缓冲和双累加缓冲执行时间线对比">
+  <div class="b2-schedule-title">单累加缓冲：MMA 与结果读取轮流使用槽位 0</div>
+  <table class="b2-buffer-time">
+    <thead><tr><th scope="col">时间 →</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">MMA</th><td class="b2-time-mma">P₀</td><td class="b2-time-wait">等</td><td class="b2-time-mma">Q₀</td><td class="b2-time-wait">等</td><td class="b2-time-mma">R₀</td><td class="b2-time-wait">等</td></tr>
+      <tr><th scope="row">读 TMEM</th><td>—</td><td class="b2-time-read">读 P₀</td><td>—</td><td class="b2-time-read">读 Q₀</td><td>—</td><td class="b2-time-read">读 R₀</td></tr>
+    </tbody>
+  </table>
+  <div class="b2-schedule-title b2-schedule-second">双累加缓冲：读上一块时，在另一槽位计算下一块</div>
+  <table class="b2-buffer-time">
+    <thead><tr><th scope="col">时间 →</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">MMA</th><td class="b2-time-mma">P₀</td><td class="b2-time-mma">Q₁</td><td class="b2-time-mma">R₀</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">读 TMEM</th><td>—</td><td class="b2-time-read">读 P₀</td><td class="b2-time-read">读 Q₁</td><td class="b2-time-read">读 R₀</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div class="b2-buffer-note">P／Q／R 是输出 tile，下标 ₀／₁ 是累加槽位。<br>时段 2：两块共同计算 Q₁，同时各自读取 P₀ 的对应部分。</div>
+  <figcaption>图 5：依赖关系示意，假设每块 MMA 和结果读取各占一格，且资源允许两阶段重叠。省略输入搬运及读出后的转换、激活和写回；格数不代表 B200 实测耗时或加速比。</figcaption>
+</figure>
+
+
+<p>双缓冲的槽位按 <code>0 → 1 → 0 → 1</code> 轮换：P 放槽位 0，Q 放槽位 1；P 读完后，R 复用槽位 0。MMA 与 epilogue 通过完成通知交接这些槽位。</p>
+<p>这里的“读完”是指对应结果最后一次 TMEM 读取完成。<strong>单缓冲也能让后续 MMA 与寄存器中的转换、激活或写回重叠；双缓冲进一步把“从 TMEM 读出上一块”的阶段也与下一块 MMA 重叠。</strong> 槽位释放不必一律等到整个 epilogue 结束。<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/cutlass/blob/v4.8.0/include/cutlass/epilogue/collective/sm100_epilogue_tma_warpspecialized.hpp">CUTLASS 的累加缓冲交接实现</a></p>
+<h3 id="多放一份缓冲的成本与收益"><a href="#多放一份缓冲的成本与收益" class="headerlink" title="多放一份缓冲的成本与收益"></a>多放一份缓冲的成本与收益</h3><p>前面的每个 CTA 拥有 <code>128 × 256</code> 个 FP32 累加元素，一份占 <code>128 × 256 × 4 = 128 KiB</code>。单缓冲时，两块合计 256 KiB；双缓冲时，每块需要 256 KiB，两块合计 512 KiB，分别位于两个 SM 上。</p>
+<p>按这个布局，每份占 256 个 TMEM 列，双份占 512 列，达到文档给出的单 CTA TMEM 地址空间列数上限。更大的输出 tile 或额外 TMEM 用途，就要一起调整布局和槽位数。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-memory">TMEM 的容量与分配规则</a></p>
+<p>输入 stage 的 SMEM、累加缓冲的 TMEM，以及 epilogue 自己使用的寄存器和 SMEM，要分别计入资源预算。前文 2CTA 省下的是 B 的 SMEM 副本，不能直接拿来充当第二份 TMEM 累加缓冲。</p>
+<p>同一对 CTA 连续处理许多输出 tile 时，双缓冲有持续的重叠机会；若只处理一块输出，或结果读取已很快，多占一份 TMEM 的收益就可能有限。选择时应观察 MMA 等待空槽位的时间，以及增加缓冲后的整体吞吐。</p>
+<p>若 epilogue 的计算或归约持续拖慢流水线，可以在支持的配置中增加处理 Warp、调整子块或重新划分阶段；若瓶颈在输出带宽，增加 Warp 通常帮不了多少。加深缓冲可以隐藏延迟，却无法长期弥补 epilogue 的吞吐不足。CUTLASS 的 <code>StageCountAutoCarveout</code> 会为 epilogue 的 SMEM 留出空间，再选择主循环 stage，融合操作变化后也要重新配合调整。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/latest/media/docs/cpp/blackwell_functionality.html">主循环与 epilogue 的资源配置</a></p>
+<h2 id="八、Cluster、L2-与调度：让足够多的配对持续工作"><a href="#八、Cluster、L2-与调度：让足够多的配对持续工作" class="headerlink" title="八、Cluster、L2 与调度：让足够多的配对持续工作"></a>八、Cluster、L2 与调度：让足够多的配对持续工作</h2><p>先用一个 CTA pair 跑通，再比较更大的 Cluster。扩大 Cluster 可以增加 multicast 复用，却也提高共同驻留的要求。<strong>更大 Cluster 的数据复用收益，要和可同时工作的 Cluster 数一起比较。</strong></p>
+<p>输出 tile 的遍历顺序同样影响 L2。让相邻任务在一段时间内复用相同 A 或 B 分块，可能减少显存访问；应测试 M 优先、N 优先或分组遍历，而不是假定一种顺序适合所有矩阵长宽比。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/latest/media/docs/cpp/efficient_gemm.html#threadblock-rasterization">CUTLASS 的 tile rasterization</a></p>
+<p>持久化 kernel 让一个 worker 连续处理多个输出 tile，可以摊薄初始化成本。Blackwell 的 CLC 则允许完成工作的 worker 获取尚未启动的工作。用于 2CTA 时，两个 CTA 必须获取一致的任务坐标并同步推进；CLC 按 Cluster 粒度领取工作，不能让同一对 CTA 各自拿一个无关 tile。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/latest/media/docs/cpp/blackwell_cluster_launch_control.html">CUTLASS 的 CLC 调度模型</a></p>
+<p>CLC 改善的是任务分配，无法补救过大的 tile、过少的总工作量或已经饱和的显存带宽。小 M&#x2F;N、短 K 的问题应保留 1CTA 候选；M&#x2F;N 小但 K 很长时，还可独立评估 Split-K 等增加任务并行度的方式，同时计入归约成本。</p>
+<h2 id="九、用官方示例核对实现"><a href="#九、用官方示例核对实现" class="headerlink" title="九、用官方示例核对实现"></a>九、用官方示例核对实现</h2><p>下面固定 CUTLASS <strong>v4.8.0</strong> 的 CuTe 教程 04。它展示 2CTA MMA、TMA 分片、multicast、屏障和 TMEM；适合核对机制，尚不是用于比较峰值性能的完整 benchmark。运行需要 B200、兼容驱动及支持 SM100 的 CUDA 工具链，例如 CUDA 13.0。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --branch v4.8.0 --depth 1 https://github.com/NVIDIA/cutlass.git cutlass-2cta</span><br><span class="line"><span class="built_in">cd</span> cutlass-2cta</span><br></pre></td></tr></table></figure>
+
+<p>该版本教程默认的 Cluster 是 <code>4 × 4 × 1</code>。为先观察单个 CTA pair，在 <code>examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu</code> 中，将 <code>cluster_shape</code> 的定义改为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 仅改变 Cluster 组织；教程已经选用了 2SM MMA 和对应的 TMA／同步。</span></span><br><span class="line"><span class="keyword">auto</span> cluster_shape = <span class="built_in">make_shape</span>(Int&lt;<span class="number">2</span>&gt;&#123;&#125;, Int&lt;<span class="number">1</span>&gt;&#123;&#125;, Int&lt;<span class="number">1</span>&gt;&#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>然后构建和运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cmake -S . -B build-2cta \</span><br><span class="line">  -DCUTLASS_NVCC_ARCHS=100a \</span><br><span class="line">  -DCUTLASS_ENABLE_TESTS=OFF</span><br><span class="line">cmake --build build-2cta --target cute_tutorial_04_mma_tma_2sm_sm100 -j 4</span><br><span class="line">./build-2cta/examples/cute/tutorial/blackwell/cute_tutorial_04_mma_tma_2sm_sm100 512 1024 256</span><br></pre></td></tr></table></figure>
+
+<p>教程按位置接收 M、N、K，当前分块要求维度可整除，不支持任意越界 tile。先确认输出 <code>Execution is successful.</code>；出现 <code>Test is waived</code> 表示没有执行目标实现，不能算验证通过。目标名与行为可核对<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/cutlass/blob/v4.8.0/examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu">版本化源码</a>及<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/cutlass/blob/v4.8.0/examples/cute/tutorial/blackwell/CMakeLists.txt">CMake 定义</a>。</p>
+<p>之后再迁移到带多级流水线和计时的 GEMM 示例。公平的 1CTA／2CTA 对比，应允许两边各自选择合适 tile、stage 和 epilogue；仅把一个底层指令替换掉，既可能不合法，也无法代表两种实现的最佳表现。</p>
+<h2 id="十、按瓶颈调参，用实测决定保留哪项改动"><a href="#十、按瓶颈调参，用实测决定保留哪项改动" class="headerlink" title="十、按瓶颈调参，用实测决定保留哪项改动"></a>十、按瓶颈调参，用实测决定保留哪项改动</h2><p>建议按这个顺序收敛：先验证布局与同步，再搜索 tile 和 stage，接着调整 epilogue，最后测试更大 Cluster、multicast、遍历顺序和 CLC。每轮只改变一类因素，保留上一版作为对照。</p>
+<table>
+<thead>
+<tr>
+<th>观察到的现象</th>
+<th>优先核对</th>
+<th>值得尝试的改动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MMA 经常等输入</td>
+<td>TMA 完成条件、缓存、可预取深度</td>
+<td>调整 stage、减少重复加载、调整布局</td>
+</tr>
+<tr>
+<td>大 tile 快，小矩阵慢</td>
+<td>边界覆盖率、独立任务数、初始化成本</td>
+<td>缩小 tile，保留 1CTA 分派</td>
+</tr>
+<tr>
+<td>stage 增加后变慢</td>
+<td>每 CTA SMEM、活跃 Cluster 数</td>
+<td>减少 stage 或 K_tile</td>
+</tr>
+<tr>
+<td>MMA 等累加缓冲</td>
+<td>epilogue 时长、TMEM 生命周期</td>
+<td>调整结果缓冲或 epilogue 子块</td>
+</tr>
+<tr>
+<td>SM 利用不均，收尾很长</td>
+<td>总任务数、Cluster 大小、任务分配</td>
+<td>缩小 Cluster，测试持久化／CLC</td>
+</tr>
+<tr>
+<td>带宽已满，算力未满</td>
+<td>实际 DRAM&#x2F;L2 字节数、缓存命中</td>
+<td>减少数据移动，先测复用收益</td>
+</tr>
+</tbody></table>
+<p>表中的对应关系是诊断假设，不是仅凭一条指标就能成立的结论。Nsight Systems 用于看时间线和 kernel 间关系，Nsight Compute 用于看资源与吞吐瓶颈；具体指标名称随工具版本变化。</p>
+<p>计时前完成分配与初始化，分开 warm-up 和测量，多次运行并报告中位耗时与波动。用 CUDA Event 或 GPU 时间线测设备耗时，不能用 CPU 提交时间替代。记录 dtype、布局、M&#x2F;N&#x2F;K、GPU、工具链、Cluster、tile、stage 和融合操作。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cutlass/latest/media/docs/cpp/gemm_performance_measurement_methodology_guidelines.html">NVIDIA 的 GEMM 测量方法</a></p>
+<p>还要分别测试缓存已热与轮换输入缓冲的情况。反复乘同一组小矩阵，测到的可能主要是 L2 复用；真实模型若不断换权重或输入，结论可能不同。最后用完整算子或模型负载确认收益，尤其关注小 batch、MoE 专家大小分布和融合成本。</p>
+<p>本文的字节数、覆盖率和运算量均为明确假设下的计算示例，未提供 B200 实测加速比。源码入口固定为 CUTLASS v4.8.0，技术资料核对日期为 2026 年 10 月 25 日。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NVIDIA/" rel="tag"># NVIDIA</a>
+              <a href="/tags/CUDA/" rel="tag"># CUDA</a>
+              <a href="/tags/Blackwell/" rel="tag"># Blackwell</a>
+              <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
+              <a href="/tags/B200/" rel="tag"># B200</a>
+              <a href="/tags/CUTLASS/" rel="tag"># CUTLASS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/10/24/packaged-beverage-three-companies-valuation/" rel="prev" title="农夫山泉、东鹏与康师傅：三种饮品生意，现价买到了什么">
+                  <i class="fa fa-angle-left"></i> 农夫山泉、东鹏与康师傅：三种饮品生意，现价买到了什么
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/10/28/attention-exp-mma-overlap/" rel="next" title="Attention 流水线：单 Q 双 S 与双 Q 的计算重叠">
+                  Attention 流水线：单 Q 双 S 与双 Q 的计算重叠 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">408k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">24:44</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"casxt/casxt.github.io","issue_term":"pathname","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>

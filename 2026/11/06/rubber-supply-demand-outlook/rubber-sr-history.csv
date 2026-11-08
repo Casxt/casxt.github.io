@@ -1,0 +1,13 @@
+region,year,production_mt,consumption_mt,production_minus_consumption_kt,basis,data_status
+中国,2020,3.225,4.379,-1154.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+中国,2021,4.873,4.522,351.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+中国,2023,5.482,6.211,-729.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+中国,2024,5.578,6.241,-663.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+中国以外,2020,11.237,10.003,1234.0,KPK_2024_IRSG,same_version_derived
+中国以外,2021,12.506,11.445,1061.0,KPK_2024_IRSG,same_version_derived
+中国以外,2023,10.578,9.896,682.0,KPK_2024_IRSG,same_version_derived
+中国以外,2024,10.749,10.05,699.0,KPK_2024_IRSG,same_version_derived
+全球,2020,14.462,14.382,80.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+全球,2021,17.379,15.967,1412.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+全球,2023,16.06,16.107,-47.0,KPK_2024_IRSG,historical_disclosure_scope_limited
+全球,2024,16.327,16.291,36.0,KPK_2024_IRSG,historical_disclosure_scope_limited

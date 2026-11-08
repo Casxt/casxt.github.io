@@ -1,0 +1,11 @@
+.hexo-echarts svg text {
+  fill: currentColor;
+}
+
+@media (max-width: 600px) {
+  .post-body table th,
+  .post-body table td {
+    padding: 4px 3px;
+    font-size: 0.85em;
+  }
+}

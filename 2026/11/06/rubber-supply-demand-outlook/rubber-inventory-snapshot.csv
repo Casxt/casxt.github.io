@@ -1,0 +1,21 @@
+entity,metric,as_of,tonnes,stock_type,inclusion_rule
+industry:natural_rubber_china,nr_stock_dark_citic_sample,2026-09-27,737000.0,survey_sample,Dark/light components included in provider social total; providers and dates differ
+industry:natural_rubber_china,nr_stock_light_citic_sample,2026-09-27,359000.0,survey_sample,Dark/light components included in provider social total; providers and dates differ
+industry:natural_rubber_china,nr_stock_social_citic_sample,2026-09-27,1096000.0,survey_sample,Dark/light components included in provider social total; providers and dates differ
+industry:natural_rubber_china,nr_stock_social_sci_sample,2025-12-31,1566900.0,survey_sample,Dark/light components included in provider social total; providers and dates differ
+industry:natural_rubber_china_nr_exchange_warehouses,shfe_nr_qualified_physical_stock,2026-10-30,5543.0,qualified_warehouse_physical,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_nr_exchange_warehouses,shfe_nr_qualified_physical_stock,2026-11-06,5039.0,qualified_warehouse_physical,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_nr_exchange_warehouses,shfe_nr_warehouse_warrant,2026-10-30,3628.0,warehouse_warrant_subset,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_nr_exchange_warehouses,shfe_nr_warehouse_warrant,2026-11-06,3628.0,warehouse_warrant_subset,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_ru_exchange_warehouses,shfe_ru_qualified_physical_stock,2026-10-30,170832.0,qualified_warehouse_physical,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_ru_exchange_warehouses,shfe_ru_qualified_physical_stock,2026-11-06,162957.0,qualified_warehouse_physical,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_ru_exchange_warehouses,shfe_ru_warehouse_warrant,2026-10-30,143340.0,warehouse_warrant_subset,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_china_ru_exchange_warehouses,shfe_ru_warehouse_warrant,2026-11-06,146680.0,warehouse_warrant_subset,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_malaysia,nr_stock_total_national,2026-06-30,129836.0,national_statistics,Geography-specific statistic; not global accessible stock
+industry:natural_rubber_malaysia,nr_stock_total_national,2026-07-31,128946.0,national_statistics,Geography-specific statistic; not global accessible stock
+industry:natural_rubber_malaysia,nr_stock_total_national_dosm_aug26,2026-07-31,132133.0,national_statistics,Geography-specific statistic; not global accessible stock
+industry:natural_rubber_malaysia,nr_stock_total_national_dosm_aug26,2026-08-31,134785.0,national_statistics,Geography-specific statistic; not global accessible stock
+industry:natural_rubber_thailand_nr_exchange_factory,shfe_nr_factory_warrant,2026-10-30,2016.0,factory_warrant_obligation,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:natural_rubber_thailand_nr_exchange_factory,shfe_nr_factory_warrant,2026-11-06,4032.0,factory_warrant_obligation,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:synthetic_rubber_china,sr_br_shfe_factory_warrants,2026-11-06,10730.0,factory_warrant_obligation,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"
+industry:synthetic_rubber_china,sr_br_shfe_warehouse_warrants,2026-11-06,970.0,warehouse_warrant_subset,"Warehouse warrant is included in same warehouse physical; factory warrants separate obligation, not national stock"

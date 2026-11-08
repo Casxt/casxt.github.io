@@ -1,0 +1,109 @@
+.post-body figure.aom-figure {
+  --aom-line: #8193a566;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 26px 0;
+  padding: 18px;
+  border: 1px solid var(--aom-line);
+  border-radius: 12px;
+  line-height: 1.65;
+}
+.aom-heading {
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+.aom-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+}
+.aom-card {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 15px 9px;
+  border: 1px solid var(--aom-line);
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.aom-card b, .aom-card span, .aom-card small { display: block; }
+.aom-card small { margin-top: 5px; font-size: 12px; }
+.aom-arrow { font-size: 22px; text-align: center; }
+.aom-mma { background: #398ac525; border-color: #398ac58c; }
+.aom-exp { background: #db98362a; border-color: #c58b3099; }
+.aom-state { background: #32947e20; border-color: #32947e99; }
+.aom-query-a { background: #398ac525; border-color: #398ac58c; }
+.aom-query-b { background: #9a6ed726; border-color: #9a6ed799; }
+.aom-note { margin: 14px 0 0; font-size: 13px; text-align: center; opacity: .85; }
+.post-body figure.aom-figure figcaption {
+  position: static;
+  margin: 15px 0 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: left;
+  color: inherit;
+  opacity: .8;
+}
+.aom-scroll { max-width: 100%; overflow-x: auto; padding: 5px 0 9px; }
+.aom-scroll:focus-visible { outline: 2px solid #398ac5; outline-offset: 3px; }
+.aom-timeline {
+  display: grid;
+  align-items: stretch;
+  column-gap: 3px;
+  row-gap: 8px;
+  font-size: 12px;
+  grid-template-rows: 24px 44px 44px;
+}
+.aom-eight { grid-template-columns: 90px repeat(8, minmax(42px, 1fr)); min-width: 465px; }
+.aom-ten { grid-template-columns: 90px repeat(10, minmax(44px, 1fr)); min-width: 580px; }
+.aom-axis { display: flex; align-items: center; font-size: 12px; white-space: nowrap; }
+.aom-tick { text-align: center; opacity: .7; }
+.aom-track {
+  border: 1px dashed var(--aom-line);
+  border-radius: 5px;
+  background: #8193a50e;
+}
+.aom-job {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+.aom-exp-border { border-style: dashed; border-width: 2px; }
+.aom-legend { display: flex; flex-wrap: wrap; gap: 7px 12px; margin-top: 9px; font-size: 12px; }
+.aom-legend span { padding: 3px 7px; border-radius: 4px; }
+.aom-buffer-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr); align-items: center; gap: 12px; }
+.aom-stack { display: grid; gap: 10px; }
+.aom-pair, .aom-correction { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.aom-merge { grid-column: 1 / -1; text-align: center; font-size: 13px; }
+.aom-wide { grid-column: 1 / -1; }
+.aom-budget-label { margin: 14px 0 7px; font-size: 13px; }
+.aom-budget { display: flex; min-height: 48px; overflow: hidden; border: 1px solid var(--aom-line); border-radius: 7px; }
+.aom-budget > div { display: flex; justify-content: center; align-items: center; min-width: 0; padding: 6px 0; font-size: 13px; text-align: center; }
+.aom-budget > div + div { border-left: 1px solid var(--aom-line); }
+.aom-budget-q { background: #398ac525; }
+.aom-budget-o { background: #9a6ed726; }
+.aom-budget-kv { background: #32947e20; }
+@media (max-width: 600px) {
+  .post-body figure.aom-figure { padding: 13px 11px; }
+  .aom-heading { font-size: 14px; }
+  .aom-flow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .aom-arrow { transform: rotate(90deg); line-height: 1; }
+  .aom-card { padding: 12px 8px; font-size: 13px; }
+  .aom-buffer-layout { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .aom-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aom-note { font-size: 12px; }
+  .aom-budget > div { font-size: 11px; }
+}

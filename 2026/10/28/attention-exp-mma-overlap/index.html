@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Attention 前向由两次矩阵乘和一段 softmax 交替组成。串行实现里，Tensor Core 算完 QK 要等 softmax，softmax 做完又要等 PV，两类运算单元轮流出空。把不同数据块上的工作交错排开，让一边等待时另一边继续算，是这个算子提高吞吐的主要来源。 在单个 CTA 内安排这种交错，有两种常见做法。单 Q 双 S 从同一个 query 块的相邻 KV 轮次里找重叠；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Attention 流水线：单 Q 双 S 与双 Q 的计算重叠">
+<meta property="og:url" content="https://maple.link/2026/10/28/attention-exp-mma-overlap/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="Attention 前向由两次矩阵乘和一段 softmax 交替组成。串行实现里，Tensor Core 算完 QK 要等 softmax，softmax 做完又要等 PV，两类运算单元轮流出空。把不同数据块上的工作交错排开，让一边等待时另一边继续算，是这个算子提高吞吐的主要来源。 在单个 CTA 内安排这种交错，有两种常见做法。单 Q 双 S 从同一个 query 块的相邻 KV 轮次里找重叠；">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-28T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T02:00:00.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="Blackwell">
+<meta property="article:tag" content="CUDA">
+<meta property="article:tag" content="FlashAttention">
+<meta property="article:tag" content="NVIDIA">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/10/28/attention-exp-mma-overlap/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/10/28/attention-exp-mma-overlap/","path":"2026/10/28/attention-exp-mma-overlap/","title":"Attention 流水线：单 Q 双 S 与双 Q 的计算重叠"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Attention 流水线：单 Q 双 S 与双 Q 的计算重叠 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"neutral","dark":"dark"},"js":{"url":"/assets/vendor/mermaid/mermaid.min.js"}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="/css/region-guard.css?v=1">
+    <script src="/js/region-guard.js?v=1"></script>
+  
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+<style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><style>.post-body .katex-display{overflow-x:auto;overflow-y:hidden;padding:.7em .15em}.post-body .katex{font-size:1.08em}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%80%E8%BD%AE-attention-%E7%9A%84%E5%B7%A5%E4%BD%9C%E9%87%8F%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%88%86%E5%B7%A5"><span class="nav-text">一、一轮 attention 的工作量与硬件分工</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1-QK%E3%80%81%E4%B8%80%E6%AC%A1-PV%E3%80%81%E4%B8%80%E6%AE%B5-softmax"><span class="nav-text">一次 QK、一次 PV、一段 softmax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E9%87%8F%E5%B7%AE-512-%E5%80%8D%EF%BC%8C%E6%97%B6%E9%97%B4%E5%8D%B4%E5%8F%AF%E8%83%BD%E4%B8%80%E6%A0%B7"><span class="nav-text">运算量差 512 倍，时间却可能一样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%B2%E8%A1%8C%E5%AE%89%E6%8E%92%EF%BC%9A%E4%B8%A4%E7%B1%BB%E7%A1%AC%E4%BB%B6%E8%BD%AE%E6%B5%81%E7%A9%BA%E9%97%B2"><span class="nav-text">二、串行安排：两类硬件轮流空闲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%8D%95-Q-%E5%8F%8C-S%EF%BC%9A%E8%AE%A9%E4%B8%8B%E4%B8%80%E8%BD%AE%E7%9A%84%E5%88%86%E6%95%B0%E6%8F%90%E5%89%8D%E7%AE%97"><span class="nav-text">三、单 Q 双 S：让下一轮的分数提前算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%BB%BD-S%EF%BC%8C%E4%B8%80%E4%B8%AA-Q"><span class="nav-text">两份 S，一个 Q</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%95%B0%E5%8F%AF%E4%BB%A5%E6%97%A9%E7%AE%97%EF%BC%8C%E8%BE%93%E5%87%BA%E5%BF%85%E9%A1%BB%E6%8C%89%E9%A1%BA%E5%BA%8F%E6%A0%A1%E6%AD%A3"><span class="nav-text">分数可以早算，输出必须按顺序校正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A7%BD%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%83%BD%E8%BF%98%E5%9B%9E%E5%8E%BB"><span class="nav-text">槽什么时候能还回去</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%8F%8C-Q%EF%BC%9A%E4%B8%A4%E6%9D%A1%E7%8B%AC%E7%AB%8B%E7%9A%84%E8%AE%A1%E7%AE%97%E9%93%BE"><span class="nav-text">四、双 Q：两条独立的计算链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E8%AE%BE%E8%AE%A1%E5%8F%AF%E4%BB%A5%E5%8F%A0%E5%8A%A0%EF%BC%8C%E4%BD%86%E8%A6%81%E4%BB%98%E5%87%BA%E8%B5%84%E6%BA%90%E4%BB%A3%E4%BB%B7"><span class="nav-text">两种设计可以叠加，但要付出资源代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%A4%E4%BA%86%E8%AE%A1%E7%AE%97%EF%BC%8C%E8%BF%98%E6%9C%89%E6%90%AC%E8%BF%90"><span class="nav-text">除了计算，还有搬运</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%A4%9A%E4%B8%80%E6%9D%A1%E8%AE%A1%E7%AE%97%E9%93%BE%E7%9A%84%E4%BB%A3%E4%BB%B7"><span class="nav-text">五、多一条计算链的代价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%87%E4%B8%8A%E7%A9%BA%E9%97%B4%E4%BC%9A%E5%8E%8B%E7%BC%A9%E9%A2%84%E5%8F%96%E6%B7%B1%E5%BA%A6"><span class="nav-text">片上空间会压缩预取深度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%BA%A6%E9%9B%86%E4%B8%AD%E5%88%B0%E6%9B%B4%E5%B0%91%E7%9A%84-CTA"><span class="nav-text">并行度集中到更少的 CTA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E8%B7%AF%E9%95%BF%E5%BA%A6%E4%B8%8D%E5%90%8C%EF%BC%8C%E4%BC%9A%E5%A4%9A%E5%87%BA%E7%A9%BA%E8%BD%AE%E6%AC%A1"><span class="nav-text">两路长度不同，会多出空轮次</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%87%8D%E5%8F%A0%E6%9C%80%E5%A4%9A%E8%83%BD%E7%9C%81%E5%A4%9A%E5%B0%91"><span class="nav-text">六、重叠最多能省多少</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">110</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">401</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/10/28/attention-exp-mma-overlap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Attention 流水线：单 Q 双 S 与双 Q 的计算重叠 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Attention 流水线：单 Q 双 S 与双 Q 的计算重叠
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-10-28 10:00:00" itemprop="dateCreated datePublished" datetime="2026-10-28T10:00:00+08:00">2026-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GPU/" itemprop="url" rel="index"><span itemprop="name">GPU</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>24 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Attention 前向由两次矩阵乘和一段 softmax 交替组成。串行实现里，Tensor Core 算完 QK 要等 softmax，softmax 做完又要等 PV，两类运算单元轮流出空。把不同数据块上的工作交错排开，让一边等待时另一边继续算，是这个算子提高吞吐的主要来源。</p>
+<p>在单个 CTA 内安排这种交错，有两种常见做法。单 Q 双 S 从同一个 query 块的相邻 KV 轮次里找重叠；双 Q 把两个 query 块放进同一个 CTA，让两条计算链交替推进。两者要回答的问题相同：哪些数据能提前算，哪些状态必须按顺序更新，多出来的中间结果放在哪里，为此占用的片上空间又是否划算。</p>
+<span id="more"></span>
+
+<link rel="stylesheet" href="/2026/10/28/attention-exp-mma-overlap/overlap.css">
+
+<p>本文假设读者了解 FlashAttention-2 的 dense 前向计算和在线 softmax，讨论范围限于单个 CTA（CUDA 线程块）内的流水线。硬件背景以 Hopper 和 Blackwell 的异步矩阵指令为主，片上存储的例子按 Blackwell 的口径给。文中的 softmax 阶段包括 max、exp、sum、类型转换和 P 的交接，exp 只是其中一段。时间线里的格子是相对时间单位，字节数是布局算例，都不是某个 kernel 的实测值。</p>
+<h2 id="一、一轮-attention-的工作量与硬件分工"><a href="#一、一轮-attention-的工作量与硬件分工" class="headerlink" title="一、一轮 attention 的工作量与硬件分工"></a>一、一轮 attention 的工作量与硬件分工</h2><h3 id="一次-QK、一次-PV、一段-softmax"><a href="#一次-QK、一次-PV、一段-softmax" class="headerlink" title="一次 QK、一次 PV、一段 softmax"></a>一次 QK、一次 PV、一段 softmax</h3><p>固定一个 query 块 <code>Q</code>，沿序列方向依次读 <code>K₀/V₀、K₁/V₁……</code>。这里的 tile 是矩阵块；“单 Q”指一个 query 块，可以包含 128 个 token。</p>
+<p>第 j 轮的主要工作是：</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>S</mi><mi>j</mi></msub><mo>=</mo><mfrac><mrow><mi>Q</mi><msubsup><mi>K</mi><mi>j</mi><mi mathvariant="sans-serif">T</mi></msubsup></mrow><msqrt><mi>D</mi></msqrt></mfrac><mo separator="true">,</mo><mspace width="2em"/><msub><mi>P</mi><mi>j</mi></msub><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>S</mi><mi>j</mi></msub><mo>−</mo><msub><mi>m</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><msub><mi>U</mi><mi>j</mi></msub><mo>=</mo><msub><mi>α</mi><mi>j</mi></msub><msub><mi>U</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>P</mi><mi>j</mi></msub><msub><mi>V</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">S_j=\frac{QK_j^{\mathsf T}}{\sqrt D},\qquad
+P_j=\exp(S_j-m_j),\qquad
+U_j=\alpha_jU_{j-1}+P_jV_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.5639em;vertical-align:-0.93em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6339em;"><span style="top:-2.1833em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9267em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;padding-left:0.833em;">D</span></span><span style="top:-2.8867em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1133em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7848em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0715em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathsf mtight">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3948em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span>
+
+<p><code>m</code> 是每行的运行最大值，<code>α</code> 是最大值变化时对已有累加结果使用的重缩放系数。<code>U</code> 是尚未归一化的输出累加器；<code>ℓ</code> 是这一行已处理的全部 KV 块的指数和，以当前 <code>m</code> 为基准在线累积并重缩放，最后用 <code>O=U/ℓ</code> 逐行归一化。</p>
+<p>下文把 <code>QKᵀ</code> 简写为 QK，把 <code>P×V</code> 简写为 PV。</p>
+<p>QK 与 PV 都落到 MMA（Matrix Multiply-Accumulate，矩阵乘加）上。softmax 不同，它由逐元素运算、最大值与求和归约、指数计算组成，跑在通用运算单元和 SFU 上。</p>
+
+<figure class="aom-figure" aria-label="一轮attention的计算和硬件分工">
+  <div class="aom-heading">一轮 KV：数据从左向右流动</div>
+  <div class="aom-flow">
+    <div class="aom-card aom-mma"><b>① QK → S</b><span>矩阵乘加</span><small>Tensor Core</small></div>
+    <div class="aom-arrow" aria-hidden="true">→</div>
+    <div class="aom-card aom-exp"><b>② S → P</b><span>max · exp · sum</span><small>通用运算单元 + SFU</small></div>
+    <div class="aom-arrow" aria-hidden="true">→</div>
+    <div class="aom-card aom-mma"><b>③ P × V</b><span>矩阵乘加</span><small>Tensor Core</small></div>
+  </div>
+  <div class="aom-note">另有输出重缩放、数据搬运和同步；图中先突出两次 MMA 与 softmax。</div>
+  <figcaption>图 1：同一份 P 必须等 S 算出后才能生成，PV 也必须等 P 准备好。可重叠的工作要从其他轮次或其他 Q 中寻找。</figcaption>
+</figure>
+
+
+<p>指数一般用 <code>exp2</code> 实现，因为 <code>exp(x)=2^(x·log₂e)</code>，硬件指数路径通常编译到 MUFU.EX2。MUFU／SFU 是执行这类特殊函数的单元，吞吐上限和 Tensor Core 完全不同。不过一段源码里的 <code>exp</code> 未必只对应一条机器指令，具体数学函数可能额外包含几条。<a target="_blank" rel="noopener" href="https://tridao.me/blog/2024/flash3/">FlashAttention-3 对硬件分工的解释</a>、<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#floating-point-instructions-ex2">PTX 的 ex2 定义</a></p>
+<h3 id="运算量差-512-倍，时间却可能一样"><a href="#运算量差-512-倍，时间却可能一样" class="headerlink" title="运算量差 512 倍，时间却可能一样"></a>运算量差 512 倍，时间却可能一样</h3><p>设 <code>Q、K、V</code> 的块尺寸都是 <code>128×128</code>，head dimension <code>D=128</code>，一次乘加按 2 FLOPs 计：</p>
+<table>
+<thead>
+<tr>
+<th>每轮工作</th>
+<th align="right">运算量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QK</td>
+<td align="right">2 × 128³ &#x3D; 4,194,304 FLOPs</td>
+</tr>
+<tr>
+<td>PV</td>
+<td align="right">2 × 128³ &#x3D; 4,194,304 FLOPs</td>
+</tr>
+<tr>
+<td>逐元素 exp</td>
+<td align="right">128² &#x3D; 16,384 次</td>
+</tr>
+</tbody></table>
+<p>两次 MMA 的 FLOPs 是 exp 次数的 512 倍。这个比值本身没有多少意义，FLOPs 和指数次数不是同一种量，能比的只有各自除上硬件吞吐之后的时间。</p>
+<p>按 FlashAttention-4 设计说明中的 B200 每 SM 理想吞吐口径，BF16 矩阵运算为 8,192 FLOPs&#x2F;cycle，指数为 16 次&#x2F;cycle。把上面的工作量除下去：</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">M</mi><mi mathvariant="normal">A</mi></mrow></msub><mo>≈</mo><mfrac><mn>8,388,608</mn><mn>8192</mn></mfrac><mo>=</mo><mn>1024</mn><mtext> cycles</mtext><mo separator="true">,</mo><mspace width="2em"/><msub><mi>T</mi><mi>exp</mi><mo>⁡</mo></msub><mo>≈</mo><mfrac><mn>16,384</mn><mn>16</mn></mfrac><mo>=</mo><mn>1024</mn><mtext> cycles</mtext></mrow><annotation encoding="application/x-tex">T_{\mathrm{MMA}}\approx\frac{8{,}388{,}608}{8192}=1024\ \text{cycles},\qquad
+T_{\exp}\approx\frac{16{,}384}{16}=1024\ \text{cycles}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">MMA</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">8192</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">8</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">388</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">608</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord">1024</span><span class="mspace"> </span><span class="mord text"><span class="mord">cycles</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">e</span><span class="mtight">x</span><span class="mtight">p</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">16</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">16</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">384</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord">1024</span><span class="mspace"> </span><span class="mord text"><span class="mord">cycles</span></span></span></span></span></span>
+
+<p>两次 MMA 合计约 1024 周期，指数运算也约 1024 周期，量级上正好相当。这个估算只做了工作量除以峰值吞吐，没有计入访存、归约、重缩放、同步和指令调度，不能当实际耗时。<a target="_blank" rel="noopener" href="https://tridao.me/blog/2026/flash4/#feeds-and-speeds">FlashAttention-4 的吞吐分析</a></p>
+<p>低精度优化里的一个现象可以由此理解：MMA 加快之后，exp 的时间未必同比缩短，它在总耗时中的占比反而上升。</p>
+<h2 id="二、串行安排：两类硬件轮流空闲"><a href="#二、串行安排：两类硬件轮流空闲" class="headerlink" title="二、串行安排：两类硬件轮流空闲"></a>二、串行安排：两类硬件轮流空闲</h2><p>最直接的写法是每轮做完 QK 做 softmax，做完 softmax 做 PV，然后进入下一轮。按上一节的比例，一轮里 QK 与 PV 合起来约等于一段 softmax 的长度，把每次 QK、PV 各记 1 格，E 记 2 格，轮流出空的位置就看得出来。</p>
+
+<figure class="aom-figure" aria-label="两轮串行attention的时间线">
+  <div class="aom-heading">串行安排：只画前两轮 KV</div>
+  <div class="aom-scroll" tabindex="0" aria-label="时间线，窄屏可横向滚动">
+    <div class="aom-timeline aom-eight">
+      <div class="aom-axis" style="grid-area:1/1">时间 →</div>
+      <div class="aom-tick" style="grid-area:1/2">0</div><div class="aom-tick" style="grid-area:1/3">1</div><div class="aom-tick" style="grid-area:1/4">2</div><div class="aom-tick" style="grid-area:1/5">3</div><div class="aom-tick" style="grid-area:1/6">4</div><div class="aom-tick" style="grid-area:1/7">5</div><div class="aom-tick" style="grid-area:1/8">6</div><div class="aom-tick" style="grid-area:1/9">7</div>
+      <div class="aom-track" style="grid-area:2/2/3/10"></div><div class="aom-track" style="grid-area:3/2/4/10"></div>
+      <div class="aom-axis" style="grid-area:2/1">Tensor Core</div><div class="aom-axis" style="grid-area:3/1">Softmax</div>
+      <div class="aom-job aom-mma" style="grid-area:2/2">QK₀</div><div class="aom-job aom-mma" style="grid-area:2/5">PV₀</div><div class="aom-job aom-mma" style="grid-area:2/6">QK₁</div><div class="aom-job aom-mma" style="grid-area:2/9">PV₁</div>
+      <div class="aom-job aom-exp" style="grid-area:3/3/4/5">E₀</div><div class="aom-job aom-exp" style="grid-area:3/7/4/9">E₁</div>
+    </div>
+  </div>
+  <div class="aom-legend"><span class="aom-mma">QK / PV：矩阵乘</span><span class="aom-exp">E：含 exp 的 softmax 阶段</span><span>灰色空档：等待</span></div>
+  <figcaption>图 2：人为设定每次 QK、PV 各占 1 个时间格，E 占 2 格。格子是相对时间单位，省略搬运与输出校正，不是周期级测量。</figcaption>
+</figure>
+
+
+<p>图 2 里 E₀ 执行期间，Tensor Core 在等 P₀。但 QK₁ 只需要 Q 和 K₁，不需要 P₀ 或 U₀，本来可以提前算出来。</p>
+<p>要让这种提前发生，还需要异步指令。Hopper 的 <code>wgmma.mma_async</code>、Blackwell 的 <code>tcgen05.mma</code> 属于这一类：发起矩阵运算之后，线程可以继续推进其他允许的工作，到读取结果时再确认完成。源码里把两段代码相邻写出并不会自动带来并行，这些异步能力才是前提。<a target="_blank" rel="noopener" href="https://arxiv.org/html/2407.08608v1#S3">FlashAttention-3 论文的异步流水线</a>、<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-consistency-model-mbarrier-completion">PTX 的异步 MMA 完成机制</a></p>
+<p>有了异步指令，还要有人把不同的工作分头推进。常见做法是 Warp Specialization（Warp 分工）：不同 Warp 或 Warp 组分别负责加载、发起 MMA、处理 softmax 和校正输出，通过缓冲区和屏障交接数据。这样同一个 SM 上，异步矩阵硬件和处理逐元素运算的线程就能交错工作。Hopper 与 Blackwell 在发射粒度、分组方式和存储位置上都有差别，不能把一代的角色分配直接搬到另一代。</p>
+<p>图中的 E 一直是完整的分数处理阶段：从可以读取的 S，到可以交给 PV 的 P。能重叠的是这一段工作与另一个 tile 的 MMA；其中 exp、归约、类型转换和写 P 各能藏起来多少，取决于实际调度和资源争用。</p>
+<p>只要 S 有第二处可写，QK₁ 就能在 E₀ 期间启动。剩下的问题是怎么管这个多出来的槽，以及输出状态要怎样跟着更新。</p>
+<h2 id="三、单-Q-双-S：让下一轮的分数提前算"><a href="#三、单-Q-双-S：让下一轮的分数提前算" class="headerlink" title="三、单 Q 双 S：让下一轮的分数提前算"></a>三、单 Q 双 S：让下一轮的分数提前算</h2><h3 id="两份-S，一个-Q"><a href="#两份-S，一个-Q" class="headerlink" title="两份 S，一个 Q"></a>两份 S，一个 Q</h3><p>如果只留一个 S 槽，softmax 还在读 S₀ 时，QK₁ 没有地方写新结果。再加一个槽，问题就解决了。</p>
+<p>单 Q 双 S（single-Q + S ping-pong）保留一个 Q、两份逻辑分数缓冲、一套在线 softmax 与输出状态。两个槽交替接收相邻轮次的分数：</p>
+
+<figure class="aom-figure" aria-label="单Q双S的缓冲区和状态">
+  <div class="aom-heading">同一个 Q，沿 KV 方向往前推进</div>
+  <div class="aom-buffer-layout">
+    <div class="aom-card"><b>Q</b><span>固定的 128 行 query</span></div>
+    <div class="aom-stack">
+      <div class="aom-card aom-mma"><b>S 槽 A</b><span>第 0、2、4……轮</span><small>QK₀ → QK₂ → QK₄</small></div>
+      <div class="aom-card aom-exp"><b>S 槽 B</b><span>第 1、3、5……轮</span><small>QK₁ → QK₃ → QK₅</small></div>
+    </div>
+    <div class="aom-card aom-state"><b>一套状态</b><span>每行 m、ℓ</span><span>输出累加器 U</span></div>
+  </div>
+  <div class="aom-note">A / B 是存储位置；0 / 1 / 2 是 KV 轮次。两个槽反复使用，不保留完整注意力矩阵。</div>
+  <figcaption>图 3：两份 S 都服务于同一个 query 块。图中的“每行”很关键：128 行各有自己的 max 和 sum，不把整块分数混成一个 softmax。</figcaption>
+</figure>
+
+
+<p>下面按一种保守实现来画：S 和 P 复用同一区域，必须等 PV 完成才能释放槽。</p>
+
+<figure class="aom-figure" aria-label="单Q双S重叠softmax与矩阵乘的时间线">
+  <div class="aom-heading">单 Q 双 S：E₁ 与 PV₀、QK₂ 重叠</div>
+  <div class="aom-scroll" tabindex="0" aria-label="时间线，窄屏可横向滚动">
+    <div class="aom-timeline aom-ten">
+      <div class="aom-axis" style="grid-area:1/1">时间 →</div>
+      <div class="aom-tick" style="grid-area:1/2">0</div><div class="aom-tick" style="grid-area:1/3">1</div><div class="aom-tick" style="grid-area:1/4">2</div><div class="aom-tick" style="grid-area:1/5">3</div><div class="aom-tick" style="grid-area:1/6">4</div><div class="aom-tick" style="grid-area:1/7">5</div><div class="aom-tick" style="grid-area:1/8">6</div><div class="aom-tick" style="grid-area:1/9">7</div><div class="aom-tick" style="grid-area:1/10">8</div><div class="aom-tick" style="grid-area:1/11">9</div>
+      <div class="aom-track" style="grid-area:2/2/3/12"></div><div class="aom-track" style="grid-area:3/2/4/12"></div>
+      <div class="aom-axis" style="grid-area:2/1">Tensor Core</div><div class="aom-axis" style="grid-area:3/1">Softmax</div>
+      <div class="aom-job aom-mma" style="grid-area:2/2">QK₀</div><div class="aom-job aom-mma" style="grid-area:2/3">QK₁</div><div class="aom-job aom-mma" style="grid-area:2/5">PV₀</div><div class="aom-job aom-mma" style="grid-area:2/6">QK₂</div><div class="aom-job aom-mma" style="grid-area:2/7">PV₁</div><div class="aom-job aom-mma" style="grid-area:2/8">QK₃</div><div class="aom-job aom-mma" style="grid-area:2/9">PV₂</div><div class="aom-job aom-mma" style="grid-area:2/11">PV₃</div>
+      <div class="aom-job aom-exp" style="grid-area:3/3/4/5">E₀</div><div class="aom-job aom-exp" style="grid-area:3/5/4/7">E₁</div><div class="aom-job aom-exp" style="grid-area:3/7/4/9">E₂</div><div class="aom-job aom-exp" style="grid-area:3/9/4/11">E₃</div>
+    </div>
+  </div>
+  <figcaption>图 4：沿用图 2 的相对时长，这次画四轮。S 槽 A 在 PV₀ 完成后才交给 QK₂；槽 B 在 PV₁ 完成后才交给 QK₃。省略输出校正阶段的耗时，不据此推算实测加速比。</figcaption>
+</figure>
+
+
+<p>按图走一遍：</p>
+<ol>
+<li>QK₀ 写槽 A，完成后 softmax 开始处理。</li>
+<li>softmax 处理槽 A 时，QK₁ 写槽 B。</li>
+<li>P₀ 就绪，做 PV₀；softmax 转去处理槽 B。</li>
+<li>PV₀ 用完槽 A，QK₂ 才能写回槽 A。此后不断交替。</li>
+</ol>
+<p>重叠发生在 E₀ 与 QK₁ 之间，以及 E₁ 与 PV₀、QK₂ 之间。同一轮的 QK、E、PV 仍然要守数据依赖。</p>
+<h3 id="分数可以早算，输出必须按顺序校正"><a href="#分数可以早算，输出必须按顺序校正" class="headerlink" title="分数可以早算，输出必须按顺序校正"></a>分数可以早算，输出必须按顺序校正</h3><p>QK₁ 能早算，但如果它带来更大的行最大值，之前累积的结果就要重新缩放：</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi>m</mi><mi>j</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>max</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><msub><mi>m</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">rowmax</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>S</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo fence="true">)</mo></mrow><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi>α</mi><mi>j</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>m</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mi>m</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi>P</mi><mi>j</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>S</mi><mi>j</mi></msub><mo>−</mo><msub><mi>m</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi mathvariant="normal">ℓ</mi><mi>j</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>α</mi><mi>j</mi></msub><msub><mi mathvariant="normal">ℓ</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mi mathvariant="normal">rowsum</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>P</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi>U</mi><mi>j</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>α</mi><mi>j</mi></msub><msub><mi>U</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>P</mi><mi>j</mi></msub><msub><mi>V</mi><mi>j</mi></msub><mi mathvariant="normal">.</mi></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+m_j&amp;=\max\left(m_{j-1},\operatorname{rowmax}(S_j)\right),\\
+\alpha_j&amp;=\exp(m_{j-1}-m_j),\\
+P_j&amp;=\exp(S_j-m_j),\\
+\ell_j&amp;=\alpha_j\ell_{j-1}+\operatorname{rowsum}(P_j),\\
+U_j&amp;=\alpha_jU_{j-1}+P_jV_j.
+\end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:7.2em;vertical-align:-3.35em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.85em;"><span style="top:-6.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span><span style="top:-4.51em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span><span style="top:-1.51em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span><span style="top:-0.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.35em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.85em;"><span style="top:-6.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop">max</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">rowmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span></span></span><span style="top:-4.51em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span></span></span><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span></span></span><span style="top:-1.51em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mop"><span class="mord mathrm">rowsum</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span></span></span><span style="top:-0.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord">.</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.35em;"><span></span></span></span></span></span></span></span></span></span></span></span>
+
+<p>这些运算逐行进行，<code>α</code> 也按行广播。举一行的例子：旧最大值是 2，新最大值变成 4，旧分母和旧输出累加器都要乘 <code>exp(-2)</code>，才能和本轮贡献处在同一尺度上。</p>
+
+<figure class="aom-figure" aria-label="在线softmax的输出校正依赖">
+  <div class="aom-heading">分数可以提前算；同一 U 的更新必须协调</div>
+  <div class="aom-correction">
+    <div class="aom-card aom-mma"><b>上一轮 PV 完成</b><span>得到完整 Uⱼ₋₁</span></div>
+    <div class="aom-card aom-exp"><b>本轮 max 已知</b><span>得到 αⱼ</span></div>
+    <div class="aom-merge">两项均就绪 ↓</div>
+    <div class="aom-card aom-state aom-wide"><b>先校正旧 U，再加入本轮 PV</b><span>Uⱼ = αⱼ Uⱼ₋₁ + Pⱼ Vⱼ</span></div>
+  </div>
+  <figcaption>图 5：采用原地累加时，不能一边让上一轮 PV 写 U，一边无序地重缩放同一份 U。实现可以安排独立的校正（correction）角色，或使用其他经过验证的累加方案。</figcaption>
+</figure>
+
+
+<p>所以双 S 放宽的只是分数缓冲的读写冲突，max、sum 和输出累加器各自保留依赖链。普通有限分数可以从第一块初始化；整行都被 mask 的情况要单独处理，避免 <code>-∞-(-∞)</code> 产生 NaN。</p>
+<h3 id="槽什么时候能还回去"><a href="#槽什么时候能还回去" class="headerlink" title="槽什么时候能还回去"></a>槽什么时候能还回去</h3><p>实现里需要能表达三件事：QK 已写完 S，softmax 已写好 P，PV 已用完 P。如果 S 和 P 共用同一区域，让 softmax 读完 S 就释放整个槽，下一次 QK 会覆盖 PV 还没用完的 P。</p>
+<p>协议可以概括成三句话：写之前等空闲，读之前等就绪，用完之后再归还。循环使用时还要区分槽里的数据属于第几代，常见做法是维护 phase。初始值和屏障怎么用，取决于所用的流水线 API，不能只照抄 <code>j % 2</code>。</p>
+<p>Blackwell 上还要分清 MMA 的提交与完成。<code>tcgen05.commit</code> 配合 barrier 跟踪异步操作的结束，访问结果时必须满足对应的可见性规则。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-consistency-model">PTX 的 tcgen05 同步规则</a></p>
+<h2 id="四、双-Q：两条独立的计算链"><a href="#四、双-Q：两条独立的计算链" class="headerlink" title="四、双 Q：两条独立的计算链"></a>四、双 Q：两条独立的计算链</h2><p>单 Q 双 S 只在同一个 Q 的前后轮次之间找重叠。双 Q（dual-Q）换一个方向：让一个 CTA 同时处理 Qᴬ、Qᴮ 两个 query 块，各自保留 m、ℓ、U。</p>
+<p>例如 Qᴬ 对应第 0～127 行 query，Qᴮ 对应第 128～255 行。dense 非因果 attention 里，它们遍历同一段 KV，但两组分数按各自的行归一化，最后分别写出 Oᴬ 和 Oᴮ。</p>
+
+<figure class="aom-figure" aria-label="双Q的独立状态和交错时间线">
+  <div class="aom-heading">一个 CTA，两个 query 块</div>
+  <div class="aom-pair">
+    <div class="aom-card aom-query-a"><b>Qᴬ：第 0～127 行</b><span>Sᴬ / Pᴬ</span><span>mᴬ、ℓᴬ、Uᴬ → Oᴬ</span></div>
+    <div class="aom-card aom-query-b"><b>Qᴮ：第 128～255 行</b><span>Sᴮ / Pᴮ</span><span>mᴮ、ℓᴮ、Uᴮ → Oᴮ</span></div>
+  </div>
+  <div class="aom-note">同一个 KV 块可以服务两路；两路的 max、sum、输出分别维护。</div>
+  <div class="aom-scroll" tabindex="0" aria-label="双Q时间线，窄屏可横向滚动">
+    <div class="aom-timeline aom-ten">
+      <div class="aom-axis" style="grid-area:1/1">时间 →</div>
+      <div class="aom-tick" style="grid-area:1/2">0</div><div class="aom-tick" style="grid-area:1/3">1</div><div class="aom-tick" style="grid-area:1/4">2</div><div class="aom-tick" style="grid-area:1/5">3</div><div class="aom-tick" style="grid-area:1/6">4</div><div class="aom-tick" style="grid-area:1/7">5</div><div class="aom-tick" style="grid-area:1/8">6</div><div class="aom-tick" style="grid-area:1/9">7</div><div class="aom-tick" style="grid-area:1/10">8</div><div class="aom-tick" style="grid-area:1/11">9</div>
+      <div class="aom-track" style="grid-area:2/2/3/12"></div><div class="aom-track" style="grid-area:3/2/4/12"></div>
+      <div class="aom-axis" style="grid-area:2/1">Tensor Core</div><div class="aom-axis" style="grid-area:3/1">Softmax</div>
+      <div class="aom-job aom-query-a" style="grid-area:2/2">QKᴬ₀</div><div class="aom-job aom-query-b" style="grid-area:2/3">QKᴮ₀</div><div class="aom-job aom-query-a" style="grid-area:2/5">PVᴬ₀</div><div class="aom-job aom-query-a" style="grid-area:2/6">QKᴬ₁</div><div class="aom-job aom-query-b" style="grid-area:2/7">PVᴮ₀</div><div class="aom-job aom-query-b" style="grid-area:2/8">QKᴮ₁</div><div class="aom-job aom-query-a" style="grid-area:2/9">PVᴬ₁</div><div class="aom-job aom-query-b" style="grid-area:2/11">PVᴮ₁</div>
+      <div class="aom-job aom-query-a aom-exp-border" style="grid-area:3/3/4/5">Eᴬ₀</div><div class="aom-job aom-query-b aom-exp-border" style="grid-area:3/5/4/7">Eᴮ₀</div><div class="aom-job aom-query-a aom-exp-border" style="grid-area:3/7/4/9">Eᴬ₁</div><div class="aom-job aom-query-b aom-exp-border" style="grid-area:3/9/4/11">Eᴮ₁</div>
+    </div>
+  </div>
+  <figcaption>图 6：上标 A／B 表示 query 块，下标 0／1 表示 KV 轮次。共完成四个 Q-KV 配对，与图 4 的四个配对工作量相同。时间图仍省略搬运和输出校正；相似的交错节奏来自不同的数据组织。</figcaption>
+</figure>
+
+
+<p>Eᴬ₀ 运行时，Tensor Core 可以算 QKᴮ₀；Eᴮ₀ 运行时，又可以做 PVᴬ₀ 和 QKᴬ₁。A 路的输出缩放不依赖 B 路的最大值，B 路也不必等 A 路走完全部 KV 才开始。</p>
+<p>与单 Q 双 S 相比，双 Q 多出一套独立的输出状态，给调度留了更多选择。dense 情况下，同一块 K&#x2F;V 如果留在片上供两路共用，还可能省掉一次重复加载；能不能真的复用，要看搬运顺序、布局和缓冲的生命周期。</p>
+<p>FlashAttention-4 公开的前向设计就采用每 CTA 两个 Q tile 的 ping-pong，并配一个独立的校正阶段处理输出重缩放。它还会协调两组 softmax 的 exp 阶段，减少对同一个指数单元的争抢。这里利用的是 exp 与 MMA 的互补；反过来，两路 exp 同时跑，也会竞争同一份吞吐。<a target="_blank" rel="noopener" href="https://tridao.me/blog/2026/flash4/#pipeline-ping-pong-q-tiles-plus-a-dedicated-correction-stage">FlashAttention-4 的前向流水线</a></p>
+<h3 id="两种设计可以叠加，但要付出资源代价"><a href="#两种设计可以叠加，但要付出资源代价" class="headerlink" title="两种设计可以叠加，但要付出资源代价"></a>两种设计可以叠加，但要付出资源代价</h3><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>单 Q 双 S</th>
+<th>本文图示的双 Q</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一个 CTA 负责的 query 块</td>
+<td>1 个</td>
+<td>2 个</td>
+</tr>
+<tr>
+<td>可交错的工作来自哪里</td>
+<td>同一 Q 的不同 KV 轮次</td>
+<td>两个 Q 的工作交错</td>
+</tr>
+<tr>
+<td>逻辑分数槽</td>
+<td>同一 Q 使用 A／B 两槽</td>
+<td>每个 Q 各一槽</td>
+</tr>
+<tr>
+<td>在线 max／sum／输出状态</td>
+<td>一套，按 query 行维护</td>
+<td>两套，各自按行维护</td>
+</tr>
+<tr>
+<td>主要资源增量</td>
+<td>额外的 S／P 在途数据</td>
+<td>额外的 Q、输出和状态</td>
+</tr>
+</tbody></table>
+<p>“几个 Q”和“每个 Q 有几级 S 缓冲”是两个独立的参数。双 Q 也可以再给每个 Q 加分数缓冲，代价是更多片上存储和同步。所以只凭名字判断不了某个 kernel 的流水线深度。</p>
+<h3 id="除了计算，还有搬运"><a href="#除了计算，还有搬运" class="headerlink" title="除了计算，还有搬运"></a>除了计算，还有搬运</h3><p>TMA（Tensor Memory Accelerator，张量存储加速器）能把后续的 K&#x2F;V 块异步送进片上，搬运本身也可以和计算重叠。把这几类放在一起，各自的作用就清楚了：</p>
+<table>
+<thead>
+<tr>
+<th>可重叠的阶段</th>
+<th>为什么有机会并行</th>
+<th>仍要满足的条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>本轮 softmax 与下一轮 QK</td>
+<td>下一轮 QK 不依赖本轮 P</td>
+<td>K 已到达，且有空闲 S 槽</td>
+</tr>
+<tr>
+<td>本轮 softmax 与上一轮 PV</td>
+<td>上一轮 P 已就绪</td>
+<td>上一轮输出校正已完成，输入未被覆盖</td>
+</tr>
+<tr>
+<td>TMA 预取后续 K&#x2F;V 与当前计算</td>
+<td>搬运走异步数据通路</td>
+<td>有空缓冲，计算前确认传输完成</td>
+</tr>
+<tr>
+<td>一路输出校正与另一路 MMA，或后续 QK</td>
+<td>操作的是不同数据区域</td>
+<td>校正与逐元素运算仍可能争资源</td>
+</tr>
+</tbody></table>
+<p>前两行是前面几条时间线的主角。后两行同样影响实际吞吐，但 TMA 预取属于搬运与计算的重叠，单 Q 双 S 和双 Q 改变的只是计算之间可交错的部分。输出校正和 PV 如果访问同一份 U，仍要按图 5 的依赖关系排队。</p>
+<p>这里的双 Q 都在一个 CTA 内，和前文的 <a href="/2026/10/25/blackwell-2cta-optimization/" title="B200 的 2CTA 怎样调优：从矩阵分块到流水线">2CTA 矩阵协作</a> 是两类不同的组织方式。Warp 与 SM 的对应关系可以参看 <a href="/2026/10/24/nvidia-cuda-execution-model/" title="从 CUDA 代码到 GPU 执行：Grid、Block、CTA、Warp 与 SM 如何对应">CUDA 执行模型</a>。</p>
+<h2 id="五、多一条计算链的代价"><a href="#五、多一条计算链的代价" class="headerlink" title="五、多一条计算链的代价"></a>五、多一条计算链的代价</h2><p>双 Q 多留了一份 Q、一份输出暂存和一套在线状态，同时把两路 query 绑在同一个 CTA 里。两件事都会反过来影响吞吐。</p>
+<h3 id="片上空间会压缩预取深度"><a href="#片上空间会压缩预取深度" class="headerlink" title="片上空间会压缩预取深度"></a>片上空间会压缩预取深度</h3><p>寄存器保存线程正在操作的分数片段、max、sum 和地址；SMEM（共享内存）常用来放 Q&#x2F;K&#x2F;V 和输出暂存；Blackwell 的 TMEM（Tensor Memory）存放矩阵累加结果，也可以承接 S／P。这三处各有容量上限，不能互相顶替。</p>
+<p>先算一笔简化的 SMEM 布局预算。取 <code>128×128</code> 的 FP8 输入块和 BF16 输出暂存，假设可用于这部分布局的空间是 224 KiB，每个 query 块占 16 KiB，每份输出暂存占 32 KiB，每个 K 或 V 缓冲槽占 16 KiB：</p>
+
+<figure class="aom-figure" aria-label="单Q与双Q共享内存预算对比">
+  <div class="aom-heading">相同 224 KiB 预算，容纳的数据不同</div>
+  <div class="aom-budget-label">单 Q：16 KiB Q + 32 KiB 输出暂存 + 11 × 16 KiB KV 槽</div>
+  <div class="aom-budget"><div class="aom-budget-q" style="flex:1">Q</div><div class="aom-budget-o" style="flex:2">O</div><div class="aom-budget-kv" style="flex:11">11 个 KV 槽</div></div>
+  <div class="aom-budget-label">双 Q：32 KiB Q + 64 KiB 输出暂存 + 8 × 16 KiB KV 槽</div>
+  <div class="aom-budget"><div class="aom-budget-q" style="flex:2">Q × 2</div><div class="aom-budget-o" style="flex:4">O × 2</div><div class="aom-budget-kv" style="flex:8">8 个 KV 槽</div></div>
+  <figcaption>图 7：条形长度按字节数绘制。KV 槽按单份 K 或 V 计，11 槽不表示 11 对 K/V。数字仅为布局算例，省略对齐、屏障等开销；输出暂存与 TMEM 中的 FP32 累加器也属于不同存储。</figcaption>
+</figure>
+
+
+<p>双 Q 多了可交错的计算，却可能把 KV 预取距离从 11 个槽压到 8 个。如果 MMA 此后更频繁地等数据，计算重叠省下的时间就会被抵消。</p>
+<p>TMEM 也要算。按每块 128 列的逻辑布局，单 Q 双 S 的 <code>S₀ + S₁ + U</code> 占 384 列，双 Q 的 <code>Sᴬ + Sᴮ + Uᴬ + Uᴮ</code> 占 512 列，都假设 P 复用 S 的区域。常规、非 exclusive 的 TMEM 分配按 2 的幂申请列数，384 列的布局也可能申请到 512 列。把剩余的逻辑空间利用起来当然可以，但那会带来额外的寄存器、SMEM 或同步开销。<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-instructions-tcgen05-alloc-dealloc-relinquish-alloc-permit">PTX 的 TMEM 分配规则</a></p>
+<h3 id="并行度集中到更少的-CTA"><a href="#并行度集中到更少的-CTA" class="headerlink" title="并行度集中到更少的 CTA"></a>并行度集中到更少的 CTA</h3><p>一个 CTA 处理两个 Q，覆盖同样一批 query 需要的 CTA 数大约减半。batch 小、query 总块数本来就不多的时候，GPU 可能凑不出足够的任务铺满 SM。寄存器、SMEM 或 TMEM 用量上升，还会压低同时驻留的 CTA 数。</p>
+<p>资源预算变小，不等于一定发生寄存器溢出。活跃值会不会被写到 local memory，要看编译产物和性能计数，不能因为用了双 Q 就下结论。</p>
+<h3 id="两路长度不同，会多出空轮次"><a href="#两路长度不同，会多出空轮次" class="headerlink" title="两路长度不同，会多出空轮次"></a>两路长度不同，会多出空轮次</h3><p>不加 mask 的时候，两路遍历的 KV 块数相同。一旦有 causal mask、变长序列或稀疏清单，长度就可能不一样。</p>
+<p>比如 A 路有 3 个有效 KV 块，B 路只有 1 个。实现如果为了配对而让两路都跑 3 轮，4 个有效配对就变成 6 个实际配对。被 mask 掉的额外计算数学贡献为零，却照样花掉加载和 MMA 时间。能跳过多少，取决于实现。</p>
+<p>所以双 Q 应该和已经优化过的单 Q 双 S 比，并为两者分别选合适的 tile、stage 和资源配置。只赢过完全串行的基线，不足以说明它优于现有的单 Q 流水线。</p>
+<h2 id="六、重叠最多能省多少"><a href="#六、重叠最多能省多少" class="headerlink" title="六、重叠最多能省多少"></a>六、重叠最多能省多少</h2><p>把一轮里两次 MMA 占 Tensor Core 的时间记作 <code>Tₘ</code>，softmax 占相关运算单元的时间记作 <code>Tₑ</code>，其他成本暂时忽略。完全串行需要：</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo>=</mo><msub><mi>T</mi><mi>m</mi></msub><mo>+</mo><msub><mi>T</mi><mi>e</mi></msub></mrow><annotation encoding="application/x-tex">T_{\mathrm{serial}}=T_m+T_e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">serial</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>
+
+<p>如果两类工作能在不同 tile 之间充分重叠，稳态下的理想处理间隔只能接近：</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">p</mi></mrow></msub><mo>≳</mo><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>T</mi><mi>m</mi></msub><mo separator="true">,</mo><msub><mi>T</mi><mi>e</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><msub><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">p</mi></mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo>≤</mo><mfrac><mrow><msub><mi>T</mi><mi>m</mi></msub><mo>+</mo><msub><mi>T</mi><mi>e</mi></msub></mrow><mrow><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>T</mi><mi>m</mi></msub><mo separator="true">,</mo><msub><mi>T</mi><mi>e</mi></msub><mo stretchy="false">)</mo></mrow></mfrac><mo>≤</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">T_{\mathrm{overlap}}\gtrsim\max(T_m,T_e),\qquad
+\mathrm{speedup}_{\mathrm{ideal}}\leq
+\frac{T_m+T_e}{\max(T_m,T_e)}\leq2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0157em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">overlap</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel amsrm">≳</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">max</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">speedup</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.242em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">ideal</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2963em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop">max</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span></span>
+
+<p>两边各需 1 个时间单位时，理想间隔从 2 降到 1；MMA 需要 1、softmax 需要 3 时，充分重叠也只能把 4 降到 3，剩下的要靠减少 softmax 的工作量或提高它的有效吞吐。</p>
+<p>图 4 和图 6 画的工作量相同，都是四个 Q-KV 配对、合计 16 格有效工作，各自走完用了 10 格。离 2 倍还差的那部分，是模型里的启动、排空和数据依赖。</p>
+<p>这个“最多 2 倍”只属于“固定工作量、两类阶段、与完全串行相比”这一个模型，没有算 KV 复用之类的其他优化，也不是从单 Q 双 S 换到双 Q 的加速承诺。真实 kernel 还要付出数据移动、校正、屏障等成本，资源变化又会改变这些成本。</p>
+<p>要判断一个实现有没有真的受益，可以依次看三件事。先看结果对不对：和参考输出比对，覆盖多个 KV 轮次、尾块、mask 和极端分数，确认每个 Q 的 max、sum 和输出都正确。再看等待有没有减少：把 Tensor Core、指数路径、访存和屏障的等待分开统计，确认省下的时间没有转移到别的瓶颈上。最后看整个算子：固定 GPU、dtype、形状和精度要求，用设备计时重复测量，比较中要包含加载、归一化和最终写出。</p>
+<p>单 Q 双 S 让一个 query 块的下一轮分数提前就位，双 Q 再多开一条独立的 query 计算链。两者起作用的前提相同：一类硬件卡在当前依赖上时，手边恰好有另一份输入齐备的工作。收益多少，取决于这些工作能不能及时就绪，以及把它们留在片上要花多少空间。</p>
+<p>技术资料核对日期：2026 年 10 月 28 日。图示均为本文绘制；吞吐参数取自文中链接的公开设计说明，其余数字都是在文中假设下的估算。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NVIDIA/" rel="tag"># NVIDIA</a>
+              <a href="/tags/CUDA/" rel="tag"># CUDA</a>
+              <a href="/tags/FlashAttention/" rel="tag"># FlashAttention</a>
+              <a href="/tags/Blackwell/" rel="tag"># Blackwell</a>
+              <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/10/25/blackwell-2cta-optimization/" rel="prev" title="B200 的 2CTA 怎样调优：从矩阵分块到流水线">
+                  <i class="fa fa-angle-left"></i> B200 的 2CTA 怎样调优：从矩阵分块到流水线
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/10/29/ai-society-and-global-trade/" rel="next" title="当机器开始上班：AI 时代的中美社会与世界秩序推演">
+                  当机器开始上班：AI 时代的中美社会与世界秩序推演 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">408k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">24:44</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"casxt/casxt.github.io","issue_term":"pathname","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>
