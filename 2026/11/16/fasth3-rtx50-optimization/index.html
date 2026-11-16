@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"maple.link","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null,"show_result":false},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"normal"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"buttons","active":"utterances","storage":true,"lazyload":true,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="这个项目的目标，是在保持生成速度和已验收画质的前提下，尽可能减少 FastH3 的显存与主存占用。为此需要同时解决两件事：让矩阵乘落到 Tensor Core 上，以及让权重和中间结果在有限显存里按时到达。前者决定计算有多快，后者决定 GPU 有多少时间真的在计算。 这次实现使用 CuTe DSL 重写主要 DiT 算子，组合 BF16 与 MXFP8，并整理了磁盘、主存和 GPU 之间的数据流。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastH3 在 RTX 50 上的推理优化：从 MXFP8 算子到长视频流水线">
+<meta property="og:url" content="https://maple.link/2026/11/16/fasth3-rtx50-optimization/index.html">
+<meta property="og:site_name" content="Maple.Link">
+<meta property="og:description" content="这个项目的目标，是在保持生成速度和已验收画质的前提下，尽可能减少 FastH3 的显存与主存占用。为此需要同时解决两件事：让矩阵乘落到 Tensor Core 上，以及让权重和中间结果在有限显存里按时到达。前者决定计算有多快，后者决定 GPU 有多少时间真的在计算。 这次实现使用 CuTe DSL 重写主要 DiT 算子，组合 BF16 与 MXFP8，并整理了磁盘、主存和 GPU 之间的数据流。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-11-16T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-11-16T15:00:00.000Z">
+<meta property="article:author" content="Maple">
+<meta property="article:tag" content="Blackwell">
+<meta property="article:tag" content="CuTe DSL">
+<meta property="article:tag" content="MXFP8">
+<meta property="article:tag" content="NVIDIA">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="视频生成">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://maple.link/2026/11/16/fasth3-rtx50-optimization/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://maple.link/2026/11/16/fasth3-rtx50-optimization/","path":"2026/11/16/fasth3-rtx50-optimization/","title":"FastH3 在 RTX 50 上的推理优化：从 MXFP8 算子到长视频流水线"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>FastH3 在 RTX 50 上的推理优化：从 MXFP8 算子到长视频流水线 | Maple.Link</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6CLMRR9ZK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-D6CLMRR9ZK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"neutral","dark":"dark"},"js":{"url":"/assets/vendor/mermaid/mermaid.min.js"}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="/css/region-guard.css?v=1">
+    <script src="/js/region-guard.js?v=1"></script>
+  
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+<style>.hexo-echarts{margin:1.5rem 0;width:100%;}.hexo-echarts__canvas{min-width:0;width:100%;}.hexo-echarts__fallback,.hexo-echarts--error{color:#c00;text-align:center;}</style><style>.post-body .katex-display{overflow-x:auto;overflow-y:hidden;padding:.7em .15em}.post-body .katex{font-size:1.08em}</style><!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Maple.Link</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术分享站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E6%98%8E%E7%A1%AE%E4%BC%98%E5%8C%96%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%85%AB%E6%AD%A5%E5%BE%88%E5%B0%91%EF%BC%8C%E6%AF%8F%E4%B8%80%E6%AD%A5%E4%BB%8D%E7%84%B6%E5%BE%88%E5%A4%A7"><span class="nav-text">一、先明确优化对象：八步很少，每一步仍然很大</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%86%85%E5%AD%98%E8%A7%84%E5%88%92%EF%BC%9A%E5%85%88%E6%B6%88%E9%99%A4%E9%87%8D%E5%A4%8D%E5%AD%98%E5%82%A8%EF%BC%8C%E5%86%8D%E5%86%B3%E5%AE%9A%E5%93%AA%E4%BA%9B%E6%95%B0%E6%8D%AE%E6%90%AC%E8%B5%B0"><span class="nav-text">二、内存规划：先消除重复存储，再决定哪些数据搬走</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%EF%BC%9A%E8%8A%82%E7%9C%81%E7%A9%BA%E9%97%B4%EF%BC%8C%E5%90%8C%E6%97%B6%E4%B8%8D%E5%A2%9E%E5%8A%A0%E5%85%B3%E9%94%AE%E8%B7%AF%E5%BE%84%E4%B8%8A%E7%9A%84%E7%AD%89%E5%BE%85"><span class="nav-text">优化目标：节省空间，同时不增加关键路径上的等待</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B3%B0%E5%80%BC%E7%9C%8B%E5%90%8C%E6%97%B6%E5%AD%98%E6%B4%BB%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%B8%8D%E7%9C%8B%E6%89%80%E6%9C%89%E5%BC%A0%E9%87%8F%E5%A4%A7%E5%B0%8F%E4%B9%8B%E5%92%8C"><span class="nav-text">峰值看同时存活的数据，不看所有张量大小之和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15s-15s%EF%BC%9A%E4%B8%BB%E8%A6%81%E5%B8%B8%E9%A9%BB%E7%BC%93%E5%86%B2%E6%9C%89%E5%A4%9A%E5%A4%A7"><span class="nav-text">15s + 15s：主要常驻缓冲有多大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%9D%97%E8%A6%81%E4%BF%9D%E7%95%99%E8%AF%AD%E4%B9%89%EF%BC%8C%E4%B9%9F%E8%A6%81%E6%A0%B8%E5%AF%B9%E9%87%8D%E7%AE%97%E6%88%90%E6%9C%AC"><span class="nav-text">分块要保留语义，也要核对重算成本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E8%83%BD%E6%8C%89%E5%B1%82%E6%90%AC%EF%BC%8C%E4%B8%AD%E9%97%B4%E7%BB%93%E6%9E%9C%E4%B9%9F%E8%A6%81%E6%9C%89%E5%8E%BB%E5%A4%84"><span class="nav-text">权重能按层搬，中间结果也要有去处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%AD%98%E5%90%8C%E6%A0%B7%E8%A7%84%E5%88%92%EF%BC%8C%E9%81%BF%E5%85%8D%E6%8B%BF%E4%B8%BB%E5%AD%98%E6%9B%BF%E6%98%BE%E5%AD%98%E6%97%A0%E9%99%90%E5%85%9C%E5%BA%95"><span class="nav-text">主存同样规划，避免拿主存替显存无限兜底</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E9%99%90%E4%B8%8D%E7%AD%89%E4%BA%8E%E5%AE%9E%E9%99%85%E5%8D%A0%E7%94%A8"><span class="nav-text">上限不等于实际占用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E7%A9%BA%E9%97%B4%E5%85%88%E7%9C%81%EF%BC%8C%E5%93%AA%E4%BA%9B%E7%A9%BA%E9%97%B4%E5%80%BC%E5%BE%97%E7%95%99%E4%B8%8B"><span class="nav-text">哪些空间先省，哪些空间值得留下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81MXFP8%EF%BC%9A%E6%9D%83%E9%87%8D%E7%A6%BB%E7%BA%BF%E6%89%93%E5%8C%85%EF%BC%8C%E6%BF%80%E6%B4%BB%E5%9C%A8%E6%B6%88%E8%B4%B9%E5%89%8D%E9%87%8F%E5%8C%96"><span class="nav-text">三、MXFP8：权重离线打包，激活在消费前量化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F-32-%E4%B8%AA%E6%95%B0%E5%85%B1%E7%94%A8%E4%B8%80%E4%B8%AA%E5%B0%BA%E5%BA%A6"><span class="nav-text">每 32 个数共用一个尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E6%94%AF%E6%8C%81%EF%BC%8C%E4%B8%8D%E4%BF%9D%E8%AF%81%E4%B8%80%E4%B8%AA%E6%9C%B4%E7%B4%A0-kernel-%E5%B0%B1%E8%B6%B3%E5%A4%9F%E5%BF%AB"><span class="nav-text">数据类型支持，不保证一个朴素 kernel 就足够快</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Warp-%E5%88%86%E5%B7%A5%EF%BC%9A%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA%E5%90%84%E6%9C%89%E4%B8%80%E6%9D%A1%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-text">四、Warp 分工：输入和输出各有一条流水线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E8%80%85%E5%87%86%E5%A4%87%E4%B8%8B%E4%B8%80%E5%9D%97%EF%BC%8C%E8%AE%A1%E7%AE%97%E8%80%85%E6%B6%88%E8%B4%B9%E5%BD%93%E5%89%8D%E5%9D%97"><span class="nav-text">加载者准备下一块，计算者消费当前块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%BA%A4%E7%BB%99%E4%B8%93%E9%97%A8%E7%9A%84-warp"><span class="nav-text">输出也可以交给专门的 warp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent-CTA-%E5%8F%AA%E5%9C%A8%E5%90%88%E9%80%82%E7%9A%84%E5%BD%A2%E7%8A%B6%E4%BD%BF%E7%94%A8"><span class="nav-text">Persistent CTA 只在合适的形状使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%9E%8D%E5%90%88%E7%9A%84%E7%9B%AE%E6%A0%87%EF%BC%9A%E8%AE%A9%E4%B8%8B%E4%B8%80%E6%AD%A5%E7%9B%B4%E6%8E%A5%E5%90%83%E5%88%B0%E9%9C%80%E8%A6%81%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="nav-text">五、融合的目标：让下一步直接吃到需要的格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FFN-%E4%B8%8A%E6%8A%95%E5%BD%B1%E3%80%81SwiGLU-%E5%92%8C%E6%89%93%E5%8C%85"><span class="nav-text">FFN 上投影、SwiGLU 和打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMSNorm%E3%80%81AdaLN-%E5%92%8C-MXFP8-%E6%89%93%E5%8C%85"><span class="nav-text">RMSNorm、AdaLN 和 MXFP8 打包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E7%A8%80%E7%96%8F%E6%B3%A8%E6%84%8F%E5%8A%9B%EF%BC%9A%E5%8F%AA%E7%AE%97%E9%80%89%E4%B8%AD%E7%9A%84%E5%9D%97%EF%BC%8C%E4%B9%9F%E4%B8%8D%E4%BF%9D%E7%95%99%E5%AE%8C%E6%95%B4%E6%B3%A8%E6%84%8F%E5%8A%9B%E7%9F%A9%E9%98%B5"><span class="nav-text">六、稀疏注意力：只算选中的块，也不保留完整注意力矩阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E9%95%BF%E8%A7%86%E9%A2%91%E7%9A%84-bubble%EF%BC%9A%E5%85%88%E5%8C%BA%E5%88%86%E6%B2%A1%E6%9C%89%E5%B7%A5%E4%BD%9C%E5%92%8C%E6%B2%A1%E6%9C%89%E7%AE%97%E5%8A%9B%E5%90%83%E6%BB%A1"><span class="nav-text">七、长视频的 bubble：先区分没有工作和没有算力吃满</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E7%9A%84%E6%9A%82%E5%81%9C%E4%B9%9F%E4%BC%9A%E8%AE%A9-GPU-%E6%96%AD%E7%B2%AE"><span class="nav-text">CPU 的暂停也会让 GPU 断粮</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E6%B3%A8%E6%84%8F%E5%8A%9B%E8%BE%93%E5%87%BA%E4%BB%A5-MXFP8-%E7%95%99%E5%9C%A8-GPU"><span class="nav-text">让注意力输出以 MXFP8 留在 GPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E6%9D%83%E9%87%8D-arena%EF%BC%8C%E6%AF%94%E5%86%8D%E5%8A%A0%E4%B8%80%E4%BB%BD%E6%9D%83%E9%87%8D%E7%BC%93%E5%86%B2%E6%9B%B4%E9%80%82%E5%90%88%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE"><span class="nav-text">固定权重 arena，比再加一份权重缓冲更适合默认配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%A7%82%E5%AF%9F%E5%89%A9%E4%BD%99%E7%A9%BA%E6%A1%A3"><span class="nav-text">怎样观察剩余空档</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81PCIe-%E8%A6%81%E5%8D%95%E7%8B%AC%E6%B5%8B%EF%BC%8C%E7%AB%AF%E5%88%B0%E7%AB%AF%E8%A6%81%E6%8C%89%E9%98%B6%E6%AE%B5%E7%9C%8B"><span class="nav-text">八、PCIe 要单独测，端到端要按阶段看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E4%BC%A0%E8%BE%93%E4%B8%8A%E9%99%90"><span class="nav-text">先确认传输上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%94%9F%E6%88%90%E7%9A%84%E7%BB%93%E6%9E%9C"><span class="nav-text">完整生成的结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%93%AA%E4%BA%9B%E5%8F%96%E8%88%8D%E4%BF%9D%E7%95%99%EF%BC%8C%E5%93%AA%E4%BA%9B%E8%BF%98%E4%B8%8D%E8%83%BD%E4%B8%8B%E7%BB%93%E8%AE%BA"><span class="nav-text">九、哪些取舍保留，哪些还不能下结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%8E%E6%B5%8B%E9%87%8F%E8%B5%84%E6%96%99"><span class="nav-text">实现与测量资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Maple</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">111</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">403</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://maple.link/2026/11/16/fasth3-rtx50-optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Maple">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="FastH3 在 RTX 50 上的推理优化：从 MXFP8 算子到长视频流水线 | Maple.Link">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FastH3 在 RTX 50 上的推理优化：从 MXFP8 算子到长视频流水线
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-11-16 23:00:00" itemprop="dateCreated datePublished" datetime="2026-11-16T23:00:00+08:00">2026-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GPU/" itemprop="url" rel="index"><span itemprop="name">GPU</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>35 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这个项目的目标，是在保持生成速度和已验收画质的前提下，尽可能减少 FastH3 的显存与主存占用。为此需要同时解决两件事：让矩阵乘落到 Tensor Core 上，以及让权重和中间结果在有限显存里按时到达。前者决定计算有多快，后者决定 GPU 有多少时间真的在计算。</p>
+<p>这次实现使用 CuTe DSL 重写主要 DiT 算子，组合 BF16 与 MXFP8，并整理了磁盘、主存和 GPU 之间的数据流。在 RTX 5080 上，15 秒参考视频加一张人物图、输出 15 秒 768p 视频的完整八步 R2VA 请求，生成耗时约 2258 秒，整卡显存采样峰值 11.35 GiB。Linux RTX 5090 上对应请求为 1260 秒、9.88 GiB。本文重点解释这些资源是怎样省下来的，以及长视频中反复出现的 bubble 是怎样定位的。</p>
+<span id="more"></span>
+
+<link rel="stylesheet" href="/2026/11/16/fasth3-rtx50-optimization/fasth3-layout.css">
+
+<p>项目代码：<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50">Casxt&#x2F;fasth3-rtx50</a>。本文以 <a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/tree/e3ab0ee">e3ab0ee 版本</a>及截至 2026 年 11 月 16 日保留的实测记录为准。图中的流水线和存储布局是设计示意；带秒数、带宽和占用的表图是实测或明确标注的容量计算。</p>
+<h2 id="一、先明确优化对象：八步很少，每一步仍然很大"><a href="#一、先明确优化对象：八步很少，每一步仍然很大" class="headerlink" title="一、先明确优化对象：八步很少，每一步仍然很大"></a>一、先明确优化对象：八步很少，每一步仍然很大</h2><p>FastH3 已经通过蒸馏减少采样步数。本项目使用 FastVideo 发布的八步权重，继续优化单机推理，不重新训练模型。T2VA 使用文生视频权重，R2VA 使用 Omni 参考权重；首帧 F2VA 和首尾帧 FL2VA 是另外两种输入方式，权重来源和帧控方式要分开看。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/prepare_weights.py">权重清单与固定版本</a></p>
+<p>八步只说明 transformer forward 的次数。每次 forward 内，仍有很多层注意力、投影和 FFN；视频长度和参考素材还会扩大序列。</p>
+<p>以 Linux 的两条 15 秒案例为例，T2VA 有 107,856 行视频 token，R2VA 有 211,056 行，后者还包括 13,933 行 Qwen 条件序列和 1,206 行音频序列。这里的 Qwen 条件行包含视觉 embedding，不能按普通提示词字数估算。R2VA 的输入视频和输出视频长度都会影响计算规模。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/linux-validation.md#tokens-and-prompt-enhancement">实际 token 统计</a></p>
+
+<figure class="h3-figure" aria-label="FastH3 生成流程与优化范围">
+  <div class="h3-flow">
+    <div class="h3-card"><b>① 输入与 PE</b><span>文字、图像、视频</span><small>OpenH3-IR 整理提示词</small></div>
+    <div class="h3-card"><b>② 条件编码</b><span>Qwen + 参考 VAE</span><small>按阶段加载与释放</small></div>
+    <div class="h3-card h3-accent"><b>③ DiT × 8</b><span>VSA · 投影 · FFN</span><small>本次主要优化范围</small></div>
+    <div class="h3-card"><b>④ 解码与导出</b><span>视频 / 音频 VAE</span><small>分块解码与媒体封装</small></div>
+  </div>
+  <figcaption>图 1：任务级数据流，按编号从左到右推进，窄屏改为纵向排列。各组件不要求同时驻留 GPU；图中卡片宽度不代表耗时。</figcaption>
+</figure>
+
+
+<p>这条路线首先减少同时存活的数据，再降低主计算的数据宽度，最后检查相邻阶段能否接起来。单纯把所有张量都换成低精度，或者给每个加载加上 <code>non_blocking=True</code>，都不足以完成这件事。</p>
+<h2 id="二、内存规划：先消除重复存储，再决定哪些数据搬走"><a href="#二、内存规划：先消除重复存储，再决定哪些数据搬走" class="headerlink" title="二、内存规划：先消除重复存储，再决定哪些数据搬走"></a>二、内存规划：先消除重复存储，再决定哪些数据搬走</h2><h3 id="优化目标：节省空间，同时不增加关键路径上的等待"><a href="#优化目标：节省空间，同时不增加关键路径上的等待" class="headerlink" title="优化目标：节省空间，同时不增加关键路径上的等待"></a>优化目标：节省空间，同时不增加关键路径上的等待</h3><p>节省显存有两类办法。删除重复张量、复用生命周期不重叠的存储、融合中间结果，主要减少原本没有必要的资源开销；将仍要消费的数据卸载到 CPU，或用重算换存储，则可能增加传输和计算。</p>
+<p>本项目优先做前一类，再对后一类逐项测量。比较时固定输入长度、分辨率、权重与精度方案、seed 和已改写提示词，在相同显存预算内看完整阶段的时间；同时检查输出一致性或样片质量。目标是从可运行的方案中，找出占用更低、速度没有可辨认退步的安排。它不承诺逐层 offload 能无条件追平所有权重常驻 GPU 的理想情况。</p>
+<p>一次小于 1% 的耗时变化，也要结合重复测量的波动解释。后文固定单 arena 的均值比动态分配多约 0.15%，因此采用的是“时间基本持平、保留显存更少”的结论，没有声称测出了严格零开销。</p>
+<h3 id="峰值看同时存活的数据，不看所有张量大小之和"><a href="#峰值看同时存活的数据，不看所有张量大小之和" class="headerlink" title="峰值看同时存活的数据，不看所有张量大小之和"></a>峰值看同时存活的数据，不看所有张量大小之和</h3><p>先按执行顺序列出每份数据的创建点、最后一个消费者和释放点，再计算各时刻同时存在的存储。Qwen、参考 VAE、DiT 和最终 VAE 解码按阶段交接，通常不需要把它们的 GPU 权重峰值加在一起。</p>
+<p>阶段交接仍会保留必要的条件 embedding、参考 latent 和生成 latent。释放前一组件的权重，不等于清空全部输入；为后续阶段准备首组权重时，重叠部分也必须计入预算。DiT 结束后，主层权重 arena 和长视频 scratch 会先释放，再进入最终解码。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/runner.py">阶段交接与清理顺序</a></p>
+
+<figure class="h3-figure" aria-label="组件按阶段驻留与跨阶段数据">
+  <div class="h3-flow">
+    <div class="h3-card"><b>① Qwen</b><span>权重按组执行</span><small>留下条件 embedding</small></div>
+    <div class="h3-card"><b>② 参考 VAE</b><span>只运行所需编码部分</span><small>留下参考 latent</small></div>
+    <div class="h3-card h3-accent"><b>③ DiT</b><span>一组权重 + 活跃状态</span><small>生成 latent 持续更新</small></div>
+    <div class="h3-card"><b>④ 最终 VAE</b><span>DiT 权重先退出</span><small>解码需要的分块再进入</small></div>
+  </div>
+  <div class="h3-note">跨阶段保留的是后续还要消费的数据；预热和预读若跨越阶段边界，要单独算入重叠峰值。</div>
+  <figcaption>图 2a：组件驻留的稳态示意，不按组件名简单相加峰值，也不假定阶段边界完全没有重叠。</figcaption>
+</figure>
+
+
+<p>在一个长序列 DiT block 内，同样可以找到复用机会。残差 R 要一直保留；调制输入 X 在 QKV 与 attention 读完之后，就可以让输出投影直接覆盖。投影结束再将门控分支加回 R，接着分块做 FFN。这个顺序省掉一份完整宽度的 BF16 投影结果，前提是 X 的最后一个读取者确实已经结束。</p>
+
+<figure class="h3-figure" aria-label="长序列 block 的缓冲区生命周期与覆写关系">
+  <div class="h3-scroll" tabindex="0" aria-label="生命周期表，窄屏可局部横向滚动">
+    <table class="h3-lifetime">
+      <thead><tr><th scope="col">固定存储</th><th scope="col">① 调制</th><th scope="col">② QKV / VSA</th><th scope="col">③ 输出投影</th><th scope="col">④ 残差更新</th><th scope="col">⑤ FFN</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">BF16 残差 R</th><td>读</td><td>保留</td><td>保留</td><td class="h3-green">就地更新</td><td class="h3-green">分块更新</td></tr>
+        <tr><th scope="row">BF16 缓冲 X</th><td class="h3-warm">写调制结果</td><td class="h3-warm">逐组读</td><td class="h3-accent">覆写为投影结果</td><td class="h3-accent">读后用完</td><td>存储保留待复用</td></tr>
+        <tr><th scope="row">MXFP8 输出 O</th><td>存储保留</td><td class="h3-warm">逐组写</td><td class="h3-accent">读</td><td>存储保留</td><td>存储保留</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <figcaption>图 2b：GPU 输出驻留路径中，缓冲建立后的稳态层。X 的两个用途不同时发生，因而能共享同一存储；O 的有效数据读完后，底层分配仍留给下一层复用。表中不包含全部临时张量。</figcaption>
+</figure>
+
+
+<p>这里还要区分“值已经没有消费者”和“内存已经归还”。固定 scratch 可以在逻辑空闲时继续占着分配，换来下一层不再重新申请。它减少分配波动，但不会把这一段占用从显存统计中抹掉。当前实现也没有做全模型通用的静态内存分配器；它针对已经验证过的生命周期安排几块主要缓冲。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/long_video.py">长序列缓冲与就地写回</a></p>
+<h3 id="15s-15s：主要常驻缓冲有多大"><a href="#15s-15s：主要常驻缓冲有多大" class="headerlink" title="15s + 15s：主要常驻缓冲有多大"></a>15s + 15s：主要常驻缓冲有多大</h3><p>沿用 226,195 行、隐藏宽度 5,376 的真实 R2VA 请求，一份完整 BF16 状态约为 2.265 GiB。当前长序列路径规划两份：R 和可覆写的 X。注意力输出按 32 个元素一个 scale 的 MXFP8 保存，约 1.168 GiB；这次权重组对应的单 arena 容量约为 0.442 GiB。</p>
+<table>
+<thead>
+<tr>
+<th>主要存储</th>
+<th>规划方式</th>
+<th align="right">容量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BF16 残差 R</td>
+<td>各层就地更新</td>
+<td align="right">2.265 GiB</td>
+</tr>
+<tr>
+<td>BF16 调制 &#x2F; 投影缓冲 X</td>
+<td>两个用途复用同一存储</td>
+<td align="right">2.265 GiB</td>
+</tr>
+<tr>
+<td>MXFP8 注意力输出 O</td>
+<td>值与 scale 一起保留</td>
+<td align="right">1.168 GiB</td>
+</tr>
+<tr>
+<td>当前主层权重 arena</td>
+<td>按最大权重组分配，一组复用</td>
+<td align="right">0.442 GiB</td>
+</tr>
+<tr>
+<td>以上小计</td>
+<td>有效载荷与 arena 容量</td>
+<td align="right"><strong>约 6.140 GiB</strong></td>
+</tr>
+</tbody></table>
+<p>这个小计还没有包括 QKV、padding、路由分数、临时量化结果、位置编码、其他模块权重和库工作区。代码会在主要缓冲之外，为注意力布局与路由另做保守估算，并加上 320 MiB 余量；不能拿 6.140 GiB 当作整条请求的峰值。后文少层实测的 CUDA 分配峰值约 8.49 GiB，差额包含这些额外存储，不能只用几项理论载荷完整还原 allocator 峰值。</p>
+<h3 id="分块要保留语义，也要核对重算成本"><a href="#分块要保留语义，也要核对重算成本" class="headerlink" title="分块要保留语义，也要核对重算成本"></a>分块要保留语义，也要核对重算成本</h3><p>长序列 attention 按独立 head 分组，默认一次处理 4 个 head，而不是同时物化全部 42 个 head 的 Q&#x2F;K&#x2F;V。单看未 padding 的 BF16 Q&#x2F;K&#x2F;V，有效载荷从约 6.795 GiB 降到一组约 0.647 GiB；真实实现还要为布局转换和前后同时存活的结果留空间。所有 token 和选块规则仍然保留，完整注意力输出最后交给输出投影。</p>
+<p>Head 分组减少并发工作区，但会增加分组调度和对输入的重复消费。长序列关闭输入量化缓存，可以为注意力输出腾出显存，却也会重新量化部分输入；能否划算，要把省下的 D2H &#x2F; H2D 与新增量化一起计时。它是经过对照选择的配置，不是没有成本的删除。</p>
+<p>QKV 的 2048-token 分块则控制投影的临时量化范围和提交粒度，和 4-head 分组是两个不同维度。FFN 使用更小的 GEMM 分块，并把归一化、调制与残差处理放在有界分块里，避免为整段长序列再建一份扩张后的 FFN 中间结果。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/transformer.py">工作区估算与分块策略</a></p>
+<h3 id="权重能按层搬，中间结果也要有去处"><a href="#权重能按层搬，中间结果也要有去处" class="headerlink" title="权重能按层搬，中间结果也要有去处"></a>权重能按层搬，中间结果也要有去处</h3><p>完整模型放不进目标显存时，可以让当前层的权重上卡，用完后换下一层。GPU 峰值因而主要由当前权重、激活、注意力工作区和临时缓冲组成，而不是完整模型的参数量。</p>
+<p>主存也不能忽略。加载整个 state dict，再转换精度、拼接权重、复制到 pinned memory，可能同时留下几份大张量。项目使用文件支持的权重读取和有界暂存区，避免为了搬一层权重先物化整个 DiT。<code>mmap</code> 是一种读取方式，普通文件 <code>read_into</code> 也是；两者都可能利用操作系统页缓存。文件映射大小、进程 RSS 和真实磁盘读取量是三件不同的事。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/storage.py">权重存储实现</a></p>
+
+<figure class="h3-figure" aria-label="磁盘到 GPU 的有界权重通路">
+  <div class="h3-flow h3-three">
+    <div class="h3-card"><b>① 文件与页缓存</b><span>按组读取需要的字节</span><small>不先复制完整 state dict</small></div>
+    <div class="h3-card h3-warm"><b>② Pinned 暂存池</b><span>固定槽位，循环复用</span><small>H2D 完成后才能覆盖</small></div>
+    <div class="h3-card h3-accent"><b>③ GPU 权重 arena</b><span>当前层使用同一块存储</span><small>计算结束后交给下一层</small></div>
+  </div>
+  <div class="h3-note">CPU 读后续分块可与当前计算重叠；单 arena 中，下一层 H2D 必须等当前层读完权重。</div>
+  <figcaption>图 2：权重通路示意。Pinned 指页锁定主存，arena 指预先分配后反复复用的存储区；两者都需要明确的所有权交接。</figcaption>
+</figure>
+
+
+<p>Pinned memory 允许建立可靠的异步拷贝通路，但它本身也占主存。不能把全部权重都锁住，更不能在 DMA 还在读取某个槽时，让 CPU 往同一槽里写下一份数据。项目用事件确认 H2D 完成，再归还暂存槽；GPU arena 同样要等上一层的计算消费结束才能覆盖。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/offload.py">分组 offload 与事件管理</a></p>
+<p>主 DiT 的权重暂存池是 512 MiB，分成 4 个 128 MiB 槽。CPU 可以继续读后续分块，GPU 使用固定 arena 中的当前权重；槽数不会让整个模型多复制四份。池再大也要计入主存，只有队列确实减少读取等待时才值得增加。</p>
+<p>单 GPU arena 的限制也很明确：下一组权重的 H2D 不能覆盖当前层仍在读取的位置。因此，CPU 预读可以重叠，不代表所有 H2D 都已经被计算隐藏。再增加 GPU arena 才能扩大这一侧的重叠机会；后文会用实测解释，为什么这点速度收益不足以抵偿默认配置的额外显存。</p>
+<h3 id="主存同样规划，避免拿主存替显存无限兜底"><a href="#主存同样规划，避免拿主存替显存无限兜底" class="headerlink" title="主存同样规划，避免拿主存替显存无限兜底"></a>主存同样规划，避免拿主存替显存无限兜底</h3><p>输入视频先整理成目标画布和帧率的 uint8 帧，避免长时间保留不再需要的高分辨率原始帧，也不提前为整段视频建立多份浮点副本。按 360 帧、1344×768、RGB 计算，一份 uint8 视频有效载荷约 1.038 GiB，FP32 同形状则约 4.153 GiB；这里未计帧数对齐和其他对象。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/long_video.py">有界参考视频读取</a></p>
+<p>如果显存预算不允许 O 驻留，主存暂存路径复用同一份 BF16 输出矩阵，而不是每层重新分配和释放。它的 D2H 暂存槽与权重 pinned 池分别核算：激活侧最多两槽，代码仅在两槽合计不超过 512 MiB 时启用这条 pinned 通路。不能把“权重池 512 MiB”理解成程序所有页锁定主存的总上限。</p>
+<p>文件页缓存也有成本。mmap 避免主动克隆完整权重，但被访问的文件页仍会占用物理内存；OS 可以回收的文件缓存、Python 私有缓冲和 pinned 主存，要分开解释。热缓存下读得快，不代表冷启动完全不受磁盘影响，更不代表映射权重没有主存占用。</p>
+<h3 id="上限不等于实际占用"><a href="#上限不等于实际占用" class="headerlink" title="上限不等于实际占用"></a>上限不等于实际占用</h3><p>默认限制 PyTorch allocator 为 10 GiB，并至少给整卡保留 256 MiB。DiT 还会根据外部占用下调预算，尽量把整卡使用控制在 11.5 GiB 内。这里的预算只是上限，不能写成“启动就分配 10 GiB”，也不包含所有驱动、桌面和其他进程的占用。</p>
+<p>后面的数据分别列出 CUDA 分配峰值、保留峰值和整卡采样峰值。主存同样区分 Python 进程、全系统以及 Linux 容器。Linux 测试容器有 92 GiB 限额，进程 RSS 约 18 GiB，并不能据此证明整个任务已经在 32 GiB 宿主机上验证通过。</p>
+<p>具体选择驻留路径时，程序取 allocator 剩余预算与整卡空闲减 reserve 两者的较小值，再判断两份 BF16 状态、MXFP8 输出、权重 arena 和保守工作区能否同时放下。整卡目标还会扣除观测到的外部占用与额外 128 MiB 余量，且不会放宽已有 allocator 上限。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_platform.py">预算计算</a></p>
+<p>这是一份保守的运行前规划，实际分配仍可能失败。失败后释放部分申请并退回主存路径，是“仍能完成任务”的保障，不是“不降速”的证明；应从运行报告确认最终采用的策略，再比较耗时。正常热循环不反复调用 <code>empty_cache()</code>，主要在组件交接与分配失败恢复时清理，避免把复用优势重新变成分配和同步开销。</p>
+<h3 id="哪些空间先省，哪些空间值得留下"><a href="#哪些空间先省，哪些空间值得留下" class="headerlink" title="哪些空间先省，哪些空间值得留下"></a>哪些空间先省，哪些空间值得留下</h3><table>
+<thead>
+<tr>
+<th>空间安排</th>
+<th>收益</th>
+<th>速度检查重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>组件错峰驻留、最后使用后覆写 X</td>
+<td>删除不必要的同时存储</td>
+<td>交接顺序正确，不引入重新计算</td>
+</tr>
+<tr>
+<td>MXFP8 权重与融合打包</td>
+<td>减少权重传输与中间结果读写</td>
+<td>量化、scale 准备和写回一起计时</td>
+</tr>
+<tr>
+<td>固定单 arena 与请求级 scratch</td>
+<td>减少重复分配，稳定保留量</td>
+<td>对照完整阶段时间与显存峰值</td>
+</tr>
+<tr>
+<td>GPU 保留紧凑的 O</td>
+<td>少用一部分空闲显存，删除主存往返</td>
+<td>省下传输是否覆盖打包和常驻成本</td>
+</tr>
+<tr>
+<td>额外量化缓存、第二份 GPU 权重 arena</td>
+<td>可能减少重算或等待</td>
+<td>增量收益是否值得增量空间</td>
+</tr>
+<tr>
+<td>主存 offload 回退</td>
+<td>更低显存也能执行</td>
+<td>显式记录降速，不能混作默认性能</td>
+</tr>
+</tbody></table>
+<p>因此，不以“显存越空越好”来选择策略。先排除没有用途的占用，再让必要的少量驻留缓冲消除等待；如果省下的一份 GPU 存储马上又导致重复传输，就需要重新比较整条数据路径。</p>
+<h2 id="三、MXFP8：权重离线打包，激活在消费前量化"><a href="#三、MXFP8：权重离线打包，激活在消费前量化" class="headerlink" title="三、MXFP8：权重离线打包，激活在消费前量化"></a>三、MXFP8：权重离线打包，激活在消费前量化</h2><h3 id="每-32-个数共用一个尺度"><a href="#每-32-个数共用一个尺度" class="headerlink" title="每 32 个数共用一个尺度"></a>每 32 个数共用一个尺度</h3><p>这里的 MXFP8 由 E4M3 数据和 E8M0 缩放因子组成。沿归约维 K，每 32 个连续元素共用一个 scale；表示一个数时，实际值近似为 <code>FP8 数据 × scale</code>。它仍然有量化误差，优势是局部数值范围可以分别适配，不必让整行都服从同一个较大的异常值。</p>
+<p>项目从原始 BF16 权重离线转换 MXFP8，并把 scale 排成 kernel 所需布局。计算时输入激活通常先是 BF16，进入 GEMM 前再量化。<strong>这条主计算路径是 W8A8，FP32 累加；BF16 输入接口并不意味着 W8A16。</strong> 最终结果再按后续算子需要写回 BF16 或 MXFP8。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/mxfp8.py">格式定义与量化策略</a></p>
+
+<figure class="h3-figure" aria-label="MXFP8 分组尺度与存储开销">
+  <div class="h3-scale-layout">
+    <div class="h3-card"><b>BF16：32 个元素</b><strong>64 字节</strong><span>每个数 2 字节</span></div>
+    <div class="h3-card h3-accent"><b>MXFP8：同一组元素</b><div class="h3-bytes"><span>32 B · E4M3 数据</span><span>1 B · E8M0 scale</span></div><strong>33 字节</strong></div>
+  </div>
+  <figcaption>图 3：仅计算有效载荷，MXFP8 占 BF16 的 33/64，约 51.6%。未计 padding、对齐和其他元数据；不能据此推导整个模型的显存也恰好减半。</figcaption>
+</figure>
+
+
+<p>缩小权重还有一个系统收益：逐层 offload 时，PCIe 上需要传输的有效载荷减少。激活的量化则会新增归约、转换和 scale 写入，必须和 GEMM 一起计时。</p>
+<h3 id="数据类型支持，不保证一个朴素-kernel-就足够快"><a href="#数据类型支持，不保证一个朴素-kernel-就足够快" class="headerlink" title="数据类型支持，不保证一个朴素 kernel 就足够快"></a>数据类型支持，不保证一个朴素 kernel 就足够快</h3><p>最初的 MXFP8 实现慢，不能直接归因为 Tensor Core 对这个格式支持不好。一次 GEMM 除了 MMA，还要安排数据加载、scale 读取、寄存器布局、共享内存交接和结果写回。只让少量 warp 顺序做完所有工作，即使每条乘加都用了 Tensor Core，也会留下大量等待。</p>
+<p>还有一条架构边界：RTX 50 系列是 SM120，本项目用 CuTe DSL 的 <code>warp.MmaMXF8Op</code> 执行原生 block-scaled MMA。前文 <a href="/2026/10/25/blackwell-2cta-optimization/" title="B200 的 2CTA 怎样调优：从矩阵分块到流水线">B200 的 2CTA</a> 讨论的是另一套指令与存储组织，不能把 SM100 的 <code>tcgen05</code>、TMEM 和 2CTA 设计直接视为本项目已经实现的功能。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/_cute_mxfp8_ffn.py">本项目 GEMM</a>、<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma">PTX 的 block scaling MMA 定义</a></p>
+<h2 id="四、Warp-分工：输入和输出各有一条流水线"><a href="#四、Warp-分工：输入和输出各有一条流水线" class="headerlink" title="四、Warp 分工：输入和输出各有一条流水线"></a>四、Warp 分工：输入和输出各有一条流水线</h2><h3 id="加载者准备下一块，计算者消费当前块"><a href="#加载者准备下一块，计算者消费当前块" class="headerlink" title="加载者准备下一块，计算者消费当前块"></a>加载者准备下一块，计算者消费当前块</h3><p>Warp Specialization 指不同 warp 承担不同职责。FFN 的实现把输入加载、Tensor Core 计算和输出交接分开，用环形共享内存和屏障连接起来。</p>
+<p>在当前原生 FFN 中，一个 loader warp 负责 TMA 输入与 scale 准备，四个 compute warp 做 MMA。输入侧默认两个 K 槽，计算当前 K 分块时，可以准备下一块。环形槽有两个状态：数据 ready，或者空间 free。加载者和消费者分别等待自己需要的状态，不能只加一个笼统的全块同步。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/_cute_warp_pipeline.py">流水线与屏障实现</a></p>
+<p>TMA 是按张量描述发起大块异步搬运的机制。这里的收益包括减少逐元素地址处理，并让搬运与计算交错推进；scale 仍需要按 MMA 的布局准备，TMA 不会自动完成所有数据重排。</p>
+
+<figure class="h3-figure" aria-label="FFN down 投影的输入、计算与写回分工">
+  <div class="h3-scroll" tabindex="0" aria-label="相对时间线，窄屏可局部横向滚动">
+    <div class="h3-timeline">
+      <b>相对时间 →</b><span>准备</span><span>推进 1</span><span>推进 2</span><span>推进 3</span><span>收尾</span>
+      <b>Loader warp</b><i class="h3-warm">载入 A</i><i class="h3-warm">载入 B</i><i class="h3-warm">载入 C</i><span></span><span></span>
+      <b>Compute warps</b><span></span><i class="h3-accent">计算 A</i><i class="h3-accent">计算 B</i><i class="h3-accent">计算 C</i><span></span>
+      <b>Store warp</b><span></span><span></span><i class="h3-green">写回 A</i><i class="h3-green">写回 B</i><i class="h3-green">写回 C</i>
+    </div>
+  </div>
+  <figcaption>图 4：Down projection 的三类职责示意。A/B/C 表示相邻输出任务，不是 K 环的具体槽号；格子不代表相同的实测时长，真实重叠受缓冲和同步依赖限制。</figcaption>
+</figure>
+
+
+<h3 id="输出也可以交给专门的-warp"><a href="#输出也可以交给专门的-warp" class="headerlink" title="输出也可以交给专门的 warp"></a>输出也可以交给专门的 warp</h3><p>Down projection 需要 BF16 输出。计算 warp 将结果写进共享内存的输出槽，store warp 等结果 ready，再用 TMA 从共享内存写到显存。输入环和输出环分别管理生命周期，loader 不必等当前输出的所有工作都结束，才开始准备后续输入。</p>
+<p>释放输出槽时有一个细节：需要确认异步 store 已经读完共享内存，才能覆盖源槽；kernel 退出前，还要确认全局写入完成，后续 kernel 才能消费结果。这两个完成条件不同。项目在对应位置分别等待，避免为了“异步”引入偶发数据覆盖。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/_cute_mxfp8_ffn.py">FFN 输出环代码</a></p>
+<p>输出环加深会占用更多 SMEM。128×128 的 BF16 tile 一份就有 32 KiB，增加一个输出槽未必划算。当前默认输入 K 环为两槽，输出环为一槽，没有把所有缓冲都机械地设成双缓冲。</p>
+<h3 id="Persistent-CTA-只在合适的形状使用"><a href="#Persistent-CTA-只在合适的形状使用" class="headerlink" title="Persistent CTA 只在合适的形状使用"></a>Persistent CTA 只在合适的形状使用</h3><p>Persistent 调度让有限数量的 CTA 循环领取多个 tile。它有机会跨 tile 复用执行状态、减少流水线反复启动，但会减少独立任务数量，也改变尾部负载分布。</p>
+<p>当前 FFN 上投影对完整 512-token 分块，将 grid 上限设为 SM 数量的两倍；这规定网格规模，不保证每个 SM 同时驻留两个 CTA。下投影和其他长度保留不同安排。这是按实际形状选择，不能扩写成“全项目 persistent 都更快”。同样，tile 增大能增加复用，也会增加寄存器和共享内存开销，最终要看完整 FFN 的耗时。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/transformer.py">实际调度入口</a></p>
+<h2 id="五、融合的目标：让下一步直接吃到需要的格式"><a href="#五、融合的目标：让下一步直接吃到需要的格式" class="headerlink" title="五、融合的目标：让下一步直接吃到需要的格式"></a>五、融合的目标：让下一步直接吃到需要的格式</h2><h3 id="FFN-上投影、SwiGLU-和打包"><a href="#FFN-上投影、SwiGLU-和打包" class="headerlink" title="FFN 上投影、SwiGLU 和打包"></a>FFN 上投影、SwiGLU 和打包</h3><p>FFN 的上投影生成 value 和 gate 两部分，SwiGLU 计算 <code>value × SiLU(gate)</code>，下投影再消费它。朴素安排会先把上投影结果写回显存，另起 kernel 读取、做激活，再读取一次量化结果。</p>
+<p>这里把 SwiGLU 和 MXFP8 打包放进上投影的 epilogue，也就是矩阵乘后的结果处理阶段。计算 warp 从累加结果得到 value&#x2F;gate，完成需要的类型转换与激活，直接写出下投影可用的 E4M3 数据和 scale，省下大份 BF16 中间结果的往返。</p>
+
+<figure class="h3-figure" aria-label="FFN 融合前后跨 kernel 的中间结果">
+  <div class="h3-compare">
+    <div class="h3-card"><b>拆开的安排</b><span>上投影 → BF16 写回</span><span>SwiGLU → BF16 写回</span><span>MXFP8 打包 → 下投影</span></div>
+    <div class="h3-card h3-accent"><b>当前原生 FFN</b><span>上投影累加结果留在寄存器</span><span>同一 epilogue 做 SwiGLU 与打包</span><span>MXFP8 数据 + scale → 下投影</span></div>
+  </div>
+  <figcaption>图 5：融合减少中间张量的显存读写与 kernel 交接。图中不表示整段 FFN 只剩一次 kernel；上、下投影仍分别执行。</figcaption>
+</figure>
+
+
+<h3 id="RMSNorm、AdaLN-和-MXFP8-打包"><a href="#RMSNorm、AdaLN-和-MXFP8-打包" class="headerlink" title="RMSNorm、AdaLN 和 MXFP8 打包"></a>RMSNorm、AdaLN 和 MXFP8 打包</h3><p>另一处融合发生在投影之前。RMSNorm 按行归一化，AdaLN 根据条件进行缩放和平移，接下来本来还要把结果量化为 MXFP8。把这几个操作放在一条数据通路里，可以减少 BF16 中间结果落地和重复读取。</p>
+<p>但“融合”也不意味着把所有值都丢掉。某些后续分支仍需要调制后的 BF16 数据，长序列路径会按生命周期复用相应缓冲；不能只为了压低一次 kernel 的显存数字，在下一步又重新计算一遍。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/_cute_h3_epilogues.py">融合算子</a>、<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/long_video.py">长序列数据生命周期</a></p>
+<p>融合前后还要检查舍入位置。把 BF16 中间值改为一直用 FP32 算到最后，会改变数值，即使数学表达式看起来相同。数据搬运优化可以要求逐位一致，量化或舍入改变则需要数值检查和固定 seed 样片对照，验收口径不能混用。</p>
+<h2 id="六、稀疏注意力：只算选中的块，也不保留完整注意力矩阵"><a href="#六、稀疏注意力：只算选中的块，也不保留完整注意力矩阵" class="headerlink" title="六、稀疏注意力：只算选中的块，也不保留完整注意力矩阵"></a>六、稀疏注意力：只算选中的块，也不保留完整注意力矩阵</h2><p>VSA 先在较粗粒度上选择视频块，再对选中的块做精细 attention。三维视频块的布局、边缘长度、条件区域和选块规则都会影响结果；这些细节在 <a href="/2026/10/23/vsa-video-sparse-attention/" title="VSA 实现详解：三维分块、均值路由与块稀疏 Attention">VSA 文章</a>里单独展开。</p>
+<p>本项目把精细计算放到 CuTe DSL 的 BF16 Tensor Core 上，并使用在线 softmax 维护每行最大值、指数和与输出累加器。这样无需把完整 <code>Q×K</code> 分数矩阵写到显存。<strong>需要保留的是后续投影要消费的注意力输出 O，不是完整的注意力概率矩阵 P。</strong> <a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_kernels/_cute_attention_tc.py">注意力实现</a></p>
+<p>实现过程中还清掉了一项额外计算：把 softmax 概率拆成高位和低位残差，分别计算 <code>P_hi×V</code> 与 <code>P_lo×V</code>，用第二次 PV 补偿转换误差。它能逼近更高精度的概率，但增加一次矩阵乘和交接。当前路径保留一次 BF16 概率 PV，累加器仍为 FP32；移除残差项会改变数值，不能称为数学等价优化。它经过固定八步样片对照后才进入默认配置。</p>
+<p>稀疏率也不能直接换成加速比。路由、块布局、softmax、投影、FFN 和边缘处理仍然存在。保留更少的 attention 块，只减少其中一部分工作；只给出“计算了多少比例的注意力”不能解释整个模型快多少。</p>
+<h2 id="七、长视频的-bubble：先区分没有工作和没有算力吃满"><a href="#七、长视频的-bubble：先区分没有工作和没有算力吃满" class="headerlink" title="七、长视频的 bubble：先区分没有工作和没有算力吃满"></a>七、长视频的 bubble：先区分没有工作和没有算力吃满</h2><h3 id="CPU-的暂停也会让-GPU-断粮"><a href="#CPU-的暂停也会让-GPU-断粮" class="headerlink" title="CPU 的暂停也会让 GPU 断粮"></a>CPU 的暂停也会让 GPU 断粮</h3><p>GPU 工作由 CPU 不断提交。CPU 如果在释放大缓冲、分配新存储、等待事件或者整理下一份输入，提交队列最终可能耗尽，GPU 就会出现空档。大张量位于 CPU，不代表它的生命周期不会影响 GPU。</p>
+<p>早期长 R2VA 路径每层都有大份 BF16 主存暂存。改成固定缓冲复用后，可以减少分配与释放引起的主线程停顿。但主存复用只解决一部分问题：注意力输出如果仍从 GPU 下载，接着又为输出投影上传，数据往返和同步依赖还在。</p>
+<h3 id="让注意力输出以-MXFP8-留在-GPU"><a href="#让注意力输出以-MXFP8-留在-GPU" class="headerlink" title="让注意力输出以 MXFP8 留在 GPU"></a>让注意力输出以 MXFP8 留在 GPU</h3><p>第二节算过，这条 15 秒输入加 15 秒输出请求的 O，用 BF16 保存约 2.265 GiB，用 MXFP8 保存约 1.168 GiB。当前策略先为这份紧凑输出保留预算，首次使用时建立缓冲，之后逐层复用，直接交给输出投影；放不下则使用主存暂存路径。长序列保持 2048-token QKV 分块，并关闭输入量化缓存，给真正需要存活的数据腾出空间。</p>
+
+<figure class="h3-figure" aria-label="注意力输出从主存往返改为 GPU 驻留">
+  <div class="h3-compare">
+    <div class="h3-card h3-warm"><b>主存暂存路径</b><span>Attention → BF16 输出</span><span>D2H → 主存缓冲 → H2D</span><span>量化 / 输出投影</span></div>
+    <div class="h3-card h3-accent"><b>GPU 驻留路径</b><span>Attention 输出按需打包</span><span>固定 MXFP8 GPU 缓冲</span><span>输出投影直接消费</span></div>
+  </div>
+  <figcaption>图 6：减少跨 PCIe 往返，也减少 CPU 交接点。不是把所有激活永久留在显卡；仅保留下一阶段需要的数据。</figcaption>
+</figure>
+
+
+<p>下面是同一进程内交错执行、各两次未加 profiler 测量的均值：15 秒参考视频加一张短边 512 的人物图，768p 输出，第一步中 block 0 预热后测量 block 1–10。QKV 分块为 2048，关闭输入量化缓存。两条路径最后一层输出逐位一致。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th align="right">主存暂存</th>
+<th align="right">GPU MXFP8 驻留</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>未加 profiler 的 10 层均值</td>
+<td align="right">55.055 s</td>
+<td align="right">53.190 s</td>
+</tr>
+<tr>
+<td>CUDA 分配峰值</td>
+<td align="right">6.934 GiB</td>
+<td align="right">8.491 GiB</td>
+</tr>
+<tr>
+<td>独立 trace 中 CUDA 活动并集</td>
+<td align="right">98.277%</td>
+<td align="right">99.615%</td>
+</tr>
+<tr>
+<td>独立 trace 中累计空档</td>
+<td align="right">955.0 ms</td>
+<td align="right">204.7 ms</td>
+</tr>
+</tbody></table>
+<p><strong>这项优化的少层时间下降约 3.4%，代价是更多 GPU 常驻激活。</strong> 这轮实验允许 12 GiB allocator 上限，不能把它的 reservation 当成最终默认配置的占用。它也没有重测完整生成，不能把 3.4% 直接标到八步端到端结果上。<a href="./measurements.json">本文附带的测量摘录</a></p>
+<h3 id="固定权重-arena，比再加一份权重缓冲更适合默认配置"><a href="#固定权重-arena，比再加一份权重缓冲更适合默认配置" class="headerlink" title="固定权重 arena，比再加一份权重缓冲更适合默认配置"></a>固定权重 arena，比再加一份权重缓冲更适合默认配置</h3><p>下一步把 DiT 主层权重放入固定 GPU arena。预先按最大组分配一块内存，用 tensor view 对应各权重，层与层之间复用同一地址，减少动态分配和 allocator 保留量的波动。</p>
+<p>在已经启用 GPU 输出驻留、整卡目标 11.5 GiB 的另一组 10 层对照中，动态分配与固定单 arena 分别为 53.197 s 和 53.276 s，约 0.15% 的差异不足以证明速度改善。但 CUDA 保留峰值从 9.066 降到 8.623 GiB，整卡采样峰值从 11.347 降到 10.902 GiB，输出逐位一致。</p>
+<p>双 arena 可以在计算当前层时 H2D 下一层，但还要多放一组权重。这组实验中时间约 52.958 s，只比单 arena 低约 0.6%，整卡峰值却回到约 11.350 GiB。因此默认选择固定单 arena，优先保留显存余量。<strong>Pinned 暂存池的多槽预读仍然存在，选择单 GPU arena 不等于关闭全部流水线。</strong></p>
+<h3 id="怎样观察剩余空档"><a href="#怎样观察剩余空档" class="headerlink" title="怎样观察剩余空档"></a>怎样观察剩余空档</h3><p>任务管理器适合发现周期性山谷，但采样窗口和显示的 GPU engine 不等于 kernel 时间线。进一步判断时，需要对 kernel、copy 和 memset 的活动区间取并集：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CUDA 活动率 = 窗口内至少有一种 CUDA 活动的时间 / 窗口总时间</span><br><span class="line">累计空档   = 窗口总时间 − CUDA 活动并集</span><br></pre></td></tr></table></figure>
+
+<p>最长一次空档很短，累计空档仍可能不少。剩余间隙要统计次数、分布和总量，再对照 CPU 提交 API、拷贝事件与同步点定位。不能仅看两个相邻 kernel 之间有空白，就认定整张卡没有其他 stream 在工作。</p>
+<p>Linux RTX 5090 的独立验证使用同一条 226,195-token 长请求，预热后观察第一步中 12 个真实 block。CUDA 活动并集为 99.721%，最长空档 7.55 ms，最差一秒窗口为 98.732%；profile 窗口 34.221 s，相邻独立预热窗口 33.838 s。这个约 1.13% 的差异也包含运行波动。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/linux-validation.md#dit-timeline-and-transfer-baseline">完整测试口径</a></p>
+<p>活动率接近 100% 后，仍可能有访存受限、Tensor Core 等待和指令调度问题。一个 kernel 持续运行就算“活跃”，不代表它达到峰值吞吐；后续要用算子内部指标分析，不能继续把所有性能问题都叫 bubble。</p>
+<h2 id="八、PCIe-要单独测，端到端要按阶段看"><a href="#八、PCIe-要单独测，端到端要按阶段看" class="headerlink" title="八、PCIe 要单独测，端到端要按阶段看"></a>八、PCIe 要单独测，端到端要按阶段看</h2><h3 id="先确认传输上限"><a href="#先确认传输上限" class="headerlink" title="先确认传输上限"></a>先确认传输上限</h3><p>同一份脚本在两台机器上测了 256 MiB pinned 拷贝。CPU 端计时包含提交与等待完成，结果如下，单位使用十进制 GB&#x2F;s：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>PCIe 负载状态</th>
+<th align="right">H2D</th>
+<th align="right">D2H</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows RTX 5080</td>
+<td>Gen5 ×16</td>
+<td align="right">56.44 GB&#x2F;s</td>
+<td align="right">56.89 GB&#x2F;s</td>
+</tr>
+<tr>
+<td>Linux RTX 5090</td>
+<td>Gen5 ×16</td>
+<td align="right">56.32 GB&#x2F;s</td>
+<td align="right">57.15 GB&#x2F;s</td>
+</tr>
+</tbody></table>
+<p>每个方向预热三次、测量二十次，取中位数；缓冲分配和数据校验不在计时内。两边的大块 pinned 带宽接近，不能用“Linux 的 pageable H2D 较慢”解释这条 pinned 流水线的空档。它们走的主存路径不同。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/transfer-baseline.md">带宽报告与复现方法</a></p>
+<p>吞吐好也不保证应用快。如果每次只搬很小的数据，提交、等待和线程调度可能占主要时间；如果一个结果必须下载后才能决定下一步，拷贝再快也会引入依赖。优化顺序应当先删除往返、减少同步，再考虑合并小拷贝和提高单次带宽。</p>
+<h3 id="完整生成的结果"><a href="#完整生成的结果" class="headerlink" title="完整生成的结果"></a>完整生成的结果</h3>
+<div class="h3-chart">
+
+
+<figure class="hexo-echarts"><div class="hexo-echarts__canvas" style="height:360px" role="img" aria-label="R2VA 完整生成耗时"></div><script class="hexo-echarts__option" type="application/json">{"title":{"text":"R2VA 完整生成耗时","subtext":"768p · 八步 · 输入与输出等长"},"tooltip":{"trigger":"axis","axisPointer":{"type":"shadow"}},"legend":{"top":64,"data":["Windows RTX 5080","Linux RTX 5090"]},"grid":{"top":110,"bottom":45,"left":62,"right":20},"xAxis":{"type":"category","axisLabel":{"interval":0,"fontSize":10},"data":["5 s → 5 s","10 s → 10 s","15 s → 15 s"]},"yAxis":{"type":"value","name":"耗时 / s","min":0},"series":[{"name":"Windows RTX 5080","type":"bar","data":[496.331,1344.252,2258.036],"itemStyle":{"color":"#d68a45"}},{"name":"Linux RTX 5090","type":"bar","data":[286.746,739.713,1260.393],"itemStyle":{"color":"#4b96ca"}}]}</script><noscript><p class="hexo-echarts__fallback">请启用 JavaScript 查看交互式图表。</p></noscript></figure>
+
+
+</div>
+
+
+<p>图 7：数据截至 2026-11-16。三条请求均为一段参考视频加一张短边 512 的人物图，输出 1344×768、24 fps。时间包含本地推理、VAE 解码和原始导出，不含 PE 与之后的 H.265 转码。Linux 与 Windows 保留的对应输入、seed 和采样参数对齐，约有 1.73–1.82 倍整机速度差；这不是同一块显卡上的软件 A&#x2F;B。</p>
+<p>Linux 的实测 CPU 为 Xeon Gold 6459C，容器有效 CPU 容量 16 核；Windows 为 Ryzen 9 9950X。两边均为 Torch 2.10.0+cu128，CPU、GPU、操作系统、页缓存状态和其他 I&#x2F;O 条件不同。硬件信息以实测为准，不采用租用页面的初始描述。</p>
+<table>
+<thead>
+<tr>
+<th>R2VA 输入 &#x2F; 输出</th>
+<th align="right">Windows 5080 Python 工作集 &#x2F; 私有提交</th>
+<th align="right">Windows 整卡显存</th>
+<th align="right">Linux 5090 Python RSS</th>
+<th align="right">Linux 整卡显存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 s &#x2F; 5 s + 1 图</td>
+<td align="right">17.41 &#x2F; 28.92 GiB</td>
+<td align="right">9.41 GiB</td>
+<td align="right">17.52 GiB</td>
+<td align="right">7.08 GiB</td>
+</tr>
+<tr>
+<td>10 s &#x2F; 10 s + 1 图</td>
+<td align="right">17.90 &#x2F; 29.80 GiB</td>
+<td align="right">10.69 GiB</td>
+<td align="right">17.92 GiB</td>
+<td align="right">9.57 GiB</td>
+</tr>
+<tr>
+<td>15 s &#x2F; 15 s + 1 图</td>
+<td align="right">18.34 &#x2F; 30.64 GiB</td>
+<td align="right">11.35 GiB</td>
+<td align="right">18.10 GiB</td>
+<td align="right">9.88 GiB</td>
+</tr>
+</tbody></table>
+<p>这些内存数值是各自峰值，未必出现在同一时刻。Windows 工作集 &#x2F; 私有提交与 Linux RSS 不是同一种完整内存口径，表里保留原名称；整卡显存为采样峰值，包含驱动等占用。实际验证设备是 5080 16 GiB 与 5090 32 GiB，在它们上面限制预算，并不等于已在所有 12 GiB 型号实测。</p>
+<p>再看 5090 的 15 秒 R2VA：DiT 八步约 1145.5 秒，参考 VAE 约 58.5 秒，最终解码约 33.8 秒，Qwen 约 13.5 秒。最大的计算块仍然是 DiT，VAE 和 Qwen 也有独立的后续优化空间。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/linux-validation.md#phase-timings">阶段耗时</a></p>
+<h2 id="九、哪些取舍保留，哪些还不能下结论"><a href="#九、哪些取舍保留，哪些还不能下结论" class="headerlink" title="九、哪些取舍保留，哪些还不能下结论"></a>九、哪些取舍保留，哪些还不能下结论</h2><p>本次默认策略包括离线 MXFP8 权重、原生 Tensor Core GEMM、FFN 与归一化打包融合、有界权重预读、固定单 arena，以及预算允许时的 GPU 注意力输出驻留。有限的额外显存应优先留给能消除大份激活往返的缓冲，再判断多一份权重预取是否值得。</p>
+<p>必要的配置、形状与内存预算保护继续保留；怀疑数值或权重问题时，用 <code>--debug-checks</code> 开启较重的检查。全量 finite 扫描、把 CUDA 标量转成 Python 值之类操作不应反复夹进热路径。它们可能触发同步，也会让“测到的 kernel 时间”和用户实际等待的时间分离。</p>
+<p>精度按组件处理。DiT 的主要线性层走 MXFP8；参考 VAE 编码保留已验收的 BF16 路径；视频 VAE 解码对已覆盖的 FFN 使用 MXFP8 overlay，其余部分维持适合的精度。Qwen 使用上游提供的 NVFP4 权重路径。不能把这些简写成“整个模型都是 MXFP8”，VAE 和 Qwen 目前也没有像 DiT 一样深入优化。<a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/fasth3_pipeline/vae_mxfp8.py">VAE overlay 范围</a></p>
+<p>效果还有模型与提示词的边界。T2VA 偶尔出现块状模糊；使用文生权重的帧控样片存在轻微模糊，匹配 BF16 DiT 的对照没有明显改善，Omni 参考权重在已测帧控样片中避开了这类问题。这些对照不能证明量化在所有场景都没有影响，只说明不应把当前全部瑕疵都归给 MXFP8。480p 主要用于测速，效果检查建议使用 720p 及以上。</p>
+<p>官方 Context IR 没有随模型开源。当前 OpenH3-IR 集成只作为 PE 演示，镜头、人物绑定、参考视频对应关系和对白仍需要调试。比较 kernel 或精度时固定已经改写好的 prompt；比较 PE 时再单独改变提示词，避免把两类变化混在一起。</p>
+<p>下一轮优化仍应从占比最大的实测阶段开始：分别分析稀疏注意力内部的 MMA、softmax、访存和同步，继续检查长序列分块与数据复用，再对 VAE 和 Qwen 做独立 profile。每一项都同时记录耗时、显存、主存和样片对照，让优化结果既能解释，也能复现。</p>
+<h2 id="实现与测量资料"><a href="#实现与测量资料" class="headerlink" title="实现与测量资料"></a>实现与测量资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/tree/e3ab0ee">FastH3 RTX50 源码与样片</a>：本项目的实现、组件来源及许可证说明。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/linux-validation.md">Linux 全案例、token 与阶段耗时</a>：完整生成与少层 profile 分别记录。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Casxt/fasth3-rtx50/blob/e3ab0ee/benchmarks/transfer-baseline.md">CPU &#x2F; GPU 传输基线</a>：带宽、PCIe、CPU 与内存统计口径。</li>
+<li><a href="./measurements.json">本文测量数据摘录</a>：用于表图的容量计算与 A&#x2F;B 数据，不包含原始 trace 或参考素材。</li>
+<li><a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma">NVIDIA PTX ISA</a>：矩阵指令、block scaling 与同步语义。</li>
+<li><a href="/2026/10/28/attention-exp-mma-overlap/" title="Attention 流水线：单 Q 双 S 与双 Q 的计算重叠">前文：Attention 流水线</a>：解释 MMA 与 softmax 怎样交错，以及为什么更多缓冲不一定更快。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NVIDIA/" rel="tag"># NVIDIA</a>
+              <a href="/tags/Blackwell/" rel="tag"># Blackwell</a>
+              <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
+              <a href="/tags/CuTe-DSL/" rel="tag"># CuTe DSL</a>
+              <a href="/tags/MXFP8/" rel="tag"># MXFP8</a>
+              <a href="/tags/%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" rel="tag"># 视频生成</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/11/07/helium-supply-demand-2028/" rel="prev" title="氦气：全球 2026 年偏紧，2027—2028 的平衡看卡塔尔复产和中国进口结构">
+                  <i class="fa fa-angle-left"></i> 氦气：全球 2026 年偏紧，2027—2028 的平衡看卡塔尔复产和中国进口结构
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">琼ICP备14002121号-1 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Maple</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">418k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">25:19</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/casxt" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"casxt/casxt.github.io","issue_term":"pathname","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+<!-- hexo injector body_end start --><script>
+(() => {
+  if (window.__hexoEchartsLoader) {
+    window.__hexoEchartsLoader.boot();
+    return;
+  }
+
+  const instances = new Set();
+  let loading;
+  let resizeFrame;
+
+  function prune() {
+    for (const chart of instances) {
+      if (!document.documentElement.contains(chart.getDom())) {
+        chart.dispose();
+        instances.delete(chart);
+      }
+    }
+  }
+
+  function render() {
+    if (!window.echarts) return;
+    document.querySelectorAll('.hexo-echarts:not([data-echarts-ready])').forEach(wrapper => {
+      const canvas = wrapper.querySelector('.hexo-echarts__canvas');
+      const option = wrapper.querySelector('.hexo-echarts__option');
+      if (!canvas || !option) return;
+
+      try {
+        const chart = window.echarts.init(canvas, null, { renderer: 'svg' });
+        chart.setOption(JSON.parse(option.textContent));
+        wrapper.dataset.echartsReady = 'true';
+        instances.add(chart);
+      } catch (error) {
+        wrapper.classList.add('hexo-echarts--error');
+        canvas.textContent = '图表加载失败，请查看浏览器控制台。';
+        console.error('[hexo-echarts]', error);
+      }
+    });
+  }
+
+  function ensureLibrary() {
+    if (!document.querySelector('.hexo-echarts')) return;
+    if (window.echarts) {
+      render();
+      return;
+    }
+    if (!loading) {
+      loading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "/assets/vendor/echarts/echarts.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    loading.then(render).catch(error => console.error('[hexo-echarts]', error));
+  }
+
+  function boot() {
+    prune();
+    ensureLibrary();
+  }
+
+  function resize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      prune();
+      for (const chart of instances) chart.resize();
+    });
+  }
+
+  window.__hexoEchartsLoader = { boot };
+  window.addEventListener('resize', resize);
+  document.addEventListener('pjax:success', boot);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script><!-- hexo injector body_end end --></body>
+</html>

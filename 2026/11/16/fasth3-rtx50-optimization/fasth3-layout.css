@@ -1,0 +1,19 @@
+.h3-figure{margin:1.7em 0;padding:18px;border:1px solid #8293a544;border-radius:10px;background:rgba(125,145,165,.04);color:inherit}
+.h3-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.h3-flow.h3-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.h3-card{display:flex;flex-direction:column;gap:8px;min-width:0;padding:14px 12px;border:1px solid #8293a544;border-radius:7px;background:rgba(125,145,165,.07);font-size:13px;line-height:1.7;text-align:left;overflow-wrap:anywhere}
+.h3-card b{font-size:14px}.h3-card small{font-size:12px;opacity:.8}.h3-card strong{font-size:22px}
+.h3-figure .h3-accent{background:#cce3f5;color:#203d56}.h3-figure .h3-warm{background:#f8dfba;color:#553d20}.h3-figure .h3-green{background:#cde7da;color:#244b38}
+.h3-note{margin:16px 0 0;font-size:12px;line-height:1.7;opacity:.85;text-align:left}
+.post-body figure.h3-figure:not(.highlight) figcaption{margin:16px 0 0!important;font:400 12px/1.8 sans-serif;color:inherit;text-align:left;opacity:.85}
+.h3-scale-layout,.h3-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.h3-bytes{display:flex;flex-direction:column;gap:5px}.h3-bytes span{padding:5px 8px;border:1px solid #8293a566;border-radius:4px}
+.h3-scroll{max-width:100%;overflow-x:auto}
+.h3-timeline{display:grid;grid-template-columns:130px repeat(5,minmax(76px,1fr));gap:6px;min-width:590px;font-size:12px;text-align:center;line-height:1.5}
+.h3-timeline>b,.h3-timeline>span,.h3-timeline>i{min-height:40px;padding:7px 3px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:4px;font-style:normal}
+.h3-timeline>span{background:rgba(125,145,165,.1)}.h3-timeline>b{justify-content:flex-start}
+.h3-chart svg text{fill:var(--text-color,#555)!important}
+.post-body .h3-lifetime{min-width:720px;width:100%;margin:0;border-collapse:collapse;table-layout:fixed;font-size:12px;line-height:1.6}
+.post-body .h3-lifetime th,.post-body .h3-lifetime td{padding:10px 7px;border:1px solid #8293a544;text-align:center;overflow-wrap:anywhere;background:transparent;color:inherit}
+.post-body .h3-lifetime th{font-weight:600}.post-body .h3-lifetime td.h3-warm{background:#f8dfba;color:#553d20}.post-body .h3-lifetime td.h3-accent{background:#cce3f5;color:#203d56}.post-body .h3-lifetime td.h3-green{background:#cde7da;color:#244b38}
+@media(max-width:600px){.h3-figure{padding:12px}.h3-flow,.h3-flow.h3-three,.h3-scale-layout,.h3-compare{grid-template-columns:minmax(0,1fr)}.h3-card{padding:12px}.h3-figure figcaption{font-size:12px}}
